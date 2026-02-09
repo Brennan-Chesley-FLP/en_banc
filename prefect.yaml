@@ -1,0 +1,41 @@
+name: en-banc
+
+build:
+  - prefect_docker.deployments.steps.build_docker_image:
+      id: build-image
+      requires: prefect-docker
+      dockerfile: en_banc/docker/Dockerfile
+      image_name: en-banc
+      tag: latest
+      context: ..
+
+deployments:
+  - name: hello-flow
+    entrypoint: hello.py:hello_flow
+    work_pool:
+      name: docker-pool
+      job_variables:
+        image: "{{ build-image.image }}"
+        network_mode: host
+        cap_add:
+          - NET_ADMIN
+          - NET_RAW
+        env:
+          TS_AUTHKEY: "{{ $TS_AUTHKEY }}"
+          TS_HOSTNAME: "{{ flow_run.name }}"
+    schedules: []
+
+  - name: alabama-publicportal-backfill
+    entrypoint: flows/scrapers/alabama/publicportal_alappeals_gov/backfill.py:alabama_publicportal_backfill
+    work_pool:
+      name: docker-pool
+      job_variables:
+        image: "{{ build-image.image }}"
+        network_mode: host
+        cap_add:
+          - NET_ADMIN
+          - NET_RAW
+        env:
+          TS_AUTHKEY: "{{ $TS_AUTHKEY }}"
+          TS_HOSTNAME: "{{ flow_run.name }}"
+    schedules: []

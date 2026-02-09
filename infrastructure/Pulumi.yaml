@@ -1,0 +1,17 @@
+name: en-banc
+runtime:
+  name: python
+  options:
+    toolchain: uv
+config:
+  aws:region: us-east-1
+  aws:endpoints:
+    - s3: http://localhost:4566
+      sns: http://localhost:4566
+      sqs: http://localhost:4566
+  aws:accessKey: test
+  aws:secretKey: test
+  aws:s3UsePathStyle: true
+  aws:skipCredentialsValidation: true
+  aws:skipRequestingAccountId: true
+  prefect:endpoint: http://localhost:4200/api
