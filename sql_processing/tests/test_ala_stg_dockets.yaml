@@ -1,0 +1,103 @@
+test_stg_dockets_trims_case_name:
+  model: ala_publicportal.stg_dockets
+  vars:
+    start_date: "2026-02-11"
+    end_date: "2026-02-13"
+  inputs:
+    ala_publicportal.raw_dockets:
+      - provenance_id: 1
+        record_id: 1
+        loaded_at: "2026-02-12 00:00:00"
+        court_id: "ala"
+        case_number: "SC-2024-0001"
+        case_instance_uuid: "abc-123"
+        date_filed: "2024-01-15"
+        case_name: "  Smith v. Jones  "
+        case_classification: "Civil"
+        originating_court: "Circuit Court of Jefferson County"
+        originating_court_number: "CV-2023-900001"
+        status: "Submitted"
+        court_guid: "guid-001"
+        source_url: "https://example.com/case/1"
+  outputs:
+    query:
+      - court_id: "ala"
+        case_number: "SC-2024-0001"
+        case_instance_uuid: "abc-123"
+        date_filed: "2024-01-15"
+        case_name: "Smith v. Jones"
+        case_classification: "Civil"
+        originating_court: "Circuit Court of Jefferson County"
+        originating_court_number: "CV-2023-900001"
+        status: "Submitted"
+        court_guid: "guid-001"
+        source_url: "https://example.com/case/1"
+        provenance_id: 1
+        record_id: 1
+        loaded_at: "2026-02-12 00:00:00"
+
+test_stg_dockets_multiple_courts:
+  model: ala_publicportal.stg_dockets
+  vars:
+    start_date: "2026-02-11"
+    end_date: "2026-02-13"
+  inputs:
+    ala_publicportal.raw_dockets:
+      - provenance_id: 1
+        record_id: 1
+        loaded_at: "2026-02-12 00:00:00"
+        court_id: "ala"
+        case_number: "SC-2024-0001"
+        case_instance_uuid: "abc-123"
+        date_filed: "2024-01-15"
+        case_name: "Smith v. Jones"
+        case_classification: "Civil"
+        originating_court: null
+        originating_court_number: null
+        status: "Decided"
+        court_guid: "guid-001"
+        source_url: "https://example.com/1"
+      - provenance_id: 1
+        record_id: 2
+        loaded_at: "2026-02-12 00:00:00"
+        court_id: "alactapp"
+        case_number: "CL-2024-0050"
+        case_instance_uuid: "def-456"
+        date_filed: "2024-03-20"
+        case_name: "Doe v. State "
+        case_classification: "Criminal"
+        originating_court: "Mobile County Circuit"
+        originating_court_number: "CC-2023-5000"
+        status: "Submitted"
+        court_guid: "guid-002"
+        source_url: "https://example.com/2"
+  outputs:
+    query:
+      - court_id: "ala"
+        case_number: "SC-2024-0001"
+        case_instance_uuid: "abc-123"
+        date_filed: "2024-01-15"
+        case_name: "Smith v. Jones"
+        case_classification: "Civil"
+        originating_court: null
+        originating_court_number: null
+        status: "Decided"
+        court_guid: "guid-001"
+        source_url: "https://example.com/1"
+        provenance_id: 1
+        record_id: 1
+        loaded_at: "2026-02-12 00:00:00"
+      - court_id: "alactapp"
+        case_number: "CL-2024-0050"
+        case_instance_uuid: "def-456"
+        date_filed: "2024-03-20"
+        case_name: "Doe v. State"
+        case_classification: "Criminal"
+        originating_court: "Mobile County Circuit"
+        originating_court_number: "CC-2023-5000"
+        status: "Submitted"
+        court_guid: "guid-002"
+        source_url: "https://example.com/2"
+        provenance_id: 1
+        record_id: 2
+        loaded_at: "2026-02-12 00:00:00"

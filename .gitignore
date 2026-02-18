@@ -1,1 +1,3 @@
 __pycache__
+docs/_build/
+docker/localstack_data/

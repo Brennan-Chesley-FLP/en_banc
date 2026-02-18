@@ -1,0 +1,84 @@
+- name: conn_jud_ct_gov.raw_dockets
+  columns:
+    provenance_id: bigint
+    record_id: bigint
+    loaded_at: timestamptz
+    crn: int
+    docket_id: text
+    court_id: text
+    date_filed: date
+    case_name: text
+    status: text
+    appeal_by: text
+    disposition_method: text
+    argued_date: date
+    disposition_date: date
+    submitted_on_briefs_date: date
+    cite: text
+    panel: text
+    response_due_date: date
+    trial_court_docket_number: text
+    trial_court_docket_url: text
+    judgment_for: text
+    trial_court: text
+    trial_judge: text
+    judgment_date: date
+    case_type: text
+    is_efiled: boolean
+    exhibits_received_by_court: date
+    source_url: text
+    subscription_url: text
+    parties: text
+    preliminary_papers: text
+    transcripts: text
+
+- name: conn_jud_ct_gov.raw_docket_entries
+  columns:
+    provenance_id: bigint
+    record_id: bigint
+    loaded_at: timestamptz
+    docket_id: text
+    court_id: text
+    activity_type: text
+    number: text
+    date_filed: date
+    initiated_by: text
+    description: text
+    action: text
+    action_date: date
+    notice_date: date
+    document_url: text
+    document_local_path: text
+    is_paperless: boolean
+
+- name: conn_jud_ct_gov.raw_opinion_clusters
+  columns:
+    provenance_id: bigint
+    record_id: bigint
+    loaded_at: timestamptz
+    docket_id: text
+    court_id: text
+    date_filed: date
+    case_name: text
+    publication_year: int
+    publication_name: text
+    law_journal_date: text
+    source_url: text
+    opinions: text
+
+- name: conn_jud_ct_gov.raw_oral_arguments
+  columns:
+    provenance_id: bigint
+    record_id: bigint
+    loaded_at: timestamptz
+    docket_number: text
+    court_id: text
+    date_argued: date
+    case_name: text
+    download_url: text
+    local_path: text
+    source_url: text
+    court_year: text
+    term: text
+    case_detail_url: text
+    audio_id: int

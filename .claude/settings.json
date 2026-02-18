@@ -1,5 +1,9 @@
 {
   "permissions": {
+    "allow": [
+      "Read(//Users/bc/code/freelaw/courtlistener/**)",
+      "Bash(ls:*)"
+    ],
     "additionalDirectories": [
       "/Users/bc/code/freelaw/en_banc"
     ]

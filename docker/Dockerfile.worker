@@ -1,0 +1,29 @@
+FROM prefecthq/prefect:3-python3.13
+
+RUN apt-get update && \
+    apt-get install -y curl libpq-dev && \
+    curl -fsSL https://tailscale.com/install.sh | sh && \
+    curl -fsSL -o /tmp/litestream.deb \
+        https://github.com/benbjohnson/litestream/releases/download/v0.3.13/litestream-v0.3.13-linux-$(dpkg --print-architecture).deb && \
+    dpkg -i /tmp/litestream.deb && \
+    rm /tmp/litestream.deb && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN pip install uv
+
+COPY juriscraper /juriscraper
+COPY kent /kent
+RUN uv pip install --system \
+    /juriscraper \
+    "/kent[persistent-driver,web]" \
+    prefect-aws \
+    sqlmodel \
+    psycopg2-binary \
+    pyyaml \
+    uvicorn
+
+COPY en_banc /app
+WORKDIR /app
+COPY en_banc/docker/worker-entrypoint.sh /worker-entrypoint.sh
+
+ENTRYPOINT ["/worker-entrypoint.sh"]

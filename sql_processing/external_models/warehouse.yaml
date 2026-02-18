@@ -1,0 +1,10 @@
+- name: warehouse.provenance
+  columns:
+    id: bigint
+    source_type: text
+    source_name: text
+    run_id: text
+    s3_artifact_path: text
+    description: text
+    metadata: text
+    created_at: timestamptz

@@ -1,0 +1,153 @@
+test_courtlistener_dockets_field_mapping:
+  model: courtlistener.dockets
+  vars:
+    execution_ts: "2026-01-01 00:00:00"
+  inputs:
+    conn_jud_ct_gov.stg_dockets: []
+    ala_publicportal.stg_dockets:
+      - court_id: "ala"
+        case_number: "SC-2024-0001"
+        case_instance_uuid: "abc-123"
+        date_filed: "2024-01-15"
+        case_name: "Smith v. Jones"
+        case_classification: "Civil"
+        originating_court: "Circuit Court of Jefferson County"
+        originating_court_number: "CV-2023-900001"
+        status: "Submitted"
+        court_guid: "guid-001"
+        source_url: "https://example.com/1"
+        provenance_id: 1
+        record_id: 1
+        loaded_at: "2026-02-12 00:00:00+00"
+  outputs:
+    query:
+      - court_id: "ala"
+        docket_number: "SC-2024-0001"
+        docket_number_core: null
+        date_filed: "2024-01-15"
+        case_name: "Smith v. Jones"
+        case_name_short: null
+        case_name_full: null
+        slug: null
+        cause: "Civil"
+        nature_of_suit: null
+        assigned_to_str: null
+        referred_to_str: null
+        panel_str: null
+        appeal_from_str: "Circuit Court of Jefferson County"
+        filepath_local: null
+        blocked: false
+        provenance_id: 1
+        record_id: 1
+        warehouse_version: 1
+        courtlistener_version: 0
+        courtlistener_id: null
+        date_created: "2026-01-01 00:00:00"
+        date_modified: "2026-01-01 00:00:00"
+
+test_courtlistener_dockets_null_originating_court:
+  model: courtlistener.dockets
+  vars:
+    execution_ts: "2026-01-01 00:00:00"
+  inputs:
+    conn_jud_ct_gov.stg_dockets: []
+    ala_publicportal.stg_dockets:
+      - court_id: "alactapp"
+        case_number: "CL-2024-0050"
+        case_instance_uuid: "def-456"
+        date_filed: "2024-03-20"
+        case_name: "Doe v. State"
+        case_classification: null
+        originating_court: null
+        originating_court_number: null
+        status: "Decided"
+        court_guid: "guid-002"
+        source_url: "https://example.com/2"
+        provenance_id: 1
+        record_id: 2
+        loaded_at: "2026-02-12 00:00:00+00"
+  outputs:
+    query:
+      - court_id: "alactapp"
+        docket_number: "CL-2024-0050"
+        docket_number_core: null
+        date_filed: "2024-03-20"
+        case_name: "Doe v. State"
+        case_name_short: null
+        case_name_full: null
+        slug: null
+        cause: null
+        nature_of_suit: null
+        assigned_to_str: null
+        referred_to_str: null
+        panel_str: null
+        appeal_from_str: null
+        filepath_local: null
+        blocked: false
+        provenance_id: 1
+        record_id: 2
+        warehouse_version: 1
+        courtlistener_version: 0
+        courtlistener_id: null
+        date_created: "2026-01-01 00:00:00"
+        date_modified: "2026-01-01 00:00:00"
+
+test_courtlistener_dockets_connecticut:
+  model: courtlistener.dockets
+  vars:
+    execution_ts: "2026-01-01 00:00:00"
+  inputs:
+    ala_publicportal.stg_dockets: []
+    conn_jud_ct_gov.stg_dockets:
+      - court_id: "conn"
+        docket_id: "SC 21125"
+        crn: 50001
+        date_filed: "2024-06-15"
+        case_name: "State v. Smith"
+        status: "Disposed"
+        appeal_by: "Defendant"
+        disposition_method: "Decided"
+        argued_date: "2024-05-01"
+        disposition_date: "2024-06-15"
+        submitted_on_briefs_date: null
+        cite: "348 Conn. 1"
+        panel: "Robinson, C.J., McDonald, D'Auria, Mullins, Ecker, Alexander, Dannehy, Js."
+        response_due_date: null
+        trial_court_docket_number: "HHDCV156062121S"
+        trial_court_docket_url: null
+        judgment_for: "Plaintiff"
+        trial_court: "JD COURTHOUSE AT HARTFORD"
+        trial_judge: "Sheridan, David"
+        judgment_date: "2023-01-15"
+        case_type: "CIVIL - FORECLOSURE"
+        is_efiled: false
+        exhibits_received_by_court: null
+        source_url: "https://example.com/docket/1"
+        provenance_id: 1
+        record_id: 1
+        loaded_at: "2026-02-12 00:00:00"
+  outputs:
+    query:
+      - court_id: "conn"
+        docket_number: "SC 21125"
+        docket_number_core: null
+        date_filed: "2024-06-15"
+        case_name: "State v. Smith"
+        case_name_short: null
+        case_name_full: null
+        slug: null
+        cause: "CIVIL - FORECLOSURE"
+        nature_of_suit: null
+        assigned_to_str: null
+        referred_to_str: null
+        panel_str: "Robinson, C.J., McDonald, D'Auria, Mullins, Ecker, Alexander, Dannehy, Js."
+        appeal_from_str: "JD COURTHOUSE AT HARTFORD"
+        filepath_local: null
+        blocked: false
+        provenance_id: 1
+        record_id: 1
+        warehouse_version: 1
+        courtlistener_version: 0
+        courtlistener_id: null
+        date_created: "2026-01-01 00:00:00"
+        date_modified: "2026-01-01 00:00:00"

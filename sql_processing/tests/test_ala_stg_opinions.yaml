@@ -1,0 +1,48 @@
+# NOTE: stg_opinions uses CROSS JOIN LATERAL jsonb_array_elements() which is
+# Postgres-specific and cannot run in the DuckDB test runner.
+# Test JSONB explosion models against Postgres with: sqlmesh test --gateway postgres
+#
+# Testing stg_opinion_clusters instead (no JSONB explosion).
+test_stg_opinion_clusters_basic:
+  model: ala_publicportal.stg_opinion_clusters
+  vars:
+    start_date: "2026-02-11"
+    end_date: "2026-02-13"
+  inputs:
+    ala_publicportal.raw_opinion_clusters:
+      - provenance_id: 1
+        record_id: 1
+        loaded_at: "2026-02-12 00:00:00"
+        court_id: "ala"
+        case_number: "SC-2024-0001"
+        date_filed: "2024-01-15"
+        case_name: "  Smith v. Jones  "
+        publication_number: "1240001"
+        authoring_judge: "Parker"
+        decision_text: "Affirmed"
+        lower_court: "Circuit Court"
+        lower_court_number: "CV-2023-900001"
+        per_curiam: false
+        on_rehearing: false
+        publication_uuid: "pub-uuid-1"
+        case_instance_uuid: "abc-123"
+        source_url: "https://example.com/1"
+  outputs:
+    query:
+      - court_id: "ala"
+        case_number: "SC-2024-0001"
+        date_filed: "2024-01-15"
+        case_name: "Smith v. Jones"
+        publication_number: "1240001"
+        authoring_judge: "Parker"
+        decision_text: "Affirmed"
+        lower_court: "Circuit Court"
+        lower_court_number: "CV-2023-900001"
+        per_curiam: false
+        on_rehearing: false
+        publication_uuid: "pub-uuid-1"
+        case_instance_uuid: "abc-123"
+        source_url: "https://example.com/1"
+        provenance_id: 1
+        record_id: 1
+        loaded_at: "2026-02-12 00:00:00"

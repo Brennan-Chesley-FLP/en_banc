@@ -81,6 +81,22 @@ for name, queue in queues.items():
         ),
     )
 
+analytics_db_block = prefect.Block(
+    "analytics-db",
+    name="analytics",
+    type_slug="sqlalchemy-connector",
+    data=json.dumps(
+        {
+            "driver": "postgresql+psycopg2",
+            "database": "analytics",
+            "username": "analytics",
+            "password": "analytics",
+            "host": "localhost",
+            "port": 5433,
+        }
+    ),
+)
+
 # ---------------------------------------------------------------------------
 # Prefect deployments
 # ---------------------------------------------------------------------------
@@ -118,21 +134,76 @@ prefect.Deployment(
     tags=["en-banc"],
 )
 
-alabama_backfill_flow = prefect.Flow(
-    "alabama-publicportal-backfill-flow",
-    name="alabama-publicportal-backfill",
-    tags=["en-banc", "alabama", "backfill"],
+scraper_run_flow = prefect.Flow(
+    "scraper-run-flow",
+    name="scraper-run",
+    tags=["en-banc", "scraper"],
 )
 
-prefect.Deployment(
-    "alabama-publicportal-backfill",
-    name="alabama-publicportal-backfill",
-    flow_id=alabama_backfill_flow.id,
-    entrypoint="flows/scrapers/alabama/publicportal_alappeals_gov/backfill.py:alabama_publicportal_backfill",
+scraper_run_parameter_schema = json.dumps({
+    "title": "Parameters",
+    "type": "object",
+    "properties": {
+        "scraper_path": {
+            "position": 0,
+            "title": "scraper_path",
+            "type": "string",
+        },
+        "seed_params": {
+            "anyOf": [
+                {
+                    "items": {
+                        "additionalProperties": {
+                            "additionalProperties": True,
+                            "type": "object",
+                        },
+                        "type": "object",
+                    },
+                    "type": "array",
+                },
+                {"type": "null"},
+            ],
+            "default": None,
+            "position": 1,
+            "title": "seed_params",
+        },
+        "scraper_schema": {
+            "default": "",
+            "position": 2,
+            "title": "scraper_schema",
+            "type": "string",
+        },
+    },
+    "required": ["scraper_path"],
+})
+
+scraper_run_deployment = prefect.Deployment(
+    "scraper-run",
+    name="scraper-run",
+    flow_id=scraper_run_flow.id,
+    entrypoint="flows/scraper_run.py:scraper_run_flow",
+    path="/app",
+    work_pool_name="scraper-pool",
+    parameter_openapi_schema=scraper_run_parameter_schema,
+    enforce_parameter_schema=False,
+    tags=["en-banc", "scraper"],
+)
+
+sqlmesh_flow = prefect.Flow(
+    "sqlmesh-transforms-flow",
+    name="sqlmesh-transforms",
+    tags=["en-banc", "transforms"],
+)
+
+sqlmesh_deployment = prefect.Deployment(
+    "sqlmesh-transforms",
+    name="sqlmesh-transforms",
+    flow_id=sqlmesh_flow.id,
+    entrypoint="flows/sqlmesh_tasks.py:sqlmesh_transforms",
     path="/app",
     work_pool_name="docker-pool",
     job_variables=docker_job_variables,
-    tags=["en-banc", "alabama", "backfill"],
+    tags=["en-banc", "transforms"],
 )
 
 sqs_listener_flow = prefect.Flow(
@@ -168,6 +239,18 @@ follow_up_deployment = prefect.Deployment(
     job_variables=docker_job_variables,
     tags=["en-banc"],
 )
+
+# ---------------------------------------------------------------------------
+# Prefect concurrency limits (one per scraper schema, limit=1)
+# ---------------------------------------------------------------------------
+
+for schema in ["ala_publicportal", "conn_jud_ct_gov"]:
+    prefect.GlobalConcurrencyLimit(
+        f"scraper-{schema}",
+        name=f"scraper:{schema}",
+        limit=1,
+        active=True,
+    )
 
 # ---------------------------------------------------------------------------
 # Prefect automations
@@ -209,6 +292,80 @@ prefect.Automation(
                 )
             ),
             expects=["prefect.flow-run.Completed"],
+            threshold=1,
+            within=0,
+        ),
+    ),
+    actions=[
+        prefect.AutomationActionArgs(
+            type="run-deployment",
+            source="selected",
+            deployment_id=follow_up_deployment.id,
+        ),
+    ],
+)
+
+# Automation 3: scrape.completed (Alabama) → run sqlmesh-transforms
+prefect.Automation(
+    "scrape-completed-ala",
+    name="scrape-completed-ala-publicportal",
+    enabled=True,
+    trigger=prefect.AutomationTriggerArgs(
+        event=prefect.AutomationTriggerEventArgs(
+            posture="Reactive",
+            match=json.dumps(
+                {"prefect.resource.id": "scraper.ala_publicportal"}
+            ),
+            expects=["scrape.completed"],
+            threshold=1,
+            within=0,
+        ),
+    ),
+    actions=[
+        prefect.AutomationActionArgs(
+            type="run-deployment",
+            source="selected",
+            deployment_id=sqlmesh_deployment.id,
+            parameters=json.dumps({"scraper_schema": "ala_publicportal"}),
+        ),
+    ],
+)
+
+# Automation 4: scrape.completed (Connecticut) → run sqlmesh-transforms
+prefect.Automation(
+    "scrape-completed-conn",
+    name="scrape-completed-conn-jud-ct-gov",
+    enabled=True,
+    trigger=prefect.AutomationTriggerArgs(
+        event=prefect.AutomationTriggerEventArgs(
+            posture="Reactive",
+            match=json.dumps(
+                {"prefect.resource.id": "scraper.conn_jud_ct_gov"}
+            ),
+            expects=["scrape.completed"],
+            threshold=1,
+            within=0,
+        ),
+    ),
+    actions=[
+        prefect.AutomationActionArgs(
+            type="run-deployment",
+            source="selected",
+            deployment_id=sqlmesh_deployment.id,
+            parameters=json.dumps({"scraper_schema": "conn_jud_ct_gov"}),
+        ),
+    ],
+)
+
+# Automation 5: sync.prepared → trigger CL sync
+prefect.Automation(
+    "sync-prepared-trigger",
+    name="sync-prepared-trigger",
+    enabled=True,
+    trigger=prefect.AutomationTriggerArgs(
+        event=prefect.AutomationTriggerEventArgs(
+            posture="Reactive",
+            expects=["sync.prepared"],
             threshold=1,
             within=0,
         ),

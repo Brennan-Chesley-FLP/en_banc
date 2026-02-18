@@ -1,0 +1,31 @@
+test_conn_stg_opinion_clusters_basic:
+  model: conn_jud_ct_gov.stg_opinion_clusters
+  vars:
+    start_date: "2026-02-11"
+    end_date: "2026-02-13"
+  inputs:
+    conn_jud_ct_gov.raw_opinion_clusters:
+      - provenance_id: 1
+        record_id: 1
+        loaded_at: "2026-02-12 00:00:00"
+        court_id: "conn"
+        docket_id: "SC 21125"
+        date_filed: "2024-06-15"
+        case_name: "  State v. Smith  "
+        publication_year: 2024
+        publication_name: "Connecticut Law Journal"
+        law_journal_date: "June 15, 2024"
+        source_url: "https://example.com/opinions/1"
+  outputs:
+    query:
+      - court_id: "conn"
+        docket_id: "SC 21125"
+        date_filed: "2024-06-15"
+        case_name: "State v. Smith"
+        publication_year: 2024
+        publication_name: "Connecticut Law Journal"
+        law_journal_date: "June 15, 2024"
+        source_url: "https://example.com/opinions/1"
+        provenance_id: 1
+        record_id: 1
+        loaded_at: "2026-02-12 00:00:00"

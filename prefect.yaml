@@ -25,8 +25,8 @@ deployments:
           TS_HOSTNAME: "{{ flow_run.name }}"
     schedules: []
 
-  - name: alabama-publicportal-backfill
-    entrypoint: flows/scrapers/alabama/publicportal_alappeals_gov/backfill.py:alabama_publicportal_backfill
+  - name: scraper-run
+    entrypoint: flows/scraper_run.py:scraper_run_flow
     work_pool:
       name: docker-pool
       job_variables:
@@ -38,4 +38,13 @@ deployments:
         env:
           TS_AUTHKEY: "{{ $TS_AUTHKEY }}"
           TS_HOSTNAME: "{{ flow_run.name }}"
+    schedules: []
+
+  - name: sqlmesh-transforms
+    entrypoint: flows/sqlmesh_tasks.py:sqlmesh_transforms
+    work_pool:
+      name: docker-pool
+      job_variables:
+        image: "{{ build-image.image }}"
+        network_mode: host
     schedules: []
