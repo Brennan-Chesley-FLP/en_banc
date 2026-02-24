@@ -227,3 +227,57 @@ def write_config(config: dict, config_path: Path) -> None:
     """
     config_path.parent.mkdir(parents=True, exist_ok=True)
     config_path.write_text(yaml.dump(config))
+
+
+def cleanup_replica(s3_bucket: str, s3_prefix: str) -> int:
+    """Delete all S3 objects under a litestream replica prefix.
+
+    Used after the final database has been integrity-checked and uploaded
+    to S3 directly, making the continuous replica redundant.
+
+    Args:
+        s3_bucket: S3 bucket name.
+        s3_prefix: S3 key prefix for the replica objects.
+
+    Returns:
+        Number of objects deleted.
+    """
+    import boto3
+
+    endpoint = _get_s3_endpoint()
+    env = _get_aws_env()
+
+    s3 = boto3.client(
+        "s3",
+        endpoint_url=endpoint,
+        aws_access_key_id=env["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=env["AWS_SECRET_ACCESS_KEY"],
+    )
+
+    objects_to_delete = []
+    paginator = s3.get_paginator("list_objects_v2")
+    for page in paginator.paginate(Bucket=s3_bucket, Prefix=s3_prefix):
+        for obj in page.get("Contents", []):
+            objects_to_delete.append({"Key": obj["Key"]})
+
+    if not objects_to_delete:
+        logger.info(
+            "No litestream replica objects to clean up at s3://%s/%s",
+            s3_bucket,
+            s3_prefix,
+        )
+        return 0
+
+    deleted = 0
+    for i in range(0, len(objects_to_delete), 1000):
+        batch = objects_to_delete[i : i + 1000]
+        s3.delete_objects(Bucket=s3_bucket, Delete={"Objects": batch})
+        deleted += len(batch)
+
+    logger.info(
+        "Deleted %d litestream replica objects from s3://%s/%s",
+        deleted,
+        s3_bucket,
+        s3_prefix,
+    )
+    return deleted

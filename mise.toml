@@ -1,8 +1,8 @@
 [env]
 PREFECT_API_URL = "http://localhost:4200/api"
-LOCALSTACK_DATA_DIR = "./localstack"
-DOCKER_HOST="unix:///var/folders/b4/0n6kw4ws2gb41m3324c37q540000gn/T/podman/podman-machine-default-api.sock"
-DOCKER_HOST_SOCKET="/var/folders/b4/0n6kw4ws2gb41m3324c37q540000gn/T/podman/podman-machine-default-api.sock"
+LOCALSTACK_ENDPOINT = "http://mini.bopp-justice.ts.net:4566"
+DOCKER_HOST="unix:///var/folders/bj/2rrz8xw16clcv0tb7n4_dwlw0000gn/T/podman/podman-machine-default-api.sock"
+DOCKER_HOST_SOCKET="/var/folders/bj/2rrz8xw16clcv0tb7n4_dwlw0000gn/T/podman/podman-machine-default-api.sock"
 # TS_AUTHKEY = "tskey-auth-..."
 
 [tasks.up]

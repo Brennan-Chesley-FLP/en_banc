@@ -3,7 +3,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy import Column, BigInteger, DateTime, Index, Text, func
+from sqlalchemy import Column, BigInteger, DateTime, Index, JSON, Text, func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlmodel import Field, SQLModel
@@ -35,9 +35,34 @@ class Provenance(SQLModel, table=True):
     s3_artifact_path: str | None = Field(default=None, sa_column=Column(Text))
     description: str | None = Field(default=None, sa_column=Column(Text))
     metadata_: dict | None = Field(
-        default=None, sa_column=Column("metadata", JSONB)
+        default=None, sa_column=Column("metadata", JSON().with_variant(JSONB(), "postgresql"))
     )
     created_at: datetime | None = Field(
+        default=None,
+        sa_column=Column(
+            DateTime(timezone=True), server_default=func.now(), nullable=False
+        ),
+    )
+
+
+class SyncState(SQLModel, table=True):
+    """Per-table high-water marks for the CL sync worker.
+
+    Tracks the last-synced version_provenance (and eventually
+    version_correction) so the sync flow only processes new rows.
+    """
+
+    __tablename__ = "sync_state"
+    __table_args__ = {"schema": "warehouse"}
+
+    table_name: str = Field(sa_column=Column(Text, primary_key=True))
+    last_provenance: int = Field(
+        default=0, sa_column=Column(BigInteger, nullable=False, server_default="0")
+    )
+    last_correction: int = Field(
+        default=0, sa_column=Column(BigInteger, nullable=False, server_default="0")
+    )
+    updated_at: datetime | None = Field(
         default=None,
         sa_column=Column(
             DateTime(timezone=True), server_default=func.now(), nullable=False

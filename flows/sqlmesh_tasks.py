@@ -1,8 +1,7 @@
-"""SQLMesh transforms as per-model Prefect tasks.
+"""SQLMesh transforms as Prefect tasks.
 
-Reads the SQLMesh DAG and submits each model as a separate Prefect task
-with correct wait_for dependencies. The Prefect UI shows the full model
-graph with dependency arrows.
+Runs SQLMesh plan (schema changes + backfill) in a single task, then
+emits a ``sync.prepared`` event for downstream CL sync automation.
 
 See docs/sqlmesh_prefect_integration.md for design details.
 """
@@ -14,38 +13,49 @@ from prefect.events import emit_event
 from sqlmesh import Context
 
 
-@task(
-    retries=1,
-    retry_delay_seconds=30,
-    task_run_name="{model_name}",
-)
-def run_model(
-    project_path: str, model_name: str, environment: str = "prod"
-) -> str:
-    """Evaluate missing intervals for a single SQLMesh model."""
-    logger = get_run_logger()
-    logger.info("Running model: %s", model_name)
-    ctx = Context(paths=project_path)
-    status = ctx.run(
-        environment=environment,
-        select_models=[model_name],
-    )
-    if status.is_failure:
-        raise RuntimeError(f"Model {model_name} failed")
-    return model_name
-
-
 @task(task_run_name="plan-and-apply")
-def plan_and_apply(project_path: str, environment: str = "prod") -> None:
-    """Apply any pending schema changes before evaluating models."""
+def plan_and_apply(
+    project_path: str,
+    environment: str = "prod",
+    scraper_schema: str | None = None,
+) -> list[str]:
+    """Apply pending schema changes and evaluate all relevant models.
+
+    Returns the list of model names that were evaluated.
+    """
     logger = get_run_logger()
-    logger.info("Creating and applying SQLMesh plan")
+
     ctx = Context(paths=project_path)
+    dag = ctx.dag
+
+    # Filter to relevant models if scraper_schema specified.
+    # Model names are catalog-qualified: "analytics"."schema"."table",
+    # so we check whether the schema portion appears in the name.
+    if scraper_schema:
+        schema_needle = f'"{scraper_schema}".'
+        roots = [m for m in dag.sorted if schema_needle in m]
+        relevant = set(roots)
+        for root in roots:
+            relevant.update(dag.downstream(root))
+        select_models = [m for m in dag.sorted if m in relevant]
+    else:
+        select_models = None  # all models
+
+    model_count = len(select_models) if select_models else len(dag.sorted)
+    logger.info(
+        "Running plan for %d models (filter=%s)",
+        model_count,
+        scraper_schema or "all",
+    )
+
     ctx.plan(
         environment=environment,
         no_prompts=True,
         auto_apply=True,
+        select_models=select_models,
     )
+
+    return select_models or list(dag.sorted)
 
 
 @flow(name="sqlmesh-transforms")
@@ -54,7 +64,7 @@ def sqlmesh_transforms(
     environment: str = "prod",
     scraper_schema: str | None = None,
 ) -> None:
-    """Run SQLMesh transforms with per-model Prefect task visibility.
+    """Run SQLMesh transforms and emit sync event.
 
     Args:
         project_path: Path to the SQLMesh project directory.
@@ -64,50 +74,15 @@ def sqlmesh_transforms(
     """
     logger = get_run_logger()
 
-    # 1. Apply schema changes (new models, altered columns, etc.)
-    plan_and_apply(project_path, environment)
-
-    # 2. Read the DAG to discover models and dependencies
-    ctx = Context(paths=project_path)
-    dag = ctx.dag
-    graph = dag.graph
-
-    # 3. Filter to relevant models if scraper_schema specified
-    if scraper_schema:
-        roots = [m for m in dag.sorted if m.startswith(f"{scraper_schema}.")]
-        relevant = set(roots)
-        for root in roots:
-            relevant.update(dag.downstream(root))
-    else:
-        relevant = set(dag.sorted)
+    models = plan_and_apply(project_path, environment, scraper_schema)
 
     logger.info(
-        "Running %d/%d models (filter=%s)",
-        len(relevant),
-        len(dag.sorted),
+        "SQLMesh transforms complete: %d models (filter=%s)",
+        len(models),
         scraper_schema or "all",
     )
 
-    # 4. Submit each model with upstream dependencies
-    futures: dict[str, object] = {}
-    for model_name in dag.sorted:
-        if model_name not in relevant:
-            continue
-        upstream_deps = graph.get(model_name, set())
-        wait_for = [futures[dep] for dep in upstream_deps if dep in futures]
-
-        futures[model_name] = run_model.submit(
-            project_path,
-            model_name,
-            environment,
-            wait_for=wait_for,
-        )
-
-    # 5. Collect results — raises on first failure
-    for name, future in futures.items():
-        future.result()
-
-    # 6. Emit sync.prepared event for downstream CL sync automation
+    # Emit sync.prepared event for downstream CL sync automation
     logger.info("Emitting sync.prepared event (schema=%s)", scraper_schema)
     emit_event(
         event="sync.prepared",

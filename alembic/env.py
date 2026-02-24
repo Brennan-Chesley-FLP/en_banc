@@ -23,7 +23,7 @@ import warehouse.register  # noqa: F401
 target_metadata = SQLModel.metadata
 
 # Schemas managed by Alembic migrations
-MANAGED_SCHEMAS = ("warehouse", "courtlistener", "ala_publicportal", "conn_jud_ct_gov")
+MANAGED_SCHEMAS = ("warehouse", "courtlistener", "ala_publicportal", "conn_jud_ct_gov", "corrections")
 
 
 def include_name(name, type_, parent_names):

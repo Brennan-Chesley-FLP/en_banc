@@ -40,6 +40,7 @@ model_defaults:
 linter:
   enabled: true
   rules:
-    - ambiguousorinvalidcolumn
+    # ambiguousorinvalidcolumn disabled — false positives on Jinja macros
+    # (resolve_latest generates CTEs with provenance_id that the linter can't trace)
     - invalidselectstarexpansion
     - noambiguousprojections

@@ -1,0 +1,49 @@
+# Alabama observations tables
+- name: ala_publicportal.raw_dockets_observations
+  columns:
+    row_id: bigint
+    provenance_id: bigint
+    record_id: bigint
+
+- name: ala_publicportal.raw_opinion_clusters_observations
+  columns:
+    row_id: bigint
+    provenance_id: bigint
+    record_id: bigint
+
+- name: ala_publicportal.raw_oral_arguments_observations
+  columns:
+    row_id: bigint
+    provenance_id: bigint
+    record_id: bigint
+
+- name: ala_publicportal.raw_historical_release_lists_observations
+  columns:
+    row_id: bigint
+    provenance_id: bigint
+    record_id: bigint
+
+# Connecticut observations tables
+- name: conn_jud_ct_gov.raw_dockets_observations
+  columns:
+    row_id: bigint
+    provenance_id: bigint
+    record_id: bigint
+
+- name: conn_jud_ct_gov.raw_docket_entries_observations
+  columns:
+    row_id: bigint
+    provenance_id: bigint
+    record_id: bigint
+
+- name: conn_jud_ct_gov.raw_opinion_clusters_observations
+  columns:
+    row_id: bigint
+    provenance_id: bigint
+    record_id: bigint
+
+- name: conn_jud_ct_gov.raw_oral_arguments_observations
+  columns:
+    row_id: bigint
+    provenance_id: bigint
+    record_id: bigint

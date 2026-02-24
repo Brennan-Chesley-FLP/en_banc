@@ -10,7 +10,7 @@ import pulumi_prefect as prefect
 # ---------------------------------------------------------------------------
 
 s3_buckets = ["scrapers", "emails"]
-sns_topics = ["email-notices"]
+sns_topics = []
 sqs_queues = ["outbox"]
 
 buckets = {}
@@ -64,7 +64,7 @@ for name, topic in topics.items():
         type_slug="secret",
         data=topic.arn.apply(
             lambda arn: json.dumps(
-                {"value": json.dumps({"topic_arn": arn, "endpoint": "http://localhost:4566"})}
+                {"value": json.dumps({"topic_arn": arn, "endpoint": "http://mini.bopp-justice.ts.net:4566"})}
             )
         ),
     )
@@ -76,7 +76,7 @@ for name, queue in queues.items():
         type_slug="secret",
         data=queue.url.apply(
             lambda url: json.dumps(
-                {"value": json.dumps({"queue_url": url, "endpoint": "http://localhost:4566"})}
+                {"value": json.dumps({"queue_url": url, "endpoint": "http://mini.bopp-justice.ts.net:4566"})}
             )
         ),
     )
@@ -87,12 +87,14 @@ analytics_db_block = prefect.Block(
     type_slug="sqlalchemy-connector",
     data=json.dumps(
         {
-            "driver": "postgresql+psycopg2",
-            "database": "analytics",
-            "username": "analytics",
-            "password": "analytics",
-            "host": "localhost",
-            "port": 5433,
+            "connection_info": {
+                "driver": "postgresql+psycopg2",
+                "database": "analytics",
+                "username": "analytics",
+                "password": "analytics",
+                "host": "eb-analytics",
+                "port": 5432,
+            }
         }
     ),
 )
@@ -240,6 +242,22 @@ follow_up_deployment = prefect.Deployment(
     tags=["en-banc"],
 )
 
+sync_warehouse_flow = prefect.Flow(
+    "sync-warehouse-flow",
+    name="sync-warehouse",
+    tags=["en-banc", "sync"],
+)
+
+sync_warehouse_deployment = prefect.Deployment(
+    "sync-warehouse",
+    name="sync-warehouse",
+    flow_id=sync_warehouse_flow.id,
+    entrypoint="cl/sync/flows.py:sync_warehouse",
+    path="/opt/courtlistener",
+    work_pool_name="sync-pool",
+    tags=["en-banc", "sync"],
+)
+
 # ---------------------------------------------------------------------------
 # Prefect concurrency limits (one per scraper schema, limit=1)
 # ---------------------------------------------------------------------------
@@ -357,7 +375,7 @@ prefect.Automation(
     ],
 )
 
-# Automation 5: sync.prepared → trigger CL sync
+# Automation 5: sync.prepared → trigger CL sync-warehouse
 prefect.Automation(
     "sync-prepared-trigger",
     name="sync-prepared-trigger",
@@ -374,7 +392,7 @@ prefect.Automation(
         prefect.AutomationActionArgs(
             type="run-deployment",
             source="selected",
-            deployment_id=follow_up_deployment.id,
+            deployment_id=sync_warehouse_deployment.id,
         ),
     ],
 )

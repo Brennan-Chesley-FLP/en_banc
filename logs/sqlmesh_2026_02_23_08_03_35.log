@@ -1,0 +1,360 @@
+2026-02-23 08:03:36,246 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-23 08:03:36,310 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-23 08:03:36,310 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-23 08:03:36,310 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-23 08:03:36,310 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-23 08:03:36,310 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-23 08:03:36,310 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-23 08:03:36,310 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-23 08:03:36,955 - MainThread - sqlmesh.core.plan.evaluator - INFO - Evaluating plan stage PhysicalLayerSchemaCreationStage (evaluator.py:123)
+2026-02-23 08:03:36,956 - ThreadPoolExecutor-1_0 - sqlmesh.core.snapshot.evaluator - INFO - Creating schema 'analytics.sqlmesh__ala_publicportal' (evaluator.py:1449)
+2026-02-23 08:03:36,956 - ThreadPoolExecutor-1_1 - sqlmesh.core.snapshot.evaluator - INFO - Creating schema 'analytics.sqlmesh__conn_jud_ct_gov' (evaluator.py:1449)
+2026-02-23 08:03:36,957 - ThreadPoolExecutor-1_2 - sqlmesh.core.snapshot.evaluator - INFO - Creating schema 'analytics.sqlmesh__warehouse' (evaluator.py:1449)
+2026-02-23 08:03:36,957 - ThreadPoolExecutor-1_3 - sqlmesh.core.snapshot.evaluator - INFO - Creating schema 'analytics.sqlmesh__courtlistener' (evaluator.py:1449)
+2026-02-23 08:03:36,962 - ThreadPoolExecutor-1_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ CREATE SCHEMA IF NOT EXISTS "sqlmesh__ala_publicportal" (base.py:2626)
+2026-02-23 08:03:36,966 - ThreadPoolExecutor-1_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ CREATE SCHEMA IF NOT EXISTS "sqlmesh__conn_jud_ct_gov" (base.py:2626)
+2026-02-23 08:03:36,970 - ThreadPoolExecutor-1_2 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ CREATE SCHEMA IF NOT EXISTS "sqlmesh__warehouse" (base.py:2626)
+2026-02-23 08:03:36,974 - ThreadPoolExecutor-1_3 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ CREATE SCHEMA IF NOT EXISTS "sqlmesh__courtlistener" (base.py:2626)
+2026-02-23 08:03:36,975 - MainThread - sqlmesh.core.plan.evaluator - INFO - Evaluating plan stage BackfillStage (evaluator.py:123)
+2026-02-23 08:03:36,978 - ThreadPoolExecutor-2_0 - sqlmesh.core.snapshot.evaluator - INFO - Listing data objects in schema analytics.sqlmesh__conn_jud_ct_gov (evaluator.py:1616)
+2026-02-23 08:03:36,978 - ThreadPoolExecutor-2_1 - sqlmesh.core.snapshot.evaluator - INFO - Listing data objects in schema analytics.sqlmesh__courtlistener (evaluator.py:1616)
+2026-02-23 08:03:36,978 - ThreadPoolExecutor-2_2 - sqlmesh.core.snapshot.evaluator - INFO - Listing data objects in schema analytics.sqlmesh__ala_publicportal (evaluator.py:1616)
+2026-02-23 08:03:36,982 - ThreadPoolExecutor-2_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT current_catalog (base.py:2626)
+2026-02-23 08:03:36,986 - ThreadPoolExecutor-2_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT current_catalog (base.py:2626)
+2026-02-23 08:03:36,990 - ThreadPoolExecutor-2_2 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT current_catalog (base.py:2626)
+2026-02-23 08:03:37,037 - ThreadPoolExecutor-3_0 - sqlmesh.core.snapshot.evaluator - INFO - Evaluating snapshot SnapshotId<"analytics"."ala_publicportal"."stg_dockets": 1593574551> (evaluator.py:711)
+2026-02-23 08:03:37,037 - ThreadPoolExecutor-3_1 - sqlmesh.core.snapshot.evaluator - INFO - Evaluating snapshot SnapshotId<"analytics"."ala_publicportal"."stg_opinion_clusters": 3698013282> (evaluator.py:711)
+2026-02-23 08:03:37,037 - ThreadPoolExecutor-3_2 - sqlmesh.core.snapshot.evaluator - INFO - Evaluating snapshot SnapshotId<"analytics"."conn_jud_ct_gov"."stg_dockets": 2677457813> (evaluator.py:711)
+2026-02-23 08:03:37,037 - ThreadPoolExecutor-3_3 - sqlmesh.core.snapshot.evaluator - INFO - Evaluating snapshot SnapshotId<"analytics"."conn_jud_ct_gov"."stg_opinion_clusters": 4199806500> (evaluator.py:711)
+2026-02-23 08:03:37,054 - ThreadPoolExecutor-3_2 - sqlmesh.core.snapshot.evaluator - INFO - Inserting data for snapshot SnapshotId<"analytics"."conn_jud_ct_gov"."stg_dockets": 2677457813> (evaluator.py:952)
+2026-02-23 08:03:37,054 - ThreadPoolExecutor-3_3 - sqlmesh.core.snapshot.evaluator - INFO - Inserting data for snapshot SnapshotId<"analytics"."conn_jud_ct_gov"."stg_opinion_clusters": 4199806500> (evaluator.py:952)
+2026-02-23 08:03:37,054 - ThreadPoolExecutor-3_1 - sqlmesh.core.snapshot.evaluator - INFO - Inserting data for snapshot SnapshotId<"analytics"."ala_publicportal"."stg_opinion_clusters": 3698013282> (evaluator.py:952)
+2026-02-23 08:03:37,054 - ThreadPoolExecutor-3_0 - sqlmesh.core.snapshot.evaluator - INFO - Inserting data for snapshot SnapshotId<"analytics"."ala_publicportal"."stg_dockets": 1593574551> (evaluator.py:952)
+2026-02-23 08:03:37,059 - ThreadPoolExecutor-3_2 - sqlmesh.core.snapshot.evaluator - INFO - Inserting batch (2026-02-11 00:00:00, 2026-02-23 00:00:00) into analytics.sqlmesh__conn_jud_ct_gov.conn_jud_ct_gov__stg_dockets__3113036954' (evaluator.py:984)
+2026-02-23 08:03:37,062 - ThreadPoolExecutor-3_3 - sqlmesh.core.snapshot.evaluator - INFO - Inserting batch (2026-02-11 00:00:00, 2026-02-23 00:00:00) into analytics.sqlmesh__conn_jud_ct_gov.conn_jud_ct_gov__stg_opinion_clusters__2653995106' (evaluator.py:984)
+2026-02-23 08:03:37,066 - ThreadPoolExecutor-3_1 - sqlmesh.core.snapshot.evaluator - INFO - Inserting batch (2026-02-11 00:00:00, 2026-02-23 00:00:00) into analytics.sqlmesh__ala_publicportal.ala_publicportal__stg_opinion_clusters__2019401618' (evaluator.py:984)
+2026-02-23 08:03:37,071 - ThreadPoolExecutor-3_0 - sqlmesh.core.snapshot.evaluator - INFO - Inserting batch (2026-02-11 00:00:00, 2026-02-23 00:00:00) into analytics.sqlmesh__ala_publicportal.ala_publicportal__stg_dockets__3771719089' (evaluator.py:984)
+2026-02-23 08:03:37,072 - ThreadPoolExecutor-3_2 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT "attname" AS "column_name", "pg_catalog".format_type("atttypid", "atttypmod") AS "data_type" FROM "pg_catalog"."pg_attribute" JOIN "pg_catalog"."pg_class" ON "pg_class"."oid" = "attrelid" JOIN "pg_catalog"."pg_namespace" ON "pg_namespace"."oid" = "relnamespace" WHERE ("attnum" > 0 AND NOT "attisdropped" AND "relname" = 'conn_jud_ct_gov__stg_dockets__3113036954') AND "nspname" = 'sqlmesh__conn_jud_ct_gov' (base.py:2626)
+2026-02-23 08:03:37,072 - ThreadPoolExecutor-3_3 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT "attname" AS "column_name", "pg_catalog".format_type("atttypid", "atttypmod") AS "data_type" FROM "pg_catalog"."pg_attribute" JOIN "pg_catalog"."pg_class" ON "pg_class"."oid" = "attrelid" JOIN "pg_catalog"."pg_namespace" ON "pg_namespace"."oid" = "relnamespace" WHERE ("attnum" > 0 AND NOT "attisdropped" AND "relname" = 'conn_jud_ct_gov__stg_opinion_clusters__2653995106') AND "nspname" = 'sqlmesh__conn_jud_ct_gov' (base.py:2626)
+2026-02-23 08:03:37,073 - ThreadPoolExecutor-3_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT "attname" AS "column_name", "pg_catalog".format_type("atttypid", "atttypmod") AS "data_type" FROM "pg_catalog"."pg_attribute" JOIN "pg_catalog"."pg_class" ON "pg_class"."oid" = "attrelid" JOIN "pg_catalog"."pg_namespace" ON "pg_namespace"."oid" = "relnamespace" WHERE ("attnum" > 0 AND NOT "attisdropped" AND "relname" = 'ala_publicportal__stg_opinion_clusters__2019401618') AND "nspname" = 'sqlmesh__ala_publicportal' (base.py:2626)
+2026-02-23 08:03:37,074 - ThreadPoolExecutor-3_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT "attname" AS "column_name", "pg_catalog".format_type("atttypid", "atttypmod") AS "data_type" FROM "pg_catalog"."pg_attribute" JOIN "pg_catalog"."pg_class" ON "pg_class"."oid" = "attrelid" JOIN "pg_catalog"."pg_namespace" ON "pg_namespace"."oid" = "relnamespace" WHERE ("attnum" > 0 AND NOT "attisdropped" AND "relname" = 'ala_publicportal__stg_dockets__3771719089') AND "nspname" = 'sqlmesh__ala_publicportal' (base.py:2626)
+2026-02-23 08:03:37,077 - ThreadPoolExecutor-3_2 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT current_catalog (base.py:2626)
+2026-02-23 08:03:37,077 - ThreadPoolExecutor-3_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT current_catalog (base.py:2626)
+2026-02-23 08:03:37,077 - ThreadPoolExecutor-3_3 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT current_catalog (base.py:2626)
+2026-02-23 08:03:37,078 - ThreadPoolExecutor-3_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT current_catalog (base.py:2626)
+2026-02-23 08:03:37,082 - ThreadPoolExecutor-3_3 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ DELETE FROM "sqlmesh__conn_jud_ct_gov"."conn_jud_ct_gov__stg_opinion_clusters__2653995106" WHERE TRUE (base.py:2626)
+2026-02-23 08:03:37,083 - ThreadPoolExecutor-3_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ DELETE FROM "sqlmesh__ala_publicportal"."ala_publicportal__stg_dockets__3771719089" WHERE TRUE (base.py:2626)
+2026-02-23 08:03:37,083 - ThreadPoolExecutor-3_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ DELETE FROM "sqlmesh__ala_publicportal"."ala_publicportal__stg_opinion_clusters__2019401618" WHERE TRUE (base.py:2626)
+2026-02-23 08:03:37,084 - ThreadPoolExecutor-3_2 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ DELETE FROM "sqlmesh__conn_jud_ct_gov"."conn_jud_ct_gov__stg_dockets__3113036954" WHERE TRUE (base.py:2626)
+2026-02-23 08:03:37,084 - ThreadPoolExecutor-3_3 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ INSERT INTO "sqlmesh__conn_jud_ct_gov"."conn_jud_ct_gov__stg_opinion_clusters__2653995106" ("court_id", "docket_id", "date_filed", "case_name", "publication_year", "publication_name", "law_journal_date", "source_url", "provenance_id", "record_id", "loaded_at") SELECT "r"."court_id" AS "court_id", "r"."docket_id" AS "docket_id", "r"."date_filed" AS "date_filed", TRIM("r"."case_name") AS "case_name", "r"."publication_year" AS "publication_year", "r"."publication_name" AS "publication_name", "r"."law_journal_date" AS "law_journal_date", "r"."source_url" AS "source_url", "r"."provenance_id" AS "provenance_id", "r"."record_id" AS "record_id", "r"."loaded_at" AS "loaded_at" FROM "analytics"."conn_jud_ct_gov"."raw_opinion_clusters" AS "r" WHERE "r"."loaded_at" < CAST('2026-02-22' AS DATE) AND "r"."loaded_at" >= CAST('2026-02-11' AS DATE) (base.py:2626)
+2026-02-23 08:03:37,086 - ThreadPoolExecutor-3_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ INSERT INTO "sqlmesh__ala_publicportal"."ala_publicportal__stg_opinion_clusters__2019401618" ("court_id", "case_number", "date_filed", "case_name", "publication_number", "authoring_judge", "decision_text", "lower_court", "lower_court_number", "per_curiam", "on_rehearing", "publication_uuid", "case_instance_uuid", "source_url", "provenance_id", "record_id", "loaded_at") SELECT "r"."court_id" AS "court_id", "r"."case_number" AS "case_number", "r"."date_filed" AS "date_filed", TRIM("r"."case_name") AS "case_name", "r"."publication_number" AS "publication_number", "r"."authoring_judge" AS "authoring_judge", "r"."decision_text" AS "decision_text", "r"."lower_court" AS "lower_court", "r"."lower_court_number" AS "lower_court_number", "r"."per_curiam" AS "per_curiam", "r"."on_rehearing" AS "on_rehearing", "r"."publication_uuid" AS "publication_uuid", "r"."case_instance_uuid" AS "case_instance_uuid", "r"."source_url" AS "source_url", "r"."provenance_id" AS "provenance_id", "r"."record_id" AS "record_id", "r"."loaded_at" AS "loaded_at" FROM "analytics"."ala_publicportal"."raw_opinion_clusters" AS "r" WHERE "r"."loaded_at" < CAST('2026-02-22' AS DATE) AND "r"."loaded_at" >= CAST('2026-02-11' AS DATE) (base.py:2626)
+2026-02-23 08:03:37,086 - ThreadPoolExecutor-3_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ INSERT INTO "sqlmesh__ala_publicportal"."ala_publicportal__stg_dockets__3771719089" ("court_id", "case_number", "case_instance_uuid", "date_filed", "case_name", "case_classification", "originating_court", "originating_court_number", "status", "court_guid", "source_url", "provenance_id", "record_id", "loaded_at") SELECT "r"."court_id" AS "court_id", "r"."case_number" AS "case_number", "r"."case_instance_uuid" AS "case_instance_uuid", "r"."date_filed" AS "date_filed", TRIM("r"."case_name") AS "case_name", "r"."case_classification" AS "case_classification", "r"."originating_court" AS "originating_court", "r"."originating_court_number" AS "originating_court_number", "r"."status" AS "status", "r"."court_guid" AS "court_guid", "r"."source_url" AS "source_url", "r"."provenance_id" AS "provenance_id", "r"."record_id" AS "record_id", "r"."loaded_at" AS "loaded_at" FROM "analytics"."ala_publicportal"."raw_dockets" AS "r" WHERE "r"."loaded_at" < CAST('2026-02-22' AS DATE) AND "r"."loaded_at" >= CAST('2026-02-11' AS DATE) (base.py:2626)
+2026-02-23 08:03:37,088 - ThreadPoolExecutor-3_2 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ INSERT INTO "sqlmesh__conn_jud_ct_gov"."conn_jud_ct_gov__stg_dockets__3113036954" ("court_id", "docket_id", "crn", "date_filed", "case_name", "status", "appeal_by", "disposition_method", "argued_date", "disposition_date", "submitted_on_briefs_date", "cite", "panel", "response_due_date", "trial_court_docket_number", "trial_court_docket_url", "judgment_for", "trial_court", "trial_judge", "judgment_date", "case_type", "is_efiled", "exhibits_received_by_court", "source_url", "provenance_id", "record_id", "loaded_at") SELECT "r"."court_id" AS "court_id", "r"."docket_id" AS "docket_id", "r"."crn" AS "crn", "r"."date_filed" AS "date_filed", TRIM("r"."case_name") AS "case_name", "r"."status" AS "status", "r"."appeal_by" AS "appeal_by", "r"."disposition_method" AS "disposition_method", "r"."argued_date" AS "argued_date", "r"."disposition_date" AS "disposition_date", "r"."submitted_on_briefs_date" AS "submitted_on_briefs_date", "r"."cite" AS "cite", "r"."panel" AS "panel", "r"."response_due_date" AS "response_due_date", "r"."trial_court_docket_number" AS "trial_court_docket_number", "r"."trial_court_docket_url" AS "trial_court_docket_url", "r"."judgment_for" AS "judgment_for", "r"."trial_court" AS "trial_court", "r"."trial_judge" AS "trial_judge", "r"."judgment_date" AS "judgment_date", "r"."case_type" AS "case_type", "r"."is_efiled" AS "is_efiled", "r"."exhibits_received_by_court" AS "exhibits_received_by_court", "r"."source_url" AS "source_url", "r"."provenance_id" AS "provenance_id", "r"."record_id" AS "record_id", "r"."loaded_at" AS "loaded_at" FROM "analytics"."conn_jud_ct_gov"."raw_dockets" AS "r" WHERE "r"."loaded_at" < CAST('2026-02-22' AS DATE) AND "r"."loaded_at" >= CAST('2026-02-11' AS DATE) (base.py:2626)
+2026-02-23 08:03:37,088 - ThreadPoolExecutor-3_3 - sqlmesh.core.snapshot.evaluator - INFO - Auditing snapshot SnapshotId<"analytics"."conn_jud_ct_gov"."stg_opinion_clusters": 4199806500> (evaluator.py:603)
+2026-02-23 08:03:37,089 - ThreadPoolExecutor-3_3 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT "attname" AS "column_name", "pg_catalog".format_type("atttypid", "atttypmod") AS "data_type" FROM "pg_catalog"."pg_attribute" JOIN "pg_catalog"."pg_class" ON "pg_class"."oid" = "attrelid" JOIN "pg_catalog"."pg_namespace" ON "pg_namespace"."oid" = "relnamespace" WHERE ("attnum" > 0 AND NOT "attisdropped" AND "relname" = 'conn_jud_ct_gov__stg_opinion_clusters__2653995106') AND "nspname" = 'sqlmesh__conn_jud_ct_gov' (base.py:2626)
+2026-02-23 08:03:37,089 - ThreadPoolExecutor-3_1 - sqlmesh.core.snapshot.evaluator - INFO - Auditing snapshot SnapshotId<"analytics"."ala_publicportal"."stg_opinion_clusters": 3698013282> (evaluator.py:603)
+2026-02-23 08:03:37,090 - ThreadPoolExecutor-3_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT "attname" AS "column_name", "pg_catalog".format_type("atttypid", "atttypmod") AS "data_type" FROM "pg_catalog"."pg_attribute" JOIN "pg_catalog"."pg_class" ON "pg_class"."oid" = "attrelid" JOIN "pg_catalog"."pg_namespace" ON "pg_namespace"."oid" = "relnamespace" WHERE ("attnum" > 0 AND NOT "attisdropped" AND "relname" = 'ala_publicportal__stg_opinion_clusters__2019401618') AND "nspname" = 'sqlmesh__ala_publicportal' (base.py:2626)
+2026-02-23 08:03:37,090 - ThreadPoolExecutor-3_2 - sqlmesh.core.snapshot.evaluator - INFO - Auditing snapshot SnapshotId<"analytics"."conn_jud_ct_gov"."stg_dockets": 2677457813> (evaluator.py:603)
+2026-02-23 08:03:37,091 - ThreadPoolExecutor-3_2 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT "attname" AS "column_name", "pg_catalog".format_type("atttypid", "atttypmod") AS "data_type" FROM "pg_catalog"."pg_attribute" JOIN "pg_catalog"."pg_class" ON "pg_class"."oid" = "attrelid" JOIN "pg_catalog"."pg_namespace" ON "pg_namespace"."oid" = "relnamespace" WHERE ("attnum" > 0 AND NOT "attisdropped" AND "relname" = 'conn_jud_ct_gov__stg_dockets__3113036954') AND "nspname" = 'sqlmesh__conn_jud_ct_gov' (base.py:2626)
+2026-02-23 08:03:37,091 - ThreadPoolExecutor-3_0 - sqlmesh.core.snapshot.evaluator - INFO - Auditing snapshot SnapshotId<"analytics"."ala_publicportal"."stg_dockets": 1593574551> (evaluator.py:603)
+2026-02-23 08:03:37,092 - ThreadPoolExecutor-3_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT "attname" AS "column_name", "pg_catalog".format_type("atttypid", "atttypmod") AS "data_type" FROM "pg_catalog"."pg_attribute" JOIN "pg_catalog"."pg_class" ON "pg_class"."oid" = "attrelid" JOIN "pg_catalog"."pg_namespace" ON "pg_namespace"."oid" = "relnamespace" WHERE ("attnum" > 0 AND NOT "attisdropped" AND "relname" = 'ala_publicportal__stg_dockets__3771719089') AND "nspname" = 'sqlmesh__ala_publicportal' (base.py:2626)
+2026-02-23 08:03:37,094 - ThreadPoolExecutor-3_3 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT COUNT(*) FROM (SELECT * FROM "analytics"."sqlmesh__conn_jud_ct_gov"."conn_jud_ct_gov__stg_opinion_clusters__2653995106" AS "t" WHERE NOT "t"."court_id" IN (SELECT "court_id" FROM "analytics"."warehouse"."court_ids" AS "court_ids")) AS "audit" (base.py:2626)
+2026-02-23 08:03:37,096 - ThreadPoolExecutor-3_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT COUNT(*) FROM (SELECT * FROM "analytics"."sqlmesh__ala_publicportal"."ala_publicportal__stg_opinion_clusters__2019401618" AS "t" WHERE NOT "t"."court_id" IN (SELECT "court_id" FROM "analytics"."warehouse"."court_ids" AS "court_ids")) AS "audit" (base.py:2626)
+2026-02-23 08:03:37,097 - ThreadPoolExecutor-3_2 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT COUNT(*) FROM (SELECT * FROM "analytics"."sqlmesh__conn_jud_ct_gov"."conn_jud_ct_gov__stg_dockets__3113036954" AS "t" WHERE NOT "t"."court_id" IN (SELECT "court_id" FROM "analytics"."warehouse"."court_ids" AS "court_ids")) AS "audit" (base.py:2626)
+2026-02-23 08:03:37,099 - ThreadPoolExecutor-3_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: d302497c4ded4249aa14adc7e77d9acd */ SELECT COUNT(*) FROM (SELECT * FROM "analytics"."sqlmesh__ala_publicportal"."ala_publicportal__stg_dockets__3771719089" AS "t" WHERE NOT "t"."court_id" IN (SELECT "court_id" FROM "analytics"."warehouse"."court_ids" AS "court_ids")) AS "audit" (base.py:2626)
+2026-02-23 08:03:37,101 - MainThread - sqlmesh.core.scheduler - INFO - SKIPPED snapshot "analytics"."courtlistener"."dockets"
+ (scheduler.py:613)
+2026-02-23 08:03:37,101 - MainThread - sqlmesh.core.scheduler - INFO - SKIPPED snapshot "analytics"."courtlistener"."opinion_clusters"
+ (scheduler.py:613)
+2026-02-23 08:03:37,101 - MainThread - sqlmesh.core.scheduler - INFO - SKIPPED snapshot "analytics"."courtlistener"."originating_court_information"
+ (scheduler.py:613)
+2026-02-23 08:03:37,101 - MainThread - sqlmesh.core.scheduler - INFO - Execution failed for node EvaluateNode(snapshot_name='"analytics"."conn_jud_ct_gov"."stg_opinion_clusters"', interval=(1770768000000, 1771804800000), batch_index=0) (scheduler.py:618)
+Traceback (most recent call last):
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/utils/concurrency.py", line 69, in _process_node
+    self.fn(node)
+    ~~~~~~~^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 554, in run_node
+    audit_results = self.evaluate(
+        snapshot=snapshot,
+    ...<9 lines>...
+        selected_models=selected_models,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 242, in evaluate
+    audit_results = self._audit_snapshot(
+        snapshot=snapshot,
+    ...<7 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 901, in _audit_snapshot
+    audit_results = self.snapshot_evaluator.audit(
+        snapshot=snapshot,
+    ...<6 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 619, in audit
+    self._audit(
+    ~~~~~~~~~~~^
+        audit=audit,
+        ^^^^^^^^^^^^
+    ...<7 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 1408, in _audit
+    count, *_ = adapter.fetchone(
+                ~~~~~~~~~~~~~~~~^
+        select("COUNT(*)").from_(query.subquery("audit")),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quote_identifiers=True,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    )  # type: ignore
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2390, in fetchone
+    self.execute(
+    ~~~~~~~~~~~~^
+        query,
+        ^^^^^^
+        ignore_unsupported_errors=ignore_unsupported_errors,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quote_identifiers=quote_identifiers,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2603, in execute
+    self._execute(sql, track_rows_processed, **kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2635, in _execute
+    self.cursor.execute(sql, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "warehouse.court_ids" does not exist
+LINE 1: ...ERE NOT "t"."court_id" IN (SELECT "court_id" FROM "analytics...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+sqlmesh.utils.concurrency.NodeExecutionFailedError: Execution failed for node EvaluateNode(snapshot_name='"analytics"."conn_jud_ct_gov"."stg_opinion_clusters"', interval=(1770768000000, 1771804800000), batch_index=0)
+2026-02-23 08:03:37,104 - MainThread - sqlmesh.core.scheduler - INFO - Execution failed for node EvaluateNode(snapshot_name='"analytics"."ala_publicportal"."stg_opinion_clusters"', interval=(1770768000000, 1771804800000), batch_index=0) (scheduler.py:618)
+Traceback (most recent call last):
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/utils/concurrency.py", line 69, in _process_node
+    self.fn(node)
+    ~~~~~~~^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 554, in run_node
+    audit_results = self.evaluate(
+        snapshot=snapshot,
+    ...<9 lines>...
+        selected_models=selected_models,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 242, in evaluate
+    audit_results = self._audit_snapshot(
+        snapshot=snapshot,
+    ...<7 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 901, in _audit_snapshot
+    audit_results = self.snapshot_evaluator.audit(
+        snapshot=snapshot,
+    ...<6 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 619, in audit
+    self._audit(
+    ~~~~~~~~~~~^
+        audit=audit,
+        ^^^^^^^^^^^^
+    ...<7 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 1408, in _audit
+    count, *_ = adapter.fetchone(
+                ~~~~~~~~~~~~~~~~^
+        select("COUNT(*)").from_(query.subquery("audit")),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quote_identifiers=True,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    )  # type: ignore
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2390, in fetchone
+    self.execute(
+    ~~~~~~~~~~~~^
+        query,
+        ^^^^^^
+        ignore_unsupported_errors=ignore_unsupported_errors,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quote_identifiers=quote_identifiers,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2603, in execute
+    self._execute(sql, track_rows_processed, **kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2635, in _execute
+    self.cursor.execute(sql, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "warehouse.court_ids" does not exist
+LINE 1: ...ERE NOT "t"."court_id" IN (SELECT "court_id" FROM "analytics...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+sqlmesh.utils.concurrency.NodeExecutionFailedError: Execution failed for node EvaluateNode(snapshot_name='"analytics"."ala_publicportal"."stg_opinion_clusters"', interval=(1770768000000, 1771804800000), batch_index=0)
+2026-02-23 08:03:37,105 - MainThread - sqlmesh.core.scheduler - INFO - Execution failed for node EvaluateNode(snapshot_name='"analytics"."conn_jud_ct_gov"."stg_dockets"', interval=(1770768000000, 1771804800000), batch_index=0) (scheduler.py:618)
+Traceback (most recent call last):
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/utils/concurrency.py", line 69, in _process_node
+    self.fn(node)
+    ~~~~~~~^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 554, in run_node
+    audit_results = self.evaluate(
+        snapshot=snapshot,
+    ...<9 lines>...
+        selected_models=selected_models,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 242, in evaluate
+    audit_results = self._audit_snapshot(
+        snapshot=snapshot,
+    ...<7 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 901, in _audit_snapshot
+    audit_results = self.snapshot_evaluator.audit(
+        snapshot=snapshot,
+    ...<6 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 619, in audit
+    self._audit(
+    ~~~~~~~~~~~^
+        audit=audit,
+        ^^^^^^^^^^^^
+    ...<7 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 1408, in _audit
+    count, *_ = adapter.fetchone(
+                ~~~~~~~~~~~~~~~~^
+        select("COUNT(*)").from_(query.subquery("audit")),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quote_identifiers=True,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    )  # type: ignore
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2390, in fetchone
+    self.execute(
+    ~~~~~~~~~~~~^
+        query,
+        ^^^^^^
+        ignore_unsupported_errors=ignore_unsupported_errors,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quote_identifiers=quote_identifiers,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2603, in execute
+    self._execute(sql, track_rows_processed, **kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2635, in _execute
+    self.cursor.execute(sql, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "warehouse.court_ids" does not exist
+LINE 1: ...ERE NOT "t"."court_id" IN (SELECT "court_id" FROM "analytics...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+sqlmesh.utils.concurrency.NodeExecutionFailedError: Execution failed for node EvaluateNode(snapshot_name='"analytics"."conn_jud_ct_gov"."stg_dockets"', interval=(1770768000000, 1771804800000), batch_index=0)
+2026-02-23 08:03:37,105 - MainThread - sqlmesh.core.scheduler - INFO - Execution failed for node EvaluateNode(snapshot_name='"analytics"."ala_publicportal"."stg_dockets"', interval=(1770768000000, 1771804800000), batch_index=0) (scheduler.py:618)
+Traceback (most recent call last):
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/utils/concurrency.py", line 69, in _process_node
+    self.fn(node)
+    ~~~~~~~^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 554, in run_node
+    audit_results = self.evaluate(
+        snapshot=snapshot,
+    ...<9 lines>...
+        selected_models=selected_models,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 242, in evaluate
+    audit_results = self._audit_snapshot(
+        snapshot=snapshot,
+    ...<7 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 901, in _audit_snapshot
+    audit_results = self.snapshot_evaluator.audit(
+        snapshot=snapshot,
+    ...<6 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 619, in audit
+    self._audit(
+    ~~~~~~~~~~~^
+        audit=audit,
+        ^^^^^^^^^^^^
+    ...<7 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 1408, in _audit
+    count, *_ = adapter.fetchone(
+                ~~~~~~~~~~~~~~~~^
+        select("COUNT(*)").from_(query.subquery("audit")),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quote_identifiers=True,
+        ^^^^^^^^^^^^^^^^^^^^^^^
+    )  # type: ignore
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2390, in fetchone
+    self.execute(
+    ~~~~~~~~~~~~^
+        query,
+        ^^^^^^
+        ignore_unsupported_errors=ignore_unsupported_errors,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        quote_identifiers=quote_identifiers,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2603, in execute
+    self._execute(sql, track_rows_processed, **kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2635, in _execute
+    self.cursor.execute(sql, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "warehouse.court_ids" does not exist
+LINE 1: ...ERE NOT "t"."court_id" IN (SELECT "court_id" FROM "analytics...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+sqlmesh.utils.concurrency.NodeExecutionFailedError: Execution failed for node EvaluateNode(snapshot_name='"analytics"."ala_publicportal"."stg_dockets"', interval=(1770768000000, 1771804800000), batch_index=0)
+2026-02-23 08:03:37,110 - MainThread - sqlmesh.core.context - INFO - Plan application failed. (context.py:1797)
+Traceback (most recent call last):
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/context.py", line 1789, in apply
+    self._apply(plan, circuit_breaker)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/context.py", line 2582, in _apply
+    self._scheduler.create_plan_evaluator(self).evaluate(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        plan.to_evaluatable(), circuit_breaker=circuit_breaker
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/plan/evaluator.py", line 105, in evaluate
+    self._evaluate_stages(plan_stages, plan)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/plan/evaluator.py", line 125, in _evaluate_stages
+    handler(stage, plan)
+    ~~~~~~~^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/plan/evaluator.py", line 264, in visit_backfill_stage
+    raise PlanError("Plan application failed.")
+sqlmesh.utils.errors.PlanError: Plan application failed.
+2026-02-23 08:03:37,110 - MainThread - root - INFO - Shutting down the event dispatcher (dispatcher.py:159)

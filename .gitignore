@@ -1,3 +1,6 @@
 __pycache__
 docs/_build/
 docker/localstack_data/
+sql_processing/.cache
+sql_processing/logs/
+infrastructure/Pulumi.local-dev.yaml

@@ -1,10 +1,9 @@
-test_courtlistener_dockets_field_mapping:
-  model: courtlistener.dockets
-  vars:
-    execution_ts: "2026-01-01 00:00:00"
+test_courtlistener_raw_dockets_alabama:
+  model: courtlistener.raw_dockets
   inputs:
-    conn_jud_ct_gov.stg_dockets: []
-    ala_publicportal.stg_dockets:
+    warehouse.court_ids: []
+    conn_jud_ct_gov.staged_dockets: []
+    ala_publicportal.staged_dockets:
       - court_id: "ala"
         case_number: "SC-2024-0001"
         case_instance_uuid: "abc-123"
@@ -18,7 +17,8 @@ test_courtlistener_dockets_field_mapping:
         source_url: "https://example.com/1"
         provenance_id: 1
         record_id: 1
-        loaded_at: "2026-02-12 00:00:00+00"
+        correction_id: 0
+        min_provenance_id: 1
   outputs:
     query:
       - court_id: "ala"
@@ -39,19 +39,15 @@ test_courtlistener_dockets_field_mapping:
         blocked: false
         provenance_id: 1
         record_id: 1
-        warehouse_version: 1
-        courtlistener_version: 0
-        courtlistener_id: null
-        date_created: "2026-01-01 00:00:00"
-        date_modified: "2026-01-01 00:00:00"
+        correction_id: 0
+        min_provenance_id: 1
 
-test_courtlistener_dockets_null_originating_court:
-  model: courtlistener.dockets
-  vars:
-    execution_ts: "2026-01-01 00:00:00"
+test_courtlistener_raw_dockets_null_originating_court:
+  model: courtlistener.raw_dockets
   inputs:
-    conn_jud_ct_gov.stg_dockets: []
-    ala_publicportal.stg_dockets:
+    warehouse.court_ids: []
+    conn_jud_ct_gov.staged_dockets: []
+    ala_publicportal.staged_dockets:
       - court_id: "alactapp"
         case_number: "CL-2024-0050"
         case_instance_uuid: "def-456"
@@ -65,7 +61,8 @@ test_courtlistener_dockets_null_originating_court:
         source_url: "https://example.com/2"
         provenance_id: 1
         record_id: 2
-        loaded_at: "2026-02-12 00:00:00+00"
+        correction_id: 0
+        min_provenance_id: 1
   outputs:
     query:
       - court_id: "alactapp"
@@ -86,19 +83,15 @@ test_courtlistener_dockets_null_originating_court:
         blocked: false
         provenance_id: 1
         record_id: 2
-        warehouse_version: 1
-        courtlistener_version: 0
-        courtlistener_id: null
-        date_created: "2026-01-01 00:00:00"
-        date_modified: "2026-01-01 00:00:00"
+        correction_id: 0
+        min_provenance_id: 1
 
-test_courtlistener_dockets_connecticut:
-  model: courtlistener.dockets
-  vars:
-    execution_ts: "2026-01-01 00:00:00"
+test_courtlistener_raw_dockets_connecticut:
+  model: courtlistener.raw_dockets
   inputs:
-    ala_publicportal.stg_dockets: []
-    conn_jud_ct_gov.stg_dockets:
+    warehouse.court_ids: []
+    ala_publicportal.staged_dockets: []
+    conn_jud_ct_gov.staged_dockets:
       - court_id: "conn"
         docket_id: "SC 21125"
         crn: 50001
@@ -123,9 +116,11 @@ test_courtlistener_dockets_connecticut:
         is_efiled: false
         exhibits_received_by_court: null
         source_url: "https://example.com/docket/1"
+        subscription_url: null
         provenance_id: 1
         record_id: 1
-        loaded_at: "2026-02-12 00:00:00"
+        correction_id: 0
+        min_provenance_id: 1
   outputs:
     query:
       - court_id: "conn"
@@ -146,8 +141,5 @@ test_courtlistener_dockets_connecticut:
         blocked: false
         provenance_id: 1
         record_id: 1
-        warehouse_version: 1
-        courtlistener_version: 0
-        courtlistener_id: null
-        date_created: "2026-01-01 00:00:00"
-        date_modified: "2026-01-01 00:00:00"
+        correction_id: 0
+        min_provenance_id: 1

@@ -18,13 +18,14 @@ from itertools import islice
 import psycopg2
 import psycopg2.extras
 from prefect import flow, task, get_run_logger
+from prefect_sqlalchemy import SqlAlchemyConnector
 
 from eyecite import get_citations
 from eyecite.models import FullCaseCitation
 
 logger = logging.getLogger(__name__)
 
-ANALYTICS_DB_URL = "postgresql://analytics:analytics@localhost:5433/analytics"
+ANALYTICS_DB_BLOCK = "analytics"
 
 # SQL to find opinions with text that haven't been processed yet.
 DISCOVER_SQL = """\
@@ -97,7 +98,8 @@ def discover_opinions(limit: int = 1000) -> list[dict]:
     offset = 0
     chunk = 500
 
-    conn = psycopg2.connect(ANALYTICS_DB_URL)
+    block = SqlAlchemyConnector.load(ANALYTICS_DB_BLOCK)
+    conn = psycopg2.connect(block.connection_info.create_url().render_as_string(hide_password=False))
     try:
         with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
             while len(rows) < limit:
@@ -121,7 +123,8 @@ def extract_and_store_citations(opinions: list[dict]) -> dict:
     total_citations = 0
     total_opinions = 0
 
-    conn = psycopg2.connect(ANALYTICS_DB_URL)
+    block = SqlAlchemyConnector.load(ANALYTICS_DB_BLOCK)
+    conn = psycopg2.connect(block.connection_info.create_url().render_as_string(hide_password=False))
     try:
         with conn.cursor() as cur:
             for opinion in opinions:

@@ -1,4 +1,4 @@
-"""Generic scraper run flow: run scraper -> doctor -> validate -> provenance -> load -> emit event.
+"""Generic scraper run flow: run scraper -> integrity check -> upload -> doctor -> validate -> load -> emit event.
 
 Orchestrates the full pipeline from scraper execution through warehouse loading.
 After loading, emits a ``scrape.completed`` event that triggers downstream
@@ -9,21 +9,25 @@ from __future__ import annotations
 
 import logging
 import os
+import sqlite3
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
 import prefect.runtime
 from prefect import flow, get_run_logger, task
-from prefect.context import get_run_context
+from prefect.artifacts import create_markdown_artifact
+from prefect.cache_policies import INPUTS
 from prefect.concurrency.asyncio import concurrency
 from prefect.events import emit_event
 from prefect_aws.s3 import S3Bucket
+from prefect_sqlalchemy import SqlAlchemyConnector
 
 from flows.s3_archive import S3_BLOCK_NAME, make_s3_archive_callback
 
 logger = logging.getLogger(__name__)
 
-ANALYTICS_DB_URL = "postgresql://analytics:analytics@localhost:5433/analytics"
+ANALYTICS_DB_BLOCK = "analytics"
 
 
 # ---------------------------------------------------------------------------
@@ -88,6 +92,99 @@ async def run_scraper_task(
 
 
 # ---------------------------------------------------------------------------
+# Task: Integrity Check and Upload
+# ---------------------------------------------------------------------------
+
+
+@task(
+    log_prints=True,
+    task_run_name="integrity-check-and-upload",
+    persist_result=True,
+    cache_policy=INPUTS,
+)
+async def integrity_check_and_upload(
+    db_path: Path,
+    scraper_schema: str,
+) -> str:
+    """Run SQLite integrity check and upload database to S3.
+
+    Runs ``PRAGMA integrity_check`` on the database.  If the check passes,
+    uploads the database to S3 at ``scraper_runs/{run_id}.db``.
+    The result is cached so flow retries skip the re-upload.
+
+    Args:
+        db_path: Path to the scraper SQLite database.
+        scraper_schema: Schema name (for logging).
+
+    Returns:
+        S3 URI of the uploaded database.
+
+    Raises:
+        RuntimeError: If the SQLite integrity check fails.
+    """
+    log = get_run_logger()
+
+    # Run SQLite integrity check
+    log.info("Running SQLite integrity check on %s", db_path)
+    conn = sqlite3.connect(str(db_path))
+    try:
+        cursor = conn.execute("PRAGMA integrity_check;")
+        results = cursor.fetchall()
+    finally:
+        conn.close()
+
+    if results[0][0] != "ok":
+        issues = "\n".join(row[0] for row in results)
+        log.error("SQLite integrity check FAILED:\n%s", issues)
+        raise RuntimeError(f"SQLite integrity check failed:\n{issues}")
+
+    log.info("SQLite integrity check passed")
+
+    # Upload to S3 at scraper_runs/{scraper_schema}/{run_id}.db
+    run_id = prefect.runtime.flow_run.id
+    s3_bucket = await S3Bucket.aload(S3_BLOCK_NAME)
+    s3_key = f"scraper_runs/{scraper_schema}/{run_id}.db"
+
+    s3_bucket.upload_from_path(str(db_path), to_path=s3_key)
+
+    bucket_name = s3_bucket.bucket_name
+    s3_uri = f"s3://{bucket_name}/{s3_key}"
+    log.info("Uploaded database to %s", s3_uri)
+    return s3_uri
+
+
+# ---------------------------------------------------------------------------
+# Task: Cleanup Litestream Replica
+# ---------------------------------------------------------------------------
+
+
+@task(log_prints=True, task_run_name="cleanup-litestream-replica")
+def cleanup_litestream_replica(scraper_schema: str) -> None:
+    """Delete litestream S3 replica objects after successful DB upload.
+
+    Best-effort cleanup — logs a warning on failure rather than
+    failing the flow.
+    """
+    from flows.litestream import cleanup_replica
+
+    log = get_run_logger()
+    run_name = prefect.runtime.flow_run.name or "unnamed"
+    s3_bucket = os.environ.get("LITESTREAM_S3_BUCKET", "scrapers")
+    s3_prefix = f"scraper_runs/{scraper_schema}/{run_name}/replica/"
+
+    try:
+        deleted = cleanup_replica(s3_bucket, s3_prefix)
+        log.info("Cleaned up %d litestream replica objects", deleted)
+    except Exception:
+        log.warning(
+            "Failed to clean up litestream replicas at s3://%s/%s",
+            s3_bucket,
+            s3_prefix,
+            exc_info=True,
+        )
+
+
+# ---------------------------------------------------------------------------
 # Task: Doctor Health Check
 # ---------------------------------------------------------------------------
 
@@ -97,6 +194,7 @@ async def doctor_health_check(db_path: Path) -> dict[str, Any]:
     """Run pdd doctor health checks on the scraper database.
 
     Fails the flow if integrity issues are found or unresolved errors exist.
+    On failure, creates a markdown artifact with the full doctor output.
 
     Args:
         db_path: Path to the scraper SQLite database.
@@ -121,18 +219,55 @@ async def doctor_health_check(db_path: Path) -> dict[str, Any]:
     )
     log.info("Ghost requests: %d", ghosts["total_count"])
 
+    has_failure = False
+    failure_reasons = []
+
     if integrity["has_issues"]:
-        raise RuntimeError(
+        has_failure = True
+        failure_reasons.append(
             f"Integrity check failed: "
             f"{integrity['orphaned_requests']['count']} orphaned requests, "
             f"{integrity['orphaned_responses']['count']} orphaned responses"
         )
 
     if stats["errors"]["unresolved"] > 0:
-        raise RuntimeError(
+        has_failure = True
+        failure_reasons.append(
             f"Unresolved errors: {stats['errors']['unresolved']} "
             f"(total errors: {stats['errors']['total']})"
         )
+
+    if has_failure:
+        md_lines = [
+            "# PDD Doctor Health Check — FAILED\n",
+            "## Integrity",
+            f"- Has issues: **{integrity['has_issues']}**",
+        ]
+        if integrity.get("orphaned_requests"):
+            md_lines.append(
+                f"- Orphaned requests: {integrity['orphaned_requests']['count']}"
+            )
+        if integrity.get("orphaned_responses"):
+            md_lines.append(
+                f"- Orphaned responses: {integrity['orphaned_responses']['count']}"
+            )
+        md_lines += [
+            "",
+            "## Error Stats",
+            f"- Total errors: {stats['errors']['total']}",
+            f"- Unresolved errors: **{stats['errors']['unresolved']}**",
+            "",
+            "## Ghost Requests",
+            f"- Total: {ghosts['total_count']}",
+        ]
+
+        await create_markdown_artifact(
+            key="doctor-health-check",
+            markdown="\n".join(md_lines),
+            description="PDD doctor health check failure report",
+        )
+
+        raise RuntimeError("; ".join(failure_reasons))
 
     return {
         "integrity": integrity,
@@ -170,36 +305,6 @@ def validate_run(db_path: str, scraper_schema: str) -> dict[str, int]:
 
 
 # ---------------------------------------------------------------------------
-# Task: Upload Database to S3
-# ---------------------------------------------------------------------------
-
-
-@task(log_prints=True, task_run_name="upload-db")
-async def upload_db(db_path: Path, scraper_schema: str) -> str:
-    """Upload the scraper database to S3 for archival.
-
-    Args:
-        db_path: Path to the sqlite database file.
-        scraper_schema: Schema name, used for S3 path.
-
-    Returns:
-        S3 URI of the uploaded database.
-    """
-    log = get_run_logger()
-    s3_bucket = await S3Bucket.aload(S3_BLOCK_NAME)
-
-    run_name = prefect.runtime.flow_run.name
-    s3_key = f"scraper_runs/{scraper_schema}/{run_name}.db"
-
-    s3_bucket.upload_from_path(str(db_path), to_path=s3_key)
-
-    bucket_name = s3_bucket.bucket_name
-    s3_uri = f"s3://{bucket_name}/{s3_key}"
-    log.info("Uploaded database to %s", s3_uri)
-    return s3_uri
-
-
-# ---------------------------------------------------------------------------
 # Task: Create Provenance
 # ---------------------------------------------------------------------------
 
@@ -212,17 +317,16 @@ def create_provenance(
     metadata: dict | None = None,
 ) -> int:
     """Create a provenance record and return its ID."""
-    from sqlalchemy import create_engine
     from sqlmodel import Session
 
     from warehouse.models import Provenance
 
     log = get_run_logger()
 
-    ctx = get_run_context()
-    run_id = ctx.flow_run.id if ctx and ctx.flow_run else None
+    run_id = prefect.runtime.flow_run.id
 
-    engine = create_engine(ANALYTICS_DB_URL)
+    block = SqlAlchemyConnector.load(ANALYTICS_DB_BLOCK)
+    engine = block.get_engine()
     prov = Provenance(
         source_type="scraper_run",
         source_name=scraper_name,
@@ -256,15 +360,94 @@ def create_provenance(
 def load_to_warehouse(
     db_path: str,
     provenance_id: int,
-) -> dict[str, int]:
-    """Load SQLite results into raw warehouse tables."""
+) -> dict[str, dict[str, int]]:
+    """Load SQLite results into raw warehouse tables with dedup."""
     from warehouse.loader import load_sqlite_to_raw
 
+    block = SqlAlchemyConnector.load(ANALYTICS_DB_BLOCK)
     return load_sqlite_to_raw(
         db_path=db_path,
         provenance_id=provenance_id,
-        db_url=ANALYTICS_DB_URL,
+        db_url=block.connection_info.create_url().render_as_string(hide_password=False),
     )
+
+
+# ---------------------------------------------------------------------------
+# Task: Create Run Summary Artifact
+# ---------------------------------------------------------------------------
+
+
+@task(log_prints=True, task_run_name="create-run-summary")
+async def create_run_summary(
+    db_path: Path,
+    counts_by_type: dict[str, int],
+    load_results: dict[str, dict[str, int]],
+    start_time: datetime,
+) -> None:
+    """Create a markdown artifact with scraper run statistics.
+
+    Includes start time, duration, total requests made, a table
+    of result counts by type, and warehouse load stats (new vs observed).
+    """
+    log = get_run_logger()
+    now = datetime.now(timezone.utc)
+    duration = now - start_time
+
+    # Query total requests from the scraper DB
+    conn = sqlite3.connect(str(db_path))
+    try:
+        cursor = conn.execute("SELECT COUNT(*) FROM requests")
+        total_requests = cursor.fetchone()[0]
+    except sqlite3.OperationalError:
+        total_requests = "N/A"
+    finally:
+        conn.close()
+
+    # Format duration
+    total_seconds = int(duration.total_seconds())
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    if hours > 0:
+        duration_str = f"{hours}h {minutes}m {seconds}s"
+    elif minutes > 0:
+        duration_str = f"{minutes}m {seconds}s"
+    else:
+        duration_str = f"{seconds}s"
+
+    # Build markdown
+    md_lines = [
+        "# Scraper Run Summary\n",
+        "| Metric | Value |",
+        "|--------|-------|",
+        f"| Started | {start_time.strftime('%Y-%m-%d %H:%M:%S UTC')} |",
+        f"| Duration | {duration_str} |",
+        f"| Total Requests | {total_requests} |",
+        "",
+        "## Result Counts by Type\n",
+        "| Type | Count |",
+        "|------|-------|",
+    ]
+    for result_type, count in sorted(counts_by_type.items()):
+        md_lines.append(f"| {result_type} | {count:,} |")
+
+    # Warehouse load stats
+    md_lines += [
+        "",
+        "## Warehouse Load\n",
+        "| Type | New Rows | Observations |",
+        "|------|----------|--------------|",
+    ]
+    for result_type, counts in sorted(load_results.items()):
+        md_lines.append(
+            f"| {result_type} | {counts['new']:,} | {counts['observed']:,} |"
+        )
+
+    await create_markdown_artifact(
+        key="run-summary",
+        markdown="\n".join(md_lines),
+        description="Scraper run summary statistics",
+    )
+    log.info("Created run summary artifact")
 
 
 # ---------------------------------------------------------------------------
@@ -289,6 +472,7 @@ async def scraper_run_flow(
         scraper_schema: PostgreSQL schema name for warehouse tables.
     """
     log = get_run_logger()
+    flow_start_time = datetime.now(timezone.utc)
 
     if not scraper_schema:
         raise ValueError("scraper_schema is required")
@@ -303,25 +487,33 @@ async def scraper_run_flow(
             scraper_schema=scraper_schema,
         )
 
-        # 2. Doctor health check
+        # 2. SQLite integrity check + upload to S3 (cached for retries)
+        s3_uri = await integrity_check_and_upload(db_path, scraper_schema)
+
+        # 3. Clean up litestream replicas (best-effort)
+        cleanup_litestream_replica(scraper_schema)
+
+        # 4. Doctor health check
         await doctor_health_check(db_path)
 
-        # 3. Validate
-        validate_run(str(db_path), scraper_schema)
+        # 5. Validate
+        counts_by_type = validate_run(str(db_path), scraper_schema)
 
-        # 4. Upload database to S3
-        s3_uri = await upload_db(db_path, scraper_schema)
-
-        # 5. Create provenance
+        # 6. Create provenance
         provenance_id = create_provenance(
             scraper_name=scraper_schema,
             s3_artifact_path=s3_uri,
         )
 
-        # 6. Load into raw tables
-        load_to_warehouse(str(db_path), provenance_id)
+        # 7. Load into raw tables
+        load_results = load_to_warehouse(str(db_path), provenance_id)
 
-        # 7. Emit scrape.completed event
+        # 8. Create run summary artifact
+        await create_run_summary(
+            db_path, counts_by_type, load_results, flow_start_time
+        )
+
+        # 9. Emit scrape.completed event
         log.info("Emitting scrape.completed event for %s", scraper_schema)
         emit_event(
             event="scrape.completed",

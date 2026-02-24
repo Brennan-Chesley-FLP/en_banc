@@ -1,0 +1,128 @@
+# Corrections provenance table
+- name: corrections.corrections
+  columns:
+    id: bigint
+    user_id: text
+    notes: text
+    created_at: timestamptz
+    metadata: jsonb
+
+# Alabama scraper-level corrections
+- name: ala_publicportal.corrections_dockets
+  columns:
+    court_id: text
+    case_number: text
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+- name: ala_publicportal.corrections_opinion_clusters
+  columns:
+    court_id: text
+    case_number: text
+    date_filed: date
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+- name: ala_publicportal.corrections_oral_arguments
+  columns:
+    court_id: text
+    case_number: text
+    date_argued: date
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+# Connecticut scraper-level corrections
+- name: conn_jud_ct_gov.corrections_dockets
+  columns:
+    court_id: text
+    docket_id: text
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+- name: conn_jud_ct_gov.corrections_docket_entries
+  columns:
+    court_id: text
+    docket_id: text
+    activity_type: text
+    date_filed: date
+    number: text
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+- name: conn_jud_ct_gov.corrections_opinion_clusters
+  columns:
+    court_id: text
+    docket_id: text
+    date_filed: date
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+- name: conn_jud_ct_gov.corrections_oral_arguments
+  columns:
+    court_id: text
+    docket_number: text
+    date_argued: date
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+# CourtListener-level corrections
+- name: courtlistener.corrections_dockets
+  columns:
+    court_id: text
+    docket_number: text
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+- name: courtlistener.corrections_opinion_clusters
+  columns:
+    court_id: text
+    docket_number: text
+    date_filed: date
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+- name: courtlistener.corrections_docket_entries
+  columns:
+    court_id: text
+    docket_number: text
+    document_uuid: text
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+- name: courtlistener.corrections_opinions
+  columns:
+    court_id: text
+    docket_number: text
+    cluster_date_filed: date
+    type: text
+    author_str: text
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+- name: courtlistener.corrections_audio
+  columns:
+    court_id: text
+    docket_number: text
+    date_argued: date
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz
+
+- name: courtlistener.corrections_originating_court_information
+  columns:
+    court_id: text
+    docket_number: text
+    correction_id: bigint
+    corrections: jsonb
+    created_at: timestamptz

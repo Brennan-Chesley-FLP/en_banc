@@ -1,8 +1,7 @@
 - name: ala_publicportal.raw_dockets
   columns:
-    provenance_id: bigint
-    record_id: bigint
-    loaded_at: timestamptz
+    row_id: bigint
+    content_hash: text
     case_instance_uuid: text
     case_number: text
     court_id: text
@@ -20,9 +19,8 @@
 
 - name: ala_publicportal.raw_opinion_clusters
   columns:
-    provenance_id: bigint
-    record_id: bigint
-    loaded_at: timestamptz
+    row_id: bigint
+    content_hash: text
     case_number: text
     court_id: text
     date_filed: date
@@ -42,9 +40,8 @@
 
 - name: ala_publicportal.raw_oral_arguments
   columns:
-    provenance_id: bigint
-    record_id: bigint
-    loaded_at: timestamptz
+    row_id: bigint
+    content_hash: text
     case_number: text
     court_id: text
     date_argued: date
@@ -57,9 +54,8 @@
 
 - name: ala_publicportal.raw_historical_release_lists
   columns:
-    provenance_id: bigint
-    record_id: bigint
-    loaded_at: timestamptz
+    row_id: bigint
+    content_hash: text
     court_id: text
     date_filed: date
     case_name: text

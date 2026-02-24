@@ -88,22 +88,29 @@ from django.db import connections
 
 
 @task(task_run_name="sync-{table_name}-chunk-{chunk_num}")
-def sync_chunk(table_name: str, chunk_num: int, provenance_id: int, chunk_size: int = 500):
+def sync_chunk(
+    table_name: str,
+    chunk_num: int,
+    last_prov: int,
+    last_corr: int,
+    chunk_size: int = 500,
+):
     """Read a chunk from the warehouse and save via Django ORM.
 
     Runs inside a Django process — ORM is available.
+    Uses the version clock to find rows newer than last sync.
     """
     logger = get_run_logger()
     offset = chunk_num * chunk_size
 
     with connections["warehouse"].cursor() as cur:
         cur.execute(
-            f"SELECT * FROM courtlistener.{table_name} "
-            "WHERE courtlistener_version < warehouse_version "
-            "AND provenance_id = %s "
-            "ORDER BY record_id "
+            f"SELECT * FROM courtlistener.staged_{table_name} "
+            "WHERE version_provenance > %s "
+            "   OR version_correction > %s "
+            "ORDER BY version_provenance, version_correction "
             "LIMIT %s OFFSET %s",
-            [provenance_id, chunk_size, offset],
+            [last_prov, last_corr, chunk_size, offset],
         )
         columns = [col.name for col in cur.description]
         rows = [dict(zip(columns, row)) for row in cur.fetchall()]
@@ -122,10 +129,15 @@ def sync_chunk(table_name: str, chunk_num: int, provenance_id: int, chunk_size: 
 
 
 @flow(name="sync-warehouse")
-def sync_warehouse(provenance_id: int, tables: list[str] | None = None):
+def sync_warehouse(
+    last_prov: int = 0,
+    last_corr: int = 0,
+    tables: list[str] | None = None,
+):
     """Sync pending warehouse rows to CourtListener.
 
     Triggered by the en_banc pipeline after transforms complete.
+    Uses the version clock (provenance_id, correction_id) to detect changes.
     """
     logger = get_run_logger()
 
@@ -133,7 +145,7 @@ def sync_warehouse(provenance_id: int, tables: list[str] | None = None):
         tables = ["dockets", "opinion_clusters", "opinions", "docket_entries", "audio"]
 
     for table_name in tables:
-        row_count = get_pending_count(table_name, provenance_id)
+        row_count = get_pending_count(table_name, last_prov, last_corr)
         if row_count == 0:
             logger.info("No pending rows for %s", table_name)
             continue
@@ -143,7 +155,7 @@ def sync_warehouse(provenance_id: int, tables: list[str] | None = None):
         logger.info("%s: %d rows in %d chunks", table_name, row_count, num_chunks)
 
         for chunk_num in range(num_chunks):
-            sync_chunk(table_name, chunk_num, provenance_id, chunk_size)
+            sync_chunk(table_name, chunk_num, last_prov, last_corr, chunk_size)
 ```
 
 ### Trigger from en_banc (after transforms)
@@ -159,10 +171,13 @@ def scraper_run_flow(scraper_id, params):
     load_to_warehouse(artifact.s3_path, provenance_id)
     sqlmesh_transforms(project_path="sql_processing")
 
+    # Read current high-water marks from sync state
+    last_prov, last_corr = get_sync_watermarks()
+
     # Trigger sync on the CL-side worker — does not block
     run_deployment(
         name="sync-warehouse/sync-pool",
-        parameters={"provenance_id": provenance_id},
+        parameters={"last_prov": last_prov, "last_corr": last_corr},
     )
 ```
 
@@ -211,8 +226,47 @@ prefect work-pool create sync-pool --type in-process --concurrency-limit 2
 
 This limits to 2 concurrent sync flows. Additional flow runs queue and wait.
 
+## Version clock and sync queries
+
+The warehouse uses a two-component version clock on `courtlistener.staged_*` tables:
+
+- `version_provenance` (BIGINT) — increases when new scraper data flows through the pipeline
+- `version_correction` (BIGINT) — increases when human corrections are applied
+
+A row is "newer" when **either** component increases. The sync worker tracks the last-synced values of both components and queries:
+
+```sql
+SELECT * FROM courtlistener.staged_dockets
+WHERE version_provenance > :last_sync_provenance
+   OR version_correction > :last_sync_correction
+ORDER BY version_provenance, version_correction
+LIMIT :chunk_size OFFSET :offset
+```
+
+After successfully syncing a batch, the worker updates its high-water marks to the maximum `version_provenance` and `version_correction` seen in that batch.
+
+The `courtlistener_id` column on `courtlistener.staged_*` is written back by the sync worker after saving each row to CL's Django ORM. This allows the pipeline to know which rows have been synced and what their CL primary keys are.
+
+## Corrections flow
+
+Corrections flow from CourtListener back into the warehouse via `cl-sync`:
+
+1. A CL user makes a correction (e.g., fixing a misspelled case name)
+2. `cl-sync` writes a row to `corrections.corrections` (provenance: who, when, why) and the appropriate `corrections_{model}` table (JSONB patch keyed by natural key)
+3. Corrections can target two levels:
+   - **Scraper-level** (e.g., `ala_publicportal.corrections_dockets`) — fixes data before normalization
+   - **CourtListener-level** (e.g., `courtlistener.corrections_dockets`) — fixes data after normalization
+4. On the next `sqlmesh run`, staged models detect the new `correction_id` above their watermark and re-process affected rows
+5. The change propagates through to `courtlistener.staged_*`, bumping `version_correction`
+6. The sync worker picks up the row and updates the CL database
+
+The JSONB corrections column supports three states per field:
+- **Key absent** — no correction, use original value
+- **Key present with value** — override with the correction value
+- **Key present with JSON null** — correct the field to NULL
+
 ## Open questions
 
 - **Where does the sync flow code live?** It needs Django imports, so it likely lives in the CL repo. But its deployment is registered against the shared Prefect server. The `InProcessWorker` with `ignore_storage=True` loads code from the local filesystem, so the CL deployment just needs the sync flow module on disk.
-- **Keyset pagination vs OFFSET**: For very large tables, `OFFSET` performance degrades. Keyset pagination (`WHERE record_id > %s ORDER BY record_id LIMIT %s`) is more efficient. Worth switching to if sync batches regularly exceed ~10k rows.
-- **Partial failure recovery**: If a sync flow fails mid-way (e.g., chunk 5 of 20), the rows from chunks 1-4 are already synced and have `courtlistener_version = warehouse_version`. Rerunning the flow skips them naturally because the `WHERE courtlistener_version < warehouse_version` filter excludes them. No special recovery logic needed.
+- **Keyset pagination vs OFFSET**: For very large tables, `OFFSET` performance degrades. Keyset pagination using the version clock (`WHERE (version_provenance, version_correction) > (:last_prov, :last_corr)`) is more efficient. Worth switching to if sync batches regularly exceed ~10k rows.
+- **Partial failure recovery**: If a sync flow fails mid-way (e.g., chunk 5 of 20), the rows from chunks 1-4 are already synced and have `courtlistener_id` written back. Rerunning the flow re-queries based on the version clock watermark, so already-synced rows with unchanged versions won't appear in the results. Rows whose `courtlistener_id` was written back but whose version hasn't changed are naturally excluded.

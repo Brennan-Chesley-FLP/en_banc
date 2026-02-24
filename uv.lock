@@ -68,6 +68,15 @@ wheels = [
 ]
 
 [[package]]
+name = "appdirs"
+version = "1.4.4"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d7/d8/05696357e0311f5b5c316d7b95f46c669dd9c15aaeecbb48c7d0aeb88c40/appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41", size = 13470 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3b/00/2344469e2084fb287c2e0b57b72910309874c3245463acd6cf5e3db69324/appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128", size = 9566 },
+]
+
+[[package]]
 name = "apprise"
 version = "1.9.7"
 source = { registry = "https://pypi.org/simple" }
@@ -655,6 +664,10 @@ dependencies = [
 ]
 
 [package.dev-dependencies]
+dev = [
+    { name = "sphinx-immaterial" },
+    { name = "sphinxcontrib-drawio" },
+]
 docs = [
     { name = "sphinx" },
     { name = "sphinx-autobuild" },
@@ -667,8 +680,8 @@ requires-dist = [
     { name = "alembic", specifier = ">=1.13.0" },
     { name = "boto3", specifier = ">=1.42.39" },
     { name = "eyecite", specifier = ">=2.6.0" },
-    { name = "juriscraper", editable = "../juriscraper" },
-    { name = "kent", extras = ["persistent-driver", "web"], editable = "../kent" },
+    { name = "juriscraper", editable = "../juri-work/juriscraper-bc-flp" },
+    { name = "kent", extras = ["persistent-driver", "web"], editable = "../juri-work/kent" },
     { name = "prefect", specifier = ">=3.6.13" },
     { name = "prefect-aws", specifier = ">=0.5.0" },
     { name = "prefect-docker", specifier = ">=0.6.0" },
@@ -687,6 +700,10 @@ requires-dist = [
 ]
 
 [package.metadata.requires-dev]
+dev = [
+    { name = "sphinx-immaterial", specifier = ">=0.13.9" },
+    { name = "sphinxcontrib-drawio", specifier = ">=0.0.17" },
+]
 docs = [
     { name = "sphinx", specifier = ">=8.0" },
     { name = "sphinx-autobuild", specifier = ">=2024.10" },
@@ -1290,7 +1307,7 @@ wheels = [
 [[package]]
 name = "juriscraper"
 version = "2.7.8"
-source = { editable = "../juriscraper" }
+source = { editable = "../juri-work/juriscraper-bc-flp" }
 dependencies = [
     { name = "certifi" },
     { name = "chardet" },
@@ -1319,7 +1336,7 @@ requires-dist = [
     { name = "feedparser", specifier = ">=6.0.11" },
     { name = "geonamescache", specifier = ">=2.0.0" },
     { name = "html5lib" },
-    { name = "kent", editable = "../kent" },
+    { name = "kent", editable = "../juri-work/kent" },
     { name = "lxml", specifier = ">=5.2" },
     { name = "nh3" },
     { name = "python-dateutil", specifier = ">=2.8.2" },
@@ -1348,7 +1365,7 @@ dev = [
 [[package]]
 name = "kent"
 version = "0.1.0"
-source = { editable = "../kent" }
+source = { editable = "../juri-work/kent" }
 dependencies = [
     { name = "click" },
     { name = "cssselect" },
@@ -2970,6 +2987,23 @@ wheels = [
 ]
 
 [[package]]
+name = "sphinx-immaterial"
+version = "0.13.9"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "appdirs" },
+    { name = "markupsafe" },
+    { name = "pydantic" },
+    { name = "pydantic-extra-types" },
+    { name = "requests" },
+    { name = "sphinx" },
+    { name = "typing-extensions" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3d/42/6e958fc5d80ccd18c87d1b7d7c0e17fed04c0ed8a72933dd41c8643622d4/sphinx_immaterial-0.13.9-py3-none-any.whl", hash = "sha256:5ea92d2ddc6befcd0fedbd3e6766ea4746e94d9a8a5cc0ab092a946e1fde4254", size = 13742592 },
+]
+
+[[package]]
 name = "sphinx-rtd-theme"
 version = "3.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2999,6 +3033,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/f6/d2/5beee64d3e4e747f316bae86b55943f51e82bb86ecd325883ef65741e7da/sphinxcontrib_devhelp-2.0.0.tar.gz", hash = "sha256:411f5d96d445d1d73bb5d52133377b4248ec79db5c793ce7dbe59e074b4dd1ad", size = 12967 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/35/7a/987e583882f985fe4d7323774889ec58049171828b58c2217e7f79cdf44e/sphinxcontrib_devhelp-2.0.0-py3-none-any.whl", hash = "sha256:aefb8b83854e4b0998877524d1029fd3e6879210422ee3780459e28a1f03a8a2", size = 82530 },
+]
+
+[[package]]
+name = "sphinxcontrib-drawio"
+version = "0.0.17"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "sphinx" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/ea/9b/45a4e9f7d5b3f3e8e3fa792f99b20d2f6d337c4b84f9e55044aecf0e60c8/sphinxcontrib-drawio-0.0.17.tar.gz", hash = "sha256:1a3f82efd1ab4b41d1ee8dd27c296bae0944a10faca3568c462dc6b9a77748f5", size = 25645 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/34/d4/81b8c94f216ef2fb68475b2f5a2836495e5da4d4ce011b3e41e663b89d1f/sphinxcontrib_drawio-0.0.17-py3-none-any.whl", hash = "sha256:c42e3fee5398da52836e8ee5c61c2f19bce947abb2d17b857057fb32137c1096", size = 10727 },
 ]
 
 [[package]]

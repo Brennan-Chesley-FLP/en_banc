@@ -1,0 +1,271 @@
+2026-02-24 09:34:45,198 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-24 09:34:45,262 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-24 09:34:45,263 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-24 09:34:45,263 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-24 09:34:45,263 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-24 09:34:45,263 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-24 09:34:45,263 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-24 09:34:45,263 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-24 09:34:45,263 - MainThread - sqlmesh.core.config.connection - INFO - Creating new DuckDB adapter for in-memory database (connection.py:498)
+2026-02-24 09:34:46,313 - MainThread - sqlmesh.core.plan.evaluator - INFO - Evaluating plan stage PhysicalLayerSchemaCreationStage (evaluator.py:123)
+2026-02-24 09:34:46,316 - ThreadPoolExecutor-1_0 - sqlmesh.core.snapshot.evaluator - INFO - Creating schema 'analytics.sqlmesh__ala_publicportal' (evaluator.py:1449)
+2026-02-24 09:34:46,316 - ThreadPoolExecutor-1_1 - sqlmesh.core.snapshot.evaluator - INFO - Creating schema 'analytics.sqlmesh__warehouse' (evaluator.py:1449)
+2026-02-24 09:34:46,317 - ThreadPoolExecutor-1_2 - sqlmesh.core.snapshot.evaluator - INFO - Creating schema 'analytics.sqlmesh__conn_jud_ct_gov' (evaluator.py:1449)
+2026-02-24 09:34:46,317 - ThreadPoolExecutor-1_3 - sqlmesh.core.snapshot.evaluator - INFO - Creating schema 'analytics.sqlmesh__courtlistener' (evaluator.py:1449)
+2026-02-24 09:34:46,322 - ThreadPoolExecutor-1_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ CREATE SCHEMA IF NOT EXISTS "sqlmesh__ala_publicportal" (base.py:2626)
+2026-02-24 09:34:46,326 - ThreadPoolExecutor-1_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ CREATE SCHEMA IF NOT EXISTS "sqlmesh__warehouse" (base.py:2626)
+2026-02-24 09:34:46,330 - ThreadPoolExecutor-1_2 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ CREATE SCHEMA IF NOT EXISTS "sqlmesh__conn_jud_ct_gov" (base.py:2626)
+2026-02-24 09:34:46,334 - ThreadPoolExecutor-1_3 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ CREATE SCHEMA IF NOT EXISTS "sqlmesh__courtlistener" (base.py:2626)
+2026-02-24 09:34:46,335 - ThreadPoolExecutor-1_0 - sqlmesh.core.snapshot.evaluator - INFO - Creating schema 'analytics.sqlmesh___test' (evaluator.py:1449)
+2026-02-24 09:34:46,336 - ThreadPoolExecutor-1_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ CREATE SCHEMA IF NOT EXISTS "sqlmesh___test" (base.py:2626)
+2026-02-24 09:34:46,336 - MainThread - sqlmesh.core.plan.evaluator - INFO - Evaluating plan stage BackfillStage (evaluator.py:123)
+2026-02-24 09:34:46,338 - ThreadPoolExecutor-2_0 - sqlmesh.core.snapshot.evaluator - INFO - Listing data objects in schema analytics.sqlmesh___test (evaluator.py:1616)
+2026-02-24 09:34:46,342 - ThreadPoolExecutor-2_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ SELECT current_catalog (base.py:2626)
+2026-02-24 09:34:46,409 - ThreadPoolExecutor-3_0 - sqlmesh.core.snapshot.evaluator - INFO - Evaluating snapshot SnapshotId<"analytics"."_test"."latest_composite": 4154915163> (evaluator.py:711)
+2026-02-24 09:34:46,409 - ThreadPoolExecutor-3_1 - sqlmesh.core.snapshot.evaluator - INFO - Evaluating snapshot SnapshotId<"analytics"."_test"."latest_simple": 3462825248> (evaluator.py:711)
+2026-02-24 09:34:46,440 - ThreadPoolExecutor-3_1 - sqlmesh.core.snapshot.evaluator - INFO - Creating table 'analytics.sqlmesh___test._test__latest_simple__800508922' (evaluator.py:2042)
+2026-02-24 09:34:46,441 - ThreadPoolExecutor-3_0 - sqlmesh.core.snapshot.evaluator - INFO - Creating table 'analytics.sqlmesh___test._test__latest_composite__3774903434' (evaluator.py:2042)
+2026-02-24 09:34:46,441 - ThreadPoolExecutor-3_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ CREATE TABLE IF NOT EXISTS "sqlmesh___test"."_test__latest_simple__800508922" ("key_a" TEXT, "val" TEXT, "provenance_id" BIGINT, "record_id" BIGINT, "min_provenance_id" BIGINT) (base.py:2626)
+2026-02-24 09:34:46,441 - ThreadPoolExecutor-3_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ CREATE TABLE IF NOT EXISTS "sqlmesh___test"."_test__latest_composite__3774903434" ("key_a" TEXT, "key_b" TEXT, "val" TEXT, "provenance_id" BIGINT, "record_id" BIGINT, "min_provenance_id" BIGINT) (base.py:2626)
+2026-02-24 09:34:46,447 - ThreadPoolExecutor-3_0 - sqlmesh.core.snapshot.evaluator - INFO - Inserting data for snapshot SnapshotId<"analytics"."_test"."latest_composite": 4154915163> (evaluator.py:952)
+2026-02-24 09:34:46,453 - ThreadPoolExecutor-3_1 - sqlmesh.core.snapshot.evaluator - INFO - Inserting data for snapshot SnapshotId<"analytics"."_test"."latest_simple": 3462825248> (evaluator.py:952)
+2026-02-24 09:34:46,456 - ThreadPoolExecutor-3_0 - sqlmesh.core.snapshot.evaluator - INFO - Inserting batch (2026-02-11 00:00:00, 2026-02-23 00:00:00) into analytics.sqlmesh___test._test__latest_composite__3774903434' (evaluator.py:984)
+2026-02-24 09:34:46,463 - ThreadPoolExecutor-3_1 - sqlmesh.core.snapshot.evaluator - INFO - Inserting batch (2026-02-11 00:00:00, 2026-02-23 00:00:00) into analytics.sqlmesh___test._test__latest_simple__800508922' (evaluator.py:984)
+2026-02-24 09:34:46,464 - ThreadPoolExecutor-3_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ SELECT "attname" AS "column_name", "pg_catalog".format_type("atttypid", "atttypmod") AS "data_type" FROM "pg_catalog"."pg_attribute" JOIN "pg_catalog"."pg_class" ON "pg_class"."oid" = "attrelid" JOIN "pg_catalog"."pg_namespace" ON "pg_namespace"."oid" = "relnamespace" WHERE ("attnum" > 0 AND NOT "attisdropped" AND "relname" = '_test__latest_composite__3774903434') AND "nspname" = 'sqlmesh___test' (base.py:2626)
+2026-02-24 09:34:46,465 - ThreadPoolExecutor-3_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ SELECT "attname" AS "column_name", "pg_catalog".format_type("atttypid", "atttypmod") AS "data_type" FROM "pg_catalog"."pg_attribute" JOIN "pg_catalog"."pg_class" ON "pg_class"."oid" = "attrelid" JOIN "pg_catalog"."pg_namespace" ON "pg_namespace"."oid" = "relnamespace" WHERE ("attnum" > 0 AND NOT "attisdropped" AND "relname" = '_test__latest_simple__800508922') AND "nspname" = 'sqlmesh___test' (base.py:2626)
+2026-02-24 09:34:46,467 - ThreadPoolExecutor-3_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ SELECT current_catalog (base.py:2626)
+2026-02-24 09:34:46,467 - ThreadPoolExecutor-3_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ SELECT current_catalog (base.py:2626)
+2026-02-24 09:34:46,470 - ThreadPoolExecutor-3_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ DELETE FROM "sqlmesh___test"."_test__latest_simple__800508922" WHERE TRUE (base.py:2626)
+2026-02-24 09:34:46,471 - ThreadPoolExecutor-3_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ DELETE FROM "sqlmesh___test"."_test__latest_composite__3774903434" WHERE TRUE (base.py:2626)
+2026-02-24 09:34:46,472 - ThreadPoolExecutor-3_1 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ INSERT INTO "sqlmesh___test"."_test__latest_simple__800508922" ("key_a", "val", "provenance_id", "record_id", "min_provenance_id") WITH "watermark" AS (SELECT COALESCE(MAX("provenance_id"), 0) AS "max_prov" FROM "analytics"."sqlmesh___test"."_test__latest_simple__800508922" AS "latest_simple"), "new_observations" AS (SELECT "obs"."row_id", "obs"."provenance_id" FROM "analytics"."_test"."raw_simple_observations" AS "obs", "watermark" AS "w" WHERE "obs"."provenance_id" > "w"."max_prov"), "touched_keys" AS (SELECT DISTINCT "r"."key_a" FROM "new_observations" AS "nobs" JOIN "analytics"."_test"."raw_simple" AS "r" ON "r"."row_id" = "nobs"."row_id"), "best_candidate" AS (SELECT DISTINCT ON ("r"."key_a") "r"."row_id", "obs"."provenance_id", "obs"."record_id" FROM "touched_keys" AS "tk" JOIN "analytics"."_test"."raw_simple" AS "r" ON "r"."key_a" IS NOT DISTINCT FROM "tk"."key_a" JOIN "analytics"."_test"."raw_simple_observations" AS "obs" ON "obs"."row_id" = "r"."row_id" ORDER BY "r"."key_a", "obs"."provenance_id" DESC), "best" AS (SELECT "bc"."row_id", "bc"."provenance_id", "bc"."record_id", MIN("all_obs"."provenance_id") AS "min_provenance_id" FROM "best_candidate" AS "bc" JOIN "analytics"."_test"."raw_simple" AS "bc_raw" ON "bc_raw"."row_id" = "bc"."row_id" JOIN "analytics"."_test"."raw_simple" AS "r_all" ON "r_all"."key_a" IS NOT DISTINCT FROM "bc_raw"."key_a" JOIN "analytics"."_test"."raw_simple_observations" AS "all_obs" ON "all_obs"."row_id" = "r_all"."row_id" GROUP BY "bc"."row_id", "bc"."provenance_id", "bc"."record_id") SELECT "r"."key_a" AS "key_a", "r"."val" AS "val", "best"."provenance_id" AS "provenance_id", "best"."record_id" AS "record_id", "best"."min_provenance_id" AS "min_provenance_id" FROM "best" AS "best" JOIN "analytics"."_test"."raw_simple" AS "r" ON "r"."row_id" = "best"."row_id" (base.py:2626)
+2026-02-24 09:34:46,475 - ThreadPoolExecutor-3_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: /* SQLMESH_PLAN: 641f9bc8aae944b4b3254c74e7a126ce */ INSERT INTO "sqlmesh___test"."_test__latest_composite__3774903434" ("key_a", "key_b", "val", "provenance_id", "record_id", "min_provenance_id") WITH "watermark" AS (SELECT COALESCE(MAX("provenance_id"), 0) AS "max_prov" FROM "analytics"."sqlmesh___test"."_test__latest_composite__3774903434" AS "latest_composite"), "new_observations" AS (SELECT "obs"."row_id", "obs"."provenance_id" FROM "analytics"."_test"."raw_composite_observations" AS "obs", "watermark" AS "w" WHERE "obs"."provenance_id" > "w"."max_prov"), "touched_keys" AS (SELECT DISTINCT "r"."key_a", "r"."key_b" FROM "new_observations" AS "nobs" JOIN "analytics"."_test"."raw_composite" AS "r" ON "r"."row_id" = "nobs"."row_id"), "best_candidate" AS (SELECT DISTINCT ON ("r"."key_a", "r"."key_b") "r"."row_id", "obs"."provenance_id", "obs"."record_id" FROM "touched_keys" AS "tk" JOIN "analytics"."_test"."raw_composite" AS "r" ON "r"."key_a" IS NOT DISTINCT FROM "tk"."key_a" AND "r"."key_b" IS NOT DISTINCT FROM "tk"."key_b" JOIN "analytics"."_test"."raw_composite_observations" AS "obs" ON "obs"."row_id" = "r"."row_id" ORDER BY "r"."key_a", "r"."key_b", "obs"."provenance_id" DESC), "best" AS (SELECT "bc"."row_id", "bc"."provenance_id", "bc"."record_id", MIN("all_obs"."provenance_id") AS "min_provenance_id" FROM "best_candidate" AS "bc" JOIN "analytics"."_test"."raw_composite" AS "bc_raw" ON "bc_raw"."row_id" = "bc"."row_id" JOIN "analytics"."_test"."raw_composite" AS "r_all" ON "r_all"."key_a" IS NOT DISTINCT FROM "bc_raw"."key_a" AND "r_all"."key_b" IS NOT DISTINCT FROM "bc_raw"."key_b" JOIN "analytics"."_test"."raw_composite_observations" AS "all_obs" ON "all_obs"."row_id" = "r_all"."row_id" GROUP BY "bc"."row_id", "bc"."provenance_id", "bc"."record_id") SELECT "r"."key_a" AS "key_a", "r"."key_b" AS "key_b", "r"."val" AS "val", "best"."provenance_id" AS "provenance_id", "best"."record_id" AS "record_id", "best"."min_provenance_id" AS "min_provenance_id" FROM "best" AS "best" JOIN "analytics"."_test"."raw_composite" AS "r" ON "r"."row_id" = "best"."row_id" (base.py:2626)
+2026-02-24 09:34:46,477 - MainThread - sqlmesh.core.scheduler - INFO - Execution failed for node EvaluateNode(snapshot_name='"analytics"."_test"."latest_simple"', interval=(1770768000000, 1771804800000), batch_index=0) (scheduler.py:618)
+Traceback (most recent call last):
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/utils/concurrency.py", line 69, in _process_node
+    self.fn(node)
+    ~~~~~~~^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 554, in run_node
+    audit_results = self.evaluate(
+        snapshot=snapshot,
+    ...<9 lines>...
+        selected_models=selected_models,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 229, in evaluate
+    wap_id = self.snapshot_evaluator.evaluate(
+        snapshot,
+    ...<9 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 186, in evaluate
+    result = self._evaluate_snapshot(
+        start=start,
+    ...<9 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 821, in _evaluate_snapshot
+    self._render_and_insert_snapshot(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        start=start,
+        ^^^^^^^^^^^^
+    ...<10 lines>...
+        batch_index=batch_index,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 1041, in _render_and_insert_snapshot
+    apply(query_or_df, index)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 990, in apply
+    evaluation_strategy.insert(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        table_name=target_table_name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<12 lines>...
+        is_snapshot_deployable=is_snapshot_deployable,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 2290, in insert
+    self._replace_query_for_model(model, table_name, query_or_df, render_kwargs, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 2155, in _replace_query_for_model
+    self.adapter.replace_query(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        name,
+        ^^^^^
+    ...<10 lines>...
+        source_columns=source_columns,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/shared.py", line 350, in internal_wrapper
+    return func(*list_args, **kwargs)
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 556, in replace_query
+    return self._insert_overwrite_by_condition(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        target_table,
+        ^^^^^^^^^^^^^
+    ...<2 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 1672, in _insert_overwrite_by_condition
+    self._insert_append_query(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        table_name,
+        ^^^^^^^^^^^
+    ...<2 lines>...
+        order_projections=False,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 1546, in _insert_append_query
+    self.execute(
+    ~~~~~~~~~~~~^
+        exp.insert(query, table_name, columns=list(target_columns_to_types)),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        track_rows_processed=track_rows_processed,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2603, in execute
+    self._execute(sql, track_rows_processed, **kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2635, in _execute
+    self.cursor.execute(sql, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "_test.raw_simple_observations" does not exist
+LINE 1: ...SELECT "obs"."row_id", "obs"."provenance_id" FROM "analytics...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+sqlmesh.utils.concurrency.NodeExecutionFailedError: Execution failed for node EvaluateNode(snapshot_name='"analytics"."_test"."latest_simple"', interval=(1770768000000, 1771804800000), batch_index=0)
+2026-02-24 09:34:46,481 - MainThread - sqlmesh.core.scheduler - INFO - Execution failed for node EvaluateNode(snapshot_name='"analytics"."_test"."latest_composite"', interval=(1770768000000, 1771804800000), batch_index=0) (scheduler.py:618)
+Traceback (most recent call last):
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/utils/concurrency.py", line 69, in _process_node
+    self.fn(node)
+    ~~~~~~~^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 554, in run_node
+    audit_results = self.evaluate(
+        snapshot=snapshot,
+    ...<9 lines>...
+        selected_models=selected_models,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 229, in evaluate
+    wap_id = self.snapshot_evaluator.evaluate(
+        snapshot,
+    ...<9 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 186, in evaluate
+    result = self._evaluate_snapshot(
+        start=start,
+    ...<9 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 821, in _evaluate_snapshot
+    self._render_and_insert_snapshot(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        start=start,
+        ^^^^^^^^^^^^
+    ...<10 lines>...
+        batch_index=batch_index,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 1041, in _render_and_insert_snapshot
+    apply(query_or_df, index)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 990, in apply
+    evaluation_strategy.insert(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        table_name=target_table_name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<12 lines>...
+        is_snapshot_deployable=is_snapshot_deployable,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 2290, in insert
+    self._replace_query_for_model(model, table_name, query_or_df, render_kwargs, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 2155, in _replace_query_for_model
+    self.adapter.replace_query(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        name,
+        ^^^^^
+    ...<10 lines>...
+        source_columns=source_columns,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/shared.py", line 350, in internal_wrapper
+    return func(*list_args, **kwargs)
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 556, in replace_query
+    return self._insert_overwrite_by_condition(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        target_table,
+        ^^^^^^^^^^^^^
+    ...<2 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 1672, in _insert_overwrite_by_condition
+    self._insert_append_query(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        table_name,
+        ^^^^^^^^^^^
+    ...<2 lines>...
+        order_projections=False,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 1546, in _insert_append_query
+    self.execute(
+    ~~~~~~~~~~~~^
+        exp.insert(query, table_name, columns=list(target_columns_to_types)),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        track_rows_processed=track_rows_processed,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2603, in execute
+    self._execute(sql, track_rows_processed, **kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2635, in _execute
+    self.cursor.execute(sql, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+psycopg2.errors.UndefinedTable: relation "_test.raw_composite_observations" does not exist
+LINE 1: ...SELECT "obs"."row_id", "obs"."provenance_id" FROM "analytics...
+                                                             ^
+
+
+The above exception was the direct cause of the following exception:
+
+sqlmesh.utils.concurrency.NodeExecutionFailedError: Execution failed for node EvaluateNode(snapshot_name='"analytics"."_test"."latest_composite"', interval=(1770768000000, 1771804800000), batch_index=0)
+2026-02-24 09:34:46,485 - MainThread - sqlmesh.core.context - INFO - Plan application failed. (context.py:1797)
+Traceback (most recent call last):
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/context.py", line 1789, in apply
+    self._apply(plan, circuit_breaker)
+    ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/context.py", line 2582, in _apply
+    self._scheduler.create_plan_evaluator(self).evaluate(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        plan.to_evaluatable(), circuit_breaker=circuit_breaker
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/plan/evaluator.py", line 105, in evaluate
+    self._evaluate_stages(plan_stages, plan)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/plan/evaluator.py", line 125, in _evaluate_stages
+    handler(stage, plan)
+    ~~~~~~~^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/plan/evaluator.py", line 264, in visit_backfill_stage
+    raise PlanError("Plan application failed.")
+sqlmesh.utils.errors.PlanError: Plan application failed.
+2026-02-24 09:34:46,485 - MainThread - root - INFO - Shutting down the event dispatcher (dispatcher.py:159)

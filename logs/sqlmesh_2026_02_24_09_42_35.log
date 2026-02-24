@@ -1,0 +1,112 @@
+2026-02-24 09:42:36,030 - MainThread - sqlmesh.core.state_sync.common - INFO - Cleaned up 0 expired snapshots (janitor.py:181)
+2026-02-24 09:42:36,031 - MainThread - sqlmesh.core.state_sync.db.interval - INFO - Compacting 0 intervals for 0 snapshots (interval.py:130)
+2026-02-24 09:42:36,128 - ThreadPoolExecutor-0_0 - sqlmesh.core.snapshot.evaluator - INFO - Listing data objects in schema analytics.sqlmesh__courtlistener (evaluator.py:1616)
+2026-02-24 09:42:36,133 - ThreadPoolExecutor-0_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: SELECT current_catalog (base.py:2626)
+2026-02-24 09:42:36,186 - ThreadPoolExecutor-1_0 - sqlmesh.core.snapshot.evaluator - INFO - Evaluating snapshot SnapshotId<"analytics"."courtlistener"."staged_opinion_clusters": 2872949182> (evaluator.py:711)
+2026-02-24 09:42:36,190 - ThreadPoolExecutor-1_0 - sqlmesh.core.snapshot.evaluator - INFO - Inserting data for snapshot SnapshotId<"analytics"."courtlistener"."staged_opinion_clusters": 2872949182> (evaluator.py:952)
+2026-02-24 09:42:36,208 - ThreadPoolExecutor-1_0 - sqlmesh.core.snapshot.evaluator - INFO - Inserting batch (2026-02-23 00:00:00, 2026-02-24 00:00:00) into analytics.sqlmesh__courtlistener.courtlistener__staged_opinion_clusters__3600870996' (evaluator.py:984)
+2026-02-24 09:42:36,208 - ThreadPoolExecutor-1_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: SHOW server_version (base.py:2626)
+2026-02-24 09:42:36,246 - ThreadPoolExecutor-1_0 - sqlmesh.core.engine_adapter.base - INFO - Executing SQL: MERGE INTO "sqlmesh__courtlistener"."courtlistener__staged_opinion_clusters__3600870996" AS "__MERGE_TARGET__" USING (WITH "prov_watermark" AS (SELECT COALESCE(MAX("version_provenance"), 0) AS "max_prov" FROM "analytics"."sqlmesh__courtlistener"."courtlistener__staged_opinion_clusters__3600870996" AS "staged_opinion_clusters"), "corr_watermark" AS (SELECT COALESCE(MAX("version_correction"), 0) AS "max_corr" FROM "analytics"."sqlmesh__courtlistener"."courtlistener__staged_opinion_clusters__3600870996" AS "staged_opinion_clusters"), "prov_changed" AS (SELECT "court_id", "docket_number", "date_filed" FROM "analytics"."sqlmesh__courtlistener"."courtlistener__raw_opinion_clusters__3097777418" AS "raw_opinion_clusters", "prov_watermark" AS "prov_watermark" WHERE "provenance_id" > "prov_watermark"."max_prov"), "corr_changed" AS (SELECT "court_id", "docket_number", "date_filed" FROM "analytics"."courtlistener"."corrections_opinion_clusters" AS "corrections_opinion_clusters", "corr_watermark" AS "corr_watermark" WHERE "correction_id" > "corr_watermark"."max_corr"), "changed_keys" AS (SELECT "court_id", "docket_number", "date_filed" FROM "prov_changed" AS "prov_changed" UNION SELECT "court_id", "docket_number", "date_filed" FROM "corr_changed" AS "corr_changed") SELECT "r"."court_id" AS "court_id", "r"."docket_number" AS "docket_number", CASE WHEN "c"."corrections" ? 'date_filed' THEN CAST(("c"."corrections" ->> 'date_filed') AS DATE) ELSE "r"."date_filed" END AS "date_filed", "r"."date_filed_is_approximate" AS "date_filed_is_approximate", CASE WHEN "c"."corrections" ? 'case_name' THEN "c"."corrections" ->> 'case_name' ELSE "r"."case_name" END AS "case_name", CASE WHEN "c"."corrections" ? 'case_name_short' THEN "c"."corrections" ->> 'case_name_short' ELSE "r"."case_name_short" END AS "case_name_short", CASE WHEN "c"."corrections" ? 'case_name_full' THEN "c"."corrections" ->> 'case_name_full' ELSE "r"."case_name_full" END AS "case_name_full", "r"."slug" AS "slug", CASE WHEN "c"."corrections" ? 'judges' THEN "c"."corrections" ->> 'judges' ELSE "r"."judges" END AS "judges", CASE WHEN "c"."corrections" ? 'precedential_status' THEN "c"."corrections" ->> 'precedential_status' ELSE "r"."precedential_status" END AS "precedential_status", CASE WHEN "c"."corrections" ? 'syllabus' THEN "c"."corrections" ->> 'syllabus' ELSE "r"."syllabus" END AS "syllabus", CASE WHEN "c"."corrections" ? 'headnotes' THEN "c"."corrections" ->> 'headnotes' ELSE "r"."headnotes" END AS "headnotes", CASE WHEN "c"."corrections" ? 'summary' THEN "c"."corrections" ->> 'summary' ELSE "r"."summary" END AS "summary", CASE WHEN "c"."corrections" ? 'disposition' THEN "c"."corrections" ->> 'disposition' ELSE "r"."disposition" END AS "disposition", CASE WHEN "c"."corrections" ? 'procedural_history' THEN "c"."corrections" ->> 'procedural_history' ELSE "r"."procedural_history" END AS "procedural_history", CASE WHEN "c"."corrections" ? 'attorneys' THEN "c"."corrections" ->> 'attorneys' ELSE "r"."attorneys" END AS "attorneys", "r"."blocked" AS "blocked", "r"."provenance_id" AS "version_provenance", "r"."min_provenance_id" AS "version_provenance_min", GREATEST(COALESCE("r"."correction_id", 0), COALESCE("c"."correction_id", 0)) AS "version_correction", CAST(NULL AS BIGINT) AS "courtlistener_id", '2026-02-24 15:42:36.115000' AS "date_created", '2026-02-24 15:42:36.115000' AS "date_modified" FROM "changed_keys" AS "ck" JOIN "analytics"."sqlmesh__courtlistener"."courtlistener__raw_opinion_clusters__3097777418" AS "r" ON "r"."court_id" = "ck"."court_id" AND "r"."docket_number" = "ck"."docket_number" AND "r"."date_filed" = "ck"."date_filed" LEFT JOIN (SELECT DISTINCT ON ("court_id", "docket_number", "date_filed") "court_id", "docket_number", "date_filed", "correction_id", "corrections" FROM "analytics"."courtlistener"."corrections_opinion_clusters" AS "corrections_opinion_clusters" ORDER BY "court_id", "docket_number", "date_filed", "correction_id" DESC) AS "c" ON "c"."court_id" = "r"."court_id" AND "c"."docket_number" = "r"."docket_number" AND "c"."date_filed" = "r"."date_filed") AS "__MERGE_SOURCE__" ON "__MERGE_TARGET__"."court_id" = "__MERGE_SOURCE__"."court_id" AND "__MERGE_TARGET__"."docket_number" = "__MERGE_SOURCE__"."docket_number" AND "__MERGE_TARGET__"."date_filed" = "__MERGE_SOURCE__"."date_filed" WHEN MATCHED THEN UPDATE SET "court_id" = "__MERGE_SOURCE__"."court_id", "docket_number" = "__MERGE_SOURCE__"."docket_number", "date_filed" = "__MERGE_SOURCE__"."date_filed", "date_filed_is_approximate" = "__MERGE_SOURCE__"."date_filed_is_approximate", "case_name" = "__MERGE_SOURCE__"."case_name", "case_name_short" = "__MERGE_SOURCE__"."case_name_short", "case_name_full" = "__MERGE_SOURCE__"."case_name_full", "slug" = "__MERGE_SOURCE__"."slug", "judges" = "__MERGE_SOURCE__"."judges", "precedential_status" = "__MERGE_SOURCE__"."precedential_status", "syllabus" = "__MERGE_SOURCE__"."syllabus", "headnotes" = "__MERGE_SOURCE__"."headnotes", "summary" = "__MERGE_SOURCE__"."summary", "disposition" = "__MERGE_SOURCE__"."disposition", "procedural_history" = "__MERGE_SOURCE__"."procedural_history", "attorneys" = "__MERGE_SOURCE__"."attorneys", "blocked" = "__MERGE_SOURCE__"."blocked", "version_provenance" = "__MERGE_SOURCE__"."version_provenance", "version_provenance_min" = "__MERGE_SOURCE__"."version_provenance_min", "version_correction" = "__MERGE_SOURCE__"."version_correction", "courtlistener_id" = "__MERGE_SOURCE__"."courtlistener_id", "date_created" = "__MERGE_SOURCE__"."date_created", "date_modified" = "__MERGE_SOURCE__"."date_modified" WHEN NOT MATCHED THEN INSERT ("court_id", "docket_number", "date_filed", "date_filed_is_approximate", "case_name", "case_name_short", "case_name_full", "slug", "judges", "precedential_status", "syllabus", "headnotes", "summary", "disposition", "procedural_history", "attorneys", "blocked", "version_provenance", "version_provenance_min", "version_correction", "courtlistener_id", "date_created", "date_modified") VALUES ("__MERGE_SOURCE__"."court_id", "__MERGE_SOURCE__"."docket_number", "__MERGE_SOURCE__"."date_filed", "__MERGE_SOURCE__"."date_filed_is_approximate", "__MERGE_SOURCE__"."case_name", "__MERGE_SOURCE__"."case_name_short", "__MERGE_SOURCE__"."case_name_full", "__MERGE_SOURCE__"."slug", "__MERGE_SOURCE__"."judges", "__MERGE_SOURCE__"."precedential_status", "__MERGE_SOURCE__"."syllabus", "__MERGE_SOURCE__"."headnotes", "__MERGE_SOURCE__"."summary", "__MERGE_SOURCE__"."disposition", "__MERGE_SOURCE__"."procedural_history", "__MERGE_SOURCE__"."attorneys", "__MERGE_SOURCE__"."blocked", "__MERGE_SOURCE__"."version_provenance", "__MERGE_SOURCE__"."version_provenance_min", "__MERGE_SOURCE__"."version_correction", "__MERGE_SOURCE__"."courtlistener_id", "__MERGE_SOURCE__"."date_created", "__MERGE_SOURCE__"."date_modified") (base.py:2626)
+2026-02-24 09:42:36,250 - MainThread - sqlmesh.core.scheduler - INFO - Execution failed for node EvaluateNode(snapshot_name='"analytics"."courtlistener"."staged_opinion_clusters"', interval=(1771804800000, 1771891200000), batch_index=0) (scheduler.py:618)
+Traceback (most recent call last):
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/utils/concurrency.py", line 69, in _process_node
+    self.fn(node)
+    ~~~~~~~^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 554, in run_node
+    audit_results = self.evaluate(
+        snapshot=snapshot,
+    ...<9 lines>...
+        selected_models=selected_models,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/scheduler.py", line 229, in evaluate
+    wap_id = self.snapshot_evaluator.evaluate(
+        snapshot,
+    ...<9 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 186, in evaluate
+    result = self._evaluate_snapshot(
+        start=start,
+    ...<9 lines>...
+        **kwargs,
+    )
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 821, in _evaluate_snapshot
+    self._render_and_insert_snapshot(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        start=start,
+        ^^^^^^^^^^^^
+    ...<10 lines>...
+        batch_index=batch_index,
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 1041, in _render_and_insert_snapshot
+    apply(query_or_df, index)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 990, in apply
+    evaluation_strategy.insert(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        table_name=target_table_name,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<12 lines>...
+        is_snapshot_deployable=is_snapshot_deployable,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/snapshot/evaluator.py", line 2297, in insert
+    self.adapter.merge(
+    ~~~~~~~~~~~~~~~~~~^
+        table_name,
+        ^^^^^^^^^^^
+    ...<10 lines>...
+        source_columns=source_columns,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/shared.py", line 350, in internal_wrapper
+    return func(*list_args, **kwargs)
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/postgres.py", line 125, in merge
+    merge_impl(  # type: ignore
+    ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+        target_table,
+        ^^^^^^^^^^^^^
+    ...<5 lines>...
+        source_columns=source_columns,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/shared.py", line 335, in internal_wrapper
+    return func(*list_args, **kwargs)
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2268, in merge
+    self._merge(
+    ~~~~~~~~~~~^
+        target_table=target_table,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        whens=exp.Whens(expressions=match_expressions),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 1736, in _merge
+    self.execute(
+    ~~~~~~~~~~~~^
+        exp.Merge(this=this, using=using, on=on, whens=whens), track_rows_processed=True
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2603, in execute
+    self._execute(sql, track_rows_processed, **kwargs)
+    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bc/code/freelaw/en_banc/.venv/lib/python3.13/site-packages/sqlmesh/core/engine_adapter/base.py", line 2635, in _execute
+    self.cursor.execute(sql, **kwargs)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+psycopg2.errors.DatatypeMismatch: column "date_created" is of type timestamp with time zone but expression is of type text
+LINE 1: ...GE_SOURCE__"."courtlistener_id", "date_created" = "__MERGE_S...
+                                                             ^
+HINT:  You will need to rewrite or cast the expression.
+
+
+The above exception was the direct cause of the following exception:
+
+sqlmesh.utils.concurrency.NodeExecutionFailedError: Execution failed for node EvaluateNode(snapshot_name='"analytics"."courtlistener"."staged_opinion_clusters"', interval=(1771804800000, 1771891200000), batch_index=0)
+2026-02-24 09:42:36,256 - MainThread - root - INFO - Shutting down the event dispatcher (dispatcher.py:159)

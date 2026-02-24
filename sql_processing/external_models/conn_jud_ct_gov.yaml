@@ -1,8 +1,7 @@
 - name: conn_jud_ct_gov.raw_dockets
   columns:
-    provenance_id: bigint
-    record_id: bigint
-    loaded_at: timestamptz
+    row_id: bigint
+    content_hash: text
     crn: int
     docket_id: text
     court_id: text
@@ -34,9 +33,8 @@
 
 - name: conn_jud_ct_gov.raw_docket_entries
   columns:
-    provenance_id: bigint
-    record_id: bigint
-    loaded_at: timestamptz
+    row_id: bigint
+    content_hash: text
     docket_id: text
     court_id: text
     activity_type: text
@@ -53,9 +51,8 @@
 
 - name: conn_jud_ct_gov.raw_opinion_clusters
   columns:
-    provenance_id: bigint
-    record_id: bigint
-    loaded_at: timestamptz
+    row_id: bigint
+    content_hash: text
     docket_id: text
     court_id: text
     date_filed: date
@@ -68,9 +65,8 @@
 
 - name: conn_jud_ct_gov.raw_oral_arguments
   columns:
-    provenance_id: bigint
-    record_id: bigint
-    loaded_at: timestamptz
+    row_id: bigint
+    content_hash: text
     docket_number: text
     court_id: text
     date_argued: date
