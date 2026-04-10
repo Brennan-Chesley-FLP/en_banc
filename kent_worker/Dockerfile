@@ -1,7 +1,7 @@
 FROM prefecthq/prefect:3-python3.13
 
 RUN apt-get update && \
-    apt-get install -y curl libpq-dev && \
+    apt-get install -y curl && \
     curl -fsSL https://tailscale.com/install.sh | sh && \
     curl -fsSL -o /tmp/litestream.deb \
         https://github.com/benbjohnson/litestream/releases/download/v0.3.13/litestream-v0.3.13-linux-$(dpkg --print-architecture).deb && \
@@ -11,20 +11,23 @@ RUN apt-get update && \
 
 RUN pip install uv
 
-COPY juri-work/juriscraper-bc-flp /juriscraper
-COPY juri-work/kent /kent
+# Install kent and juriscraper from named build contexts
+COPY --from=kent . /build/kent
+COPY --from=juriscraper . /build/juriscraper
 RUN uv pip install --system \
-    /juriscraper \
-    "/kent[persistent-driver,web]" \
+    /build/juriscraper \
+    "/build/kent[persistent-driver,web]" \
     prefect-aws \
-    prefect-sqlalchemy \
-    sqlmodel \
-    psycopg2-binary \
     pyyaml \
-    uvicorn
+    uvicorn \
+    boto3 \
+    aiosqlite \
+    zstandard
 
-COPY en_banc /app
+# Copy application code
+COPY flows/ /app/flows/
+COPY workers/ /app/workers/
+COPY worker-entrypoint.sh /worker-entrypoint.sh
+
 WORKDIR /app
-COPY en_banc/docker/worker-entrypoint.sh /worker-entrypoint.sh
-
 ENTRYPOINT ["/worker-entrypoint.sh"]

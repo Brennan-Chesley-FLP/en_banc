@@ -1,0 +1,7 @@
+.venv
+__pycache__
+*.pyc
+Dockerfile
+.dockerignore
+pyproject.toml
+uv.lock
