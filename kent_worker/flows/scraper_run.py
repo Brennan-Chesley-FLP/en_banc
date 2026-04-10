@@ -1,8 +1,7 @@
-"""Generic scraper run flow: run scraper -> doctor -> validate -> provenance -> load -> emit event.
+"""Scraper run flow: run scraper -> doctor -> upload to S3 -> emit event.
 
-Orchestrates the full pipeline from scraper execution through warehouse loading.
-After loading, emits a ``scrape.completed`` event that triggers downstream
-SQLMesh transforms via Prefect automation.
+Orchestrates scraper execution through S3 upload. After uploading, emits a
+``scrape.uploaded`` event that triggers downstream warehouse loading.
 """
 
 from __future__ import annotations
@@ -14,7 +13,6 @@ from typing import Any
 
 import prefect.runtime
 from prefect import flow, get_run_logger, task
-from prefect.context import get_run_context
 from prefect.concurrency.asyncio import concurrency
 from prefect.events import emit_event
 from prefect_aws.s3 import S3Bucket
@@ -22,8 +20,6 @@ from prefect_aws.s3 import S3Bucket
 from flows.s3_archive import S3_BLOCK_NAME, make_s3_archive_callback
 
 logger = logging.getLogger(__name__)
-
-ANALYTICS_DB_URL = "postgresql://analytics:analytics@localhost:5433/analytics"
 
 
 # ---------------------------------------------------------------------------
@@ -142,34 +138,6 @@ async def doctor_health_check(db_path: Path) -> dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
-# Task: Validate
-# ---------------------------------------------------------------------------
-
-
-@task(log_prints=True, task_run_name="validate-{scraper_schema}")
-def validate_run(db_path: str, scraper_schema: str) -> dict[str, int]:
-    """Validate scraper output before loading."""
-    from warehouse.validation import validate_scraper_output
-
-    log = get_run_logger()
-    report = validate_scraper_output(db_path)
-
-    if not report.is_valid:
-        raise ValueError(
-            f"Validation failed for {scraper_schema}: "
-            f"{report.valid_rows} valid / {report.total_rows} total rows"
-        )
-
-    log.info(
-        "%s: %d valid rows across %d types",
-        scraper_schema,
-        report.valid_rows,
-        len(report.counts_by_type),
-    )
-    return report.counts_by_type
-
-
-# ---------------------------------------------------------------------------
 # Task: Upload Database to S3
 # ---------------------------------------------------------------------------
 
@@ -200,74 +168,6 @@ async def upload_db(db_path: Path, scraper_schema: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Task: Create Provenance
-# ---------------------------------------------------------------------------
-
-
-@task(log_prints=True, task_run_name="create-provenance")
-def create_provenance(
-    scraper_name: str,
-    s3_artifact_path: str | None = None,
-    description: str | None = None,
-    metadata: dict | None = None,
-) -> int:
-    """Create a provenance record and return its ID."""
-    from sqlalchemy import create_engine
-    from sqlmodel import Session
-
-    from warehouse.models import Provenance
-
-    log = get_run_logger()
-
-    ctx = get_run_context()
-    run_id = ctx.flow_run.id if ctx and ctx.flow_run else None
-
-    engine = create_engine(ANALYTICS_DB_URL)
-    prov = Provenance(
-        source_type="scraper_run",
-        source_name=scraper_name,
-        run_id=run_id,
-        s3_artifact_path=s3_artifact_path,
-        description=description or f"{scraper_name} scraper run",
-        metadata_=metadata or {},
-    )
-
-    with Session(engine) as session:
-        session.add(prov)
-        session.commit()
-        session.refresh(prov)
-        provenance_id = prov.id
-
-    log.info(
-        "Created provenance %d for %s (run_id=%s)",
-        provenance_id,
-        scraper_name,
-        run_id,
-    )
-    return provenance_id
-
-
-# ---------------------------------------------------------------------------
-# Task: Load to Warehouse
-# ---------------------------------------------------------------------------
-
-
-@task(log_prints=True, task_run_name="load-to-warehouse")
-def load_to_warehouse(
-    db_path: str,
-    provenance_id: int,
-) -> dict[str, int]:
-    """Load SQLite results into raw warehouse tables."""
-    from warehouse.loader import load_sqlite_to_raw
-
-    return load_sqlite_to_raw(
-        db_path=db_path,
-        provenance_id=provenance_id,
-        db_url=ANALYTICS_DB_URL,
-    )
-
-
-# ---------------------------------------------------------------------------
 # Flow: scraper-run
 # ---------------------------------------------------------------------------
 
@@ -278,10 +178,10 @@ async def scraper_run_flow(
     seed_params: list[dict[str, dict[str, Any]]] | None = None,
     scraper_schema: str = "",
 ) -> None:
-    """Generic scraper run flow.
+    """Run a scraper, verify output, and upload the database to S3.
 
-    Runs a scraper, validates output, loads to warehouse, and emits
-    a ``scrape.completed`` event for downstream processing.
+    After uploading, emits a ``scrape.uploaded`` event for downstream
+    warehouse loading.
 
     Args:
         scraper_path: Import path like "module.path:ClassName".
@@ -306,26 +206,19 @@ async def scraper_run_flow(
         # 2. Doctor health check
         await doctor_health_check(db_path)
 
-        # 3. Validate
-        validate_run(str(db_path), scraper_schema)
-
-        # 4. Upload database to S3
+        # 3. Upload database to S3
         s3_uri = await upload_db(db_path, scraper_schema)
 
-        # 5. Create provenance
-        provenance_id = create_provenance(
-            scraper_name=scraper_schema,
-            s3_artifact_path=s3_uri,
-        )
-
-        # 6. Load into raw tables
-        load_to_warehouse(str(db_path), provenance_id)
-
-        # 7. Emit scrape.completed event
-        log.info("Emitting scrape.completed event for %s", scraper_schema)
+        # 4. Emit scrape.uploaded event for warehouse loading
+        log.info("Emitting scrape.uploaded event for %s", scraper_schema)
         emit_event(
-            event="scrape.completed",
+            event="scrape.uploaded",
             resource={
                 "prefect.resource.id": f"scraper.{scraper_schema}",
+            },
+            payload={
+                "s3_uri": s3_uri,
+                "scraper_schema": scraper_schema,
+                "scraper_path": scraper_path,
             },
         )

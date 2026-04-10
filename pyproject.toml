@@ -40,3 +40,6 @@ juriscraper = { path = "../juriscraper", editable = true }
 pulumi-prefect = { path = "infrastructure/sdks/prefect", editable = true }
 steno = { path = "../steno", editable = true }
 kent = { path = "../kent", editable = true }
+
+[tool.uv.workspace]
+members = ["kent_worker"]
