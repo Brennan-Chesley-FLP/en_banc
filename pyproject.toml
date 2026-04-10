@@ -1,0 +1,26 @@
+[project]
+name = "en-banc"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "prefect>=3.6.25",
+    "pulumi>=3.229.0",
+    "pulumi-aws>=7.24.0",
+    "pulumi-docker>=4.11.2",
+    "pulumi-postgresql>=3.16.2",
+    "pulumi-prefect>=0.1.4",
+    "pydantic>=2.12.5",
+    "sqlmesh>=0.233.0",
+]
+
+[dependency-groups]
+docs = [
+    "sphinx",
+    "sphinx-immaterial",
+    "sphinxcontrib-mermaid",
+]
+
+[tool.uv.workspace]
+members = ["kent_worker"]
