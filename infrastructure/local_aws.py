@@ -1,10 +1,10 @@
-"""MinIO on remote server for S3-compatible object storage."""
+"""LocalStack on remote server for local AWS services."""
 
 import pulumi
 import pulumi_docker as docker
 
 
-def create_minio():
+def create_localstack():
     config = pulumi.Config()
     remote_host = (
         config.get("remote-docker-host")
@@ -19,34 +19,32 @@ def create_minio():
     opts = pulumi.ResourceOptions(provider=remote_provider)
 
     container = docker.Container(
-        "minio",
-        image="minio/minio",
-        name="eb-minio",
+        "localstack",
+        image="localstack/localstack:community-archive",
+        name="eb-localstack",
         restart="unless-stopped",
-        command=["server", "/data", "--console-address", ":9001"],
         ports=[
             docker.ContainerPortArgs(
-                internal=9000,
+                internal=4566,
                 external=7110,
-            ),
-            docker.ContainerPortArgs(
-                internal=9001,
-                external=7111,
             ),
         ],
         envs=[
-            "MINIO_ROOT_USER=minioadmin",
-            "MINIO_ROOT_PASSWORD=minioadmin",
+            "SERVICES=s3,sns,sqs,secretsmanager,lambda",
+            "PERSISTENCE=1",
         ],
         volumes=[
             docker.ContainerVolumeArgs(
                 host_path="/Volumes/Public/freelaw/localstack",
-                container_path="/data",
+                container_path="/var/lib/localstack",
+            ),
+            docker.ContainerVolumeArgs(
+                host_path="/run/user/501/podman/podman.sock",
+                container_path="/var/run/docker.sock",
             ),
         ],
         opts=opts,
     )
 
-    pulumi.export("minio_api_url", "http://mini.bopp-justice.ts.net:7110")
-    pulumi.export("minio_console_url", "http://mini.bopp-justice.ts.net:7111")
-    pulumi.export("minio_container_name", container.name)
+    pulumi.export("localstack_url", "http://mini.bopp-justice.ts.net:7110")
+    pulumi.export("localstack_container_name", container.name)
