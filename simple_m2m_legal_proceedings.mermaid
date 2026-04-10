@@ -1,0 +1,134 @@
+erDiagram
+    COURT {
+        uuid id PK
+        string name
+        string jurisdiction
+        string level
+    }
+    COURT_COURT {
+        uuid id PK
+        uuid from_court_id FK
+        uuid to_court_id FK
+        string type
+    }
+    PROCEEDING {
+        uuid id PK
+        string case_name
+        string status
+        timestamp filed_date
+    }
+    DOCKET {
+        uuid id PK
+        uuid court_id FK
+        string docket_number
+        timestamp opened_date
+        timestamp closed_date
+    }
+    DOCKET_EVENT {
+        uuid id PK
+        uuid docket_id FK
+        string event_type
+        text description
+        timestamp event_date
+    }
+    PROCEEDING_DOCKET {
+        uuid id PK
+        uuid proceeding_id FK
+        uuid docket_id FK
+        int sequence_order
+        string role
+    }
+    DECISION {
+        uuid id PK
+        timestamp decided_date
+        string disposition
+    }
+    CITATION {
+        uuid id PK
+        uuid decision_id FK
+        string volume
+        string reporter
+        string page
+        string type
+    }
+    DECISION_PROCEEDING_DOCKET {
+        uuid id PK
+        uuid decision_id FK
+        uuid proceeding_docket_id FK
+        string outcome
+    }
+    OPINION {
+        uuid id PK
+        uuid decision_id FK
+        uuid author_id FK
+        string opinion_type
+        text body
+    }
+    PERSON {
+        uuid id PK
+        string name
+    }
+    PERSON_COURT {
+        uuid id PK
+        uuid person_id FK
+        uuid court_id FK
+        string role
+    }
+    PERSON_PROCEEDING {
+        uuid id PK
+        uuid person_id FK
+        uuid proceeding_id FK
+        string role
+    }
+    PERSON_DOCUMENT {
+        uuid id PK
+        uuid person_id FK
+        uuid document_id FK
+        string role
+    }
+    DOCUMENT {
+        uuid id PK
+        uuid docket_event_id FK
+        uuid opinion_id FK
+        string resource_type
+        string filename
+        string original_url
+        string local_url
+    }
+    CROSS_DOCKET_CONCERN {
+        uuid id PK
+        uuid from_docket_id FK
+        uuid to_docket_id FK
+        string type
+        text description
+    }
+    OPINION_REFERENCE {
+        uuid id PK
+        uuid from_opinion_id FK
+        uuid to_opinion_id FK
+        string type
+        text parenthetical
+    }
+
+    COURT ||--o{ COURT_COURT : "relates from"
+    COURT ||--o{ COURT_COURT : "relates to"
+    COURT ||--o{ DOCKET : "hosts"
+    DOCKET ||--o{ DOCKET_EVENT : "contains"
+    PROCEEDING ||--o{ PROCEEDING_DOCKET : "tracked in"
+    DOCKET ||--o{ PROCEEDING_DOCKET : "links to"
+    DECISION ||--o{ CITATION : "cited as"
+    DECISION ||--o{ DECISION_PROCEEDING_DOCKET : "applies to"
+    PROCEEDING_DOCKET ||--o{ DECISION_PROCEEDING_DOCKET : "decided by"
+    DECISION ||--o{ OPINION : "comprises"
+    DOCKET_EVENT ||--o{ DOCUMENT : "has"
+    OPINION ||--o{ DOCUMENT : "has"
+    DOCKET ||--o{ CROSS_DOCKET_CONCERN : "originates"
+    DOCKET ||--o{ CROSS_DOCKET_CONCERN : "receives"
+    PERSON ||--o{ PERSON_COURT : "associated with"
+    COURT ||--o{ PERSON_COURT : "has"
+    PERSON ||--o{ PERSON_PROCEEDING : "involved in"
+    PROCEEDING ||--o{ PERSON_PROCEEDING : "involves"
+    PERSON ||--o{ PERSON_DOCUMENT : "contributes to"
+    DOCUMENT ||--o{ PERSON_DOCUMENT : "contributed by"
+    OPINION ||--o{ OPINION_REFERENCE : "references"
+    OPINION ||--o{ OPINION_REFERENCE : "referenced by"

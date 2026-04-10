@@ -10,4 +10,9 @@ html_theme_options = {
     "repo_url": "https://github.com/freelawproject/en-banc",
     "repo_type": "github",
     "font": False,
+    "features": [
+        "navigation.expand",
+        "navigation.top",
+        "toc.follow",
+    ],
 }
