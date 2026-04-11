@@ -4,18 +4,16 @@ import pulumi
 import pulumi_docker as docker
 
 
-def create_localstack():
+def create_remote_provider() -> docker.Provider:
     config = pulumi.Config()
     remote_host = (
         config.get("remote-docker-host")
         or "ssh://bc@mini.bopp-justice.ts.net"
     )
+    return docker.Provider("remote-docker", host=remote_host)
 
-    remote_provider = docker.Provider(
-        "remote-docker",
-        host=remote_host,
-    )
 
+def create_localstack(remote_provider: docker.Provider):
     opts = pulumi.ResourceOptions(provider=remote_provider)
 
     image = docker.RemoteImage(
