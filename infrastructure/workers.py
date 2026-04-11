@@ -5,26 +5,21 @@ import pulumi_docker as docker
 
 
 def create_kent_worker(remote_provider: docker.Provider):
-    """Kent scraper worker on the remote host."""
-    config = pulumi.Config()
-    opts = pulumi.ResourceOptions(
-        provider=remote_provider,
-        ignore_changes=["image"],
-    )
+    """Kent scraper worker on the remote host.
 
-    image = docker.RemoteImage(
-        "kent-worker-image",
-        name="prefecthq/prefect:3-python3.13",
-        keep_locally=True,
-        opts=pulumi.ResourceOptions(provider=remote_provider),
-    )
+    The kent-worker image must be pre-built and available on the remote
+    host. Build and transfer with:
+
+        podman build -t en-banc-kent-worker kent_worker/
+        podman save en-banc-kent-worker | ssh bc@mini.bopp-justice.ts.net podman load
+    """
+    config = pulumi.Config()
 
     container = docker.Container(
         "kent-worker",
-        image=image.image_id,
+        image="en-banc-kent-worker:latest",
         name="en-banc-kent-worker",
         restart="unless-stopped",
-        command=["python", "-m", "workers.in_process"],
         envs=[
             f"PREFECT_API_URL={config.get('prefect-api-url') or 'http://localhost:7100/api'}",
             "SCRAPER_RUNS_DIR=/app/runs",
@@ -35,7 +30,10 @@ def create_kent_worker(remote_provider: docker.Provider):
                 container_path="/app/runs",
             ),
         ],
-        opts=opts,
+        opts=pulumi.ResourceOptions(
+            provider=remote_provider,
+            ignore_changes=["image"],
+        ),
     )
 
     pulumi.export("kent_worker_container_name", container.name)
