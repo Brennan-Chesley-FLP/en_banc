@@ -18,9 +18,16 @@ def create_localstack():
 
     opts = pulumi.ResourceOptions(provider=remote_provider)
 
+    image = docker.RemoteImage(
+        "localstack-image",
+        name="localstack/localstack:community-archive",
+        keep_locally=True,
+        opts=opts,
+    )
+
     container = docker.Container(
         "localstack",
-        image="localstack/localstack:community-archive",
+        image=image.image_id,
         name="eb-localstack",
         restart="unless-stopped",
         ports=[
@@ -43,7 +50,7 @@ def create_localstack():
                 container_path="/var/run/docker.sock",
             ),
         ],
-        opts=opts,
+        opts=pulumi.ResourceOptions(provider=remote_provider, ignore_changes=["image"]),
     )
 
     pulumi.export("localstack_url", "http://mini.bopp-justice.ts.net:7110")

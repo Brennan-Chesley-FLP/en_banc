@@ -1,6 +1,6 @@
 [env]
-PREFECT_API_URL = "http://localhost:4200/api"
-LOCALSTACK_ENDPOINT = "http://mini.bopp-justice.ts.net:4566"
+PREFECT_API_URL = "http://localhost:7100/api"
+LOCALSTACK_ENDPOINT = "http://mini.bopp-justice.ts.net:7110"
 DOCKER_HOST="unix:///var/folders/bj/2rrz8xw16clcv0tb7n4_dwlw0000gn/T/podman/podman-machine-default-api.sock"
 DOCKER_HOST_SOCKET="/var/folders/bj/2rrz8xw16clcv0tb7n4_dwlw0000gn/T/podman/podman-machine-default-api.sock"
 # TS_AUTHKEY = "tskey-auth-..."
@@ -21,11 +21,15 @@ uv run prefect deploy --all
 description = "Build Sphinx documentation"
 run = "uv run --group docs sphinx-build -b html docs docs/_build/html"
 
+[tasks.infra-foundation]
+description = "Provision Docker infrastructure (network, databases, Prefect server, LocalStack)"
+run = "pulumi up --yes"
+
+[tasks.infra-app]
+description = "Provision app resources (S3 buckets, Prefect blocks, work pools, deployments)"
+depends = ["infra-foundation"]
+run = "cd app && pulumi stack init local 2>/dev/null || true && pulumi up --yes"
+
 [tasks.infra]
-description = "Provision LocalStack resources and Prefect blocks/deployments with Pulumi"
-run = """
-cd infrastructure
-pulumi package add terraform-provider prefecthq/prefect 2>/dev/null || true
-pulumi stack init dev 2>/dev/null || true
-pulumi up --yes
-"""
+description = "Provision all infrastructure"
+depends = ["infra-foundation", "infra-app"]

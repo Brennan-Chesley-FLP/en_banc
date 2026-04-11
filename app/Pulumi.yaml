@@ -1,0 +1,22 @@
+name: en-banc-app
+description: "App: S3 buckets, Prefect blocks, work pools, deployments"
+runtime:
+  name: python
+  options:
+    toolchain: uv
+    root: ..
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: python
+  aws:region: us-west-2
+  aws:endpoints:
+    - s3: http://mini.bopp-justice.ts.net:7110
+      sns: http://mini.bopp-justice.ts.net:7110
+      sqs: http://mini.bopp-justice.ts.net:7110
+  aws:accessKey: test
+  aws:secretKey: test
+  aws:s3UsePathStyle: true
+  aws:skipCredentialsValidation: true
+  aws:skipRequestingAccountId: true
+  prefect:endpoint: http://localhost:7100/api

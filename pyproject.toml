@@ -26,6 +26,7 @@ dependencies = [
     "kent[persistent-driver,web]",
     "uvicorn>=0.34.0",
     "pyyaml>=6.0",
+    "pulumi-docker>=4.11.2",
 ]
 
 [dependency-groups]
@@ -40,7 +41,7 @@ dev = [
 ]
 
 [tool.uv.sources]
-juriscraper = { path = "../juri-work/juriscraper-bc-flp", editable = true }
+juriscraper = { path = "../juriscraper", editable = true }
 pulumi-prefect = { path = "infrastructure/sdks/prefect", editable = true }
 steno = { path = "../steno", editable = true }
 kent = { path = "../kent", editable = true }

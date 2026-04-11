@@ -11,6 +11,22 @@ erDiagram
         uuid to_court_id FK
         string type
     }
+    COURT_IDENTIFIER_NAMESPACE {
+        uuid id PK
+        string code UK
+        string label
+        string pattern
+        text description
+    }
+    COURT_IDENTIFIER {
+        uuid id PK
+        uuid court_id FK
+        uuid namespace_id FK
+        string value
+        boolean is_primary
+        timestamp valid_from
+        timestamp valid_to
+    }
     PROCEEDING {
         uuid id PK
         string case_name
@@ -23,6 +39,22 @@ erDiagram
         string docket_number
         timestamp opened_date
         timestamp closed_date
+    }
+    DOCKET_IDENTIFIER_NAMESPACE {
+        uuid id PK
+        string code UK
+        string label
+        string pattern
+        text description
+    }
+    DOCKET_IDENTIFIER {
+        uuid id PK
+        uuid docket_id FK
+        uuid namespace_id FK
+        string value
+        boolean is_primary
+        timestamp valid_from
+        timestamp valid_to
     }
     DOCKET_EVENT {
         uuid id PK
@@ -43,13 +75,21 @@ erDiagram
         timestamp decided_date
         string disposition
     }
-    CITATION {
+    DECISION_IDENTIFIER_NAMESPACE {
+        uuid id PK
+        string code UK
+        string label
+        string pattern
+        text description
+    }
+    DECISION_IDENTIFIER {
         uuid id PK
         uuid decision_id FK
-        string volume
-        string reporter
-        string page
-        string type
+        uuid namespace_id FK
+        string value
+        boolean is_primary
+        timestamp valid_from
+        timestamp valid_to
     }
     DECISION_PROCEEDING_DOCKET {
         uuid id PK
@@ -64,9 +104,41 @@ erDiagram
         string opinion_type
         text body
     }
+    OPINION_IDENTIFIER_NAMESPACE {
+        uuid id PK
+        string code UK
+        string label
+        string pattern
+        text description
+    }
+    OPINION_IDENTIFIER {
+        uuid id PK
+        uuid opinion_id FK
+        uuid namespace_id FK
+        string value
+        boolean is_primary
+        timestamp valid_from
+        timestamp valid_to
+    }
     PERSON {
         uuid id PK
         string name
+    }
+    PERSON_IDENTIFIER_NAMESPACE {
+        uuid id PK
+        string code UK
+        string label
+        string pattern
+        text description
+    }
+    PERSON_IDENTIFIER {
+        uuid id PK
+        uuid person_id FK
+        uuid namespace_id FK
+        string value
+        boolean is_primary
+        timestamp valid_from
+        timestamp valid_to
     }
     PERSON_COURT {
         uuid id PK
@@ -112,18 +184,27 @@ erDiagram
 
     COURT ||--o{ COURT_COURT : "relates from"
     COURT ||--o{ COURT_COURT : "relates to"
+    COURT ||--o{ COURT_IDENTIFIER : "identified by"
+    COURT_IDENTIFIER_NAMESPACE ||--o{ COURT_IDENTIFIER : "defines"
     COURT ||--o{ DOCKET : "hosts"
     DOCKET ||--o{ DOCKET_EVENT : "contains"
+    DOCKET ||--o{ DOCKET_IDENTIFIER : "identified by"
+    DOCKET_IDENTIFIER_NAMESPACE ||--o{ DOCKET_IDENTIFIER : "defines"
     PROCEEDING ||--o{ PROCEEDING_DOCKET : "tracked in"
     DOCKET ||--o{ PROCEEDING_DOCKET : "links to"
-    DECISION ||--o{ CITATION : "cited as"
+    DECISION ||--o{ DECISION_IDENTIFIER : "identified by"
+    DECISION_IDENTIFIER_NAMESPACE ||--o{ DECISION_IDENTIFIER : "defines"
     DECISION ||--o{ DECISION_PROCEEDING_DOCKET : "applies to"
     PROCEEDING_DOCKET ||--o{ DECISION_PROCEEDING_DOCKET : "decided by"
     DECISION ||--o{ OPINION : "comprises"
+    OPINION ||--o{ OPINION_IDENTIFIER : "identified by"
+    OPINION_IDENTIFIER_NAMESPACE ||--o{ OPINION_IDENTIFIER : "defines"
     DOCKET_EVENT ||--o{ DOCUMENT : "has"
     OPINION ||--o{ DOCUMENT : "has"
     DOCKET ||--o{ CROSS_DOCKET_CONCERN : "originates"
     DOCKET ||--o{ CROSS_DOCKET_CONCERN : "receives"
+    PERSON ||--o{ PERSON_IDENTIFIER : "identified by"
+    PERSON_IDENTIFIER_NAMESPACE ||--o{ PERSON_IDENTIFIER : "defines"
     PERSON ||--o{ PERSON_COURT : "associated with"
     COURT ||--o{ PERSON_COURT : "has"
     PERSON ||--o{ PERSON_PROCEEDING : "involved in"

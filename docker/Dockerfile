@@ -11,14 +11,14 @@ RUN apt-get update && \
 
 RUN pip install uv
 
-COPY juri-work/juriscraper-bc-flp /juri-work/juriscraper-bc-flp
-COPY juri-work/kent /juri-work/kent
+COPY juriscraper /juriscraper
+COPY kent /kent
 COPY steno /steno
 COPY en_banc/pyproject.toml en_banc/uv.lock /app/
 COPY en_banc/infrastructure/sdks /app/infrastructure/sdks
 WORKDIR /app
 RUN uv pip install --system --override /dev/null \
-    /juri-work/juriscraper-bc-flp "/juri-work/kent[persistent-driver,web]" /steno .
+    juriscraper "/kent[persistent-driver,web]" /steno .
 
 COPY en_banc /app
 COPY en_banc/docker/entrypoint.sh /entrypoint.sh

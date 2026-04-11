@@ -12,3 +12,5 @@ the United States.
    the-plan
    data-flow
    deployment
+   infrastructure
+   sql/index

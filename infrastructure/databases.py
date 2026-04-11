@@ -4,18 +4,35 @@ import pulumi
 import pulumi_docker as docker
 
 
-def create_databases(network: docker.Network, pg_password: str):
-    databases = {
-        "warehouse": 7101,
-        "courtlistener": 7102,
-        "replica_client_a": 7103,
-    }
+DATABASES = {
+    "prefect": {"port": 7104, "alias": "prefect-db"},
+    "warehouse": {"port": 7101},
+    "courtlistener": {"port": 7102},
+    "replica_client_a": {"port": 7103},
+}
 
-    for db_name, port in databases.items():
+
+def create_databases(network: docker.Network, pg_password: str):
+    databases = DATABASES
+    containers = {}
+
+    for db_name, db_config in databases.items():
+        port = db_config["port"]
+        alias = db_config.get("alias", db_name)
+
+        image = docker.RemoteImage(
+            f"pg-{db_name}-image",
+            name="postgres:18.3",
+            keep_locally=True,
+        )
+
+        volume = docker.Volume(f"pg-{db_name}-data", name=f"en-banc-pg-{db_name}-data")
+
         container = docker.Container(
             f"pg-{db_name}",
-            image="postgres:16",
+            image=image.image_id,
             name=f"en-banc-pg-{db_name}",
+            opts=pulumi.ResourceOptions(ignore_changes=["image"]),
             envs=[
                 f"POSTGRES_DB={db_name}",
                 f"POSTGRES_PASSWORD={pg_password}",
@@ -23,13 +40,19 @@ def create_databases(network: docker.Network, pg_password: str):
             networks_advanced=[
                 docker.ContainerNetworksAdvancedArgs(
                     name=network.name,
-                    aliases=[db_name],
+                    aliases=[alias],
                 )
             ],
             ports=[
                 docker.ContainerPortArgs(
                     internal=5432,
                     external=port,
+                )
+            ],
+            volumes=[
+                docker.ContainerVolumeArgs(
+                    volume_name=volume.name,
+                    container_path="/var/lib/postgresql",
                 )
             ],
             healthcheck=docker.ContainerHealthcheckArgs(
@@ -42,6 +65,7 @@ def create_databases(network: docker.Network, pg_password: str):
             wait_timeout=30,
         )
 
+        containers[db_name] = container
         pulumi.export(f"{db_name}_container_name", container.name)
         pulumi.export(
             f"{db_name}_port",
@@ -49,3 +73,5 @@ def create_databases(network: docker.Network, pg_password: str):
                 lambda ports: ports[0].external if ports else None
             ),
         )
+
+    return containers

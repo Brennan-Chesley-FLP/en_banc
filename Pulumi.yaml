@@ -1,5 +1,5 @@
-name: en_banc
-description: Legal Data Infrastructure
+name: en-banc-foundation
+description: "Foundation: Docker network, databases, Prefect server, LocalStack"
 runtime:
   name: python
   options:
