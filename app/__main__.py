@@ -73,7 +73,8 @@ config = pulumi.Config()
 pg_password = config.get("pg-password") or "postgres"
 
 for db_name, db_config in DATABASES.items():
-    alias = db_config.get("alias", db_name)
+    aliases = db_config.get("aliases", [db_config.get("alias", db_name)])
+    alias = aliases[0]
     block_name = db_name.replace("_", "-")
     prev_block = prefect.Block(
         f"db-{db_name}",

@@ -33,3 +33,7 @@ run = "cd app && pulumi stack init local 2>/dev/null || true && pulumi up --yes"
 [tasks.infra]
 description = "Provision all infrastructure"
 depends = ["infra-foundation", "infra-app"]
+
+[tasks.warehouse-worker]
+description = "Start the warehouse Docker worker (runs on host)"
+run = "uv run prefect worker start --pool docker-pool --type docker"

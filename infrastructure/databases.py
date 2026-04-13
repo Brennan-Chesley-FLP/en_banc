@@ -7,7 +7,7 @@ import pulumi_docker as docker
 DATABASES = {
     "prefect": {"port": 7104, "alias": "prefect-db"},
     "warehouse": {"port": 7101},
-    "courtlistener": {"port": 7102},
+    "courtlistener": {"port": 7102, "aliases": ["courtlistener", "cl-postgres"]},
     "replica_client_a": {"port": 7103},
 }
 
@@ -18,7 +18,7 @@ def create_databases(network: docker.Network, pg_password: str):
 
     for db_name, db_config in databases.items():
         port = db_config["port"]
-        alias = db_config.get("alias", db_name)
+        aliases = db_config.get("aliases", [db_config.get("alias", db_name)])
 
         image = docker.RemoteImage(
             f"pg-{db_name}-image",
@@ -40,7 +40,7 @@ def create_databases(network: docker.Network, pg_password: str):
             networks_advanced=[
                 docker.ContainerNetworksAdvancedArgs(
                     name=network.name,
-                    aliases=[alias],
+                    aliases=aliases,
                 )
             ],
             ports=[
