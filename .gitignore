@@ -6,3 +6,4 @@ sql_processing/.cache
 sql_processing/logs/
 infrastructure/Pulumi.local-dev.yaml
 app/Pulumi.local.yaml
+Pulumi.local.yaml
