@@ -17,11 +17,14 @@ if [ -n "$TS_AUTHKEY" ]; then
         HOSTNAME_ARG="--hostname=${TS_HOSTNAME}"
     fi
 
-    tailscale up \
-        --authkey="$TS_AUTHKEY" \
-        $HOSTNAME_ARG
+    TS_ARGS="--authkey=$TS_AUTHKEY --ephemeral"
+    [ -n "$TS_HOSTNAME" ] && TS_ARGS="$TS_ARGS --hostname=$TS_HOSTNAME"
 
-    echo "Tailscale connected as ${TS_HOSTNAME:-$(tailscale status --self | awk '{print $2}')}"
+    if tailscale up $TS_ARGS; then
+        echo "Tailscale connected as ${TS_HOSTNAME:-$(tailscale status --self | awk '{print $2}')}"
+    else
+        echo "WARNING: Tailscale failed to connect (continuing without it)"
+    fi
 fi
 
 exec "$@"

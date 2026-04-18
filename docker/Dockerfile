@@ -1,7 +1,8 @@
 FROM prefecthq/prefect:3-python3.13
 
 RUN apt-get update && \
-    apt-get install -y curl libpq-dev && \
+    apt-get install -y curl libpq-dev iptables && \
+    curl -fsSL https://tailscale.com/install.sh | sh && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install uv

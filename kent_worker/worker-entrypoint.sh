@@ -1,6 +1,30 @@
 #!/bin/sh
 set -e
 
+# Start Tailscale if auth key is provided
+if [ -n "$TS_AUTHKEY" ]; then
+    echo "Starting Tailscale..."
+    tailscaled --state=/var/lib/tailscale/tailscaled.state &
+    TSPID=$!
+
+    # Wait for tailscaled socket
+    for i in $(seq 1 30); do
+        if tailscale status >/dev/null 2>&1; then
+            break
+        fi
+        sleep 0.5
+    done
+
+    TS_ARGS="--authkey=$TS_AUTHKEY"
+    [ -n "$TS_HOSTNAME" ] && TS_ARGS="$TS_ARGS --hostname=$TS_HOSTNAME"
+
+    if tailscale up $TS_ARGS; then
+        echo "Tailscale connected as ${TS_HOSTNAME:-$(tailscale status --self | awk '{print $2}')}"
+    else
+        echo "WARNING: Tailscale failed to connect (continuing without it)"
+    fi
+fi
+
 RUNS_DIR="${SCRAPER_RUNS_DIR:-/app/runs}"
 mkdir -p "$RUNS_DIR"
 

@@ -3,6 +3,8 @@ import json
 import pulumi
 import pulumi_prefect as prefect
 
+config = pulumi.Config()
+
 # ---------------------------------------------------------------------------
 # Work pools
 # ---------------------------------------------------------------------------
@@ -29,14 +31,28 @@ sync_pool = prefect.WorkPool(
 # Deployments
 # ---------------------------------------------------------------------------
 
-docker_job_variables = json.dumps({
+ts_authkey = config.get_secret("ts-authkey")
+
+_docker_env = {
+    "PREFECT_API_URL": "http://localhost:7100/api",
+}
+_docker_job_vars = {
     "image": "localhost/en-banc:latest",
     "image_pull_policy": "Never",
     "network_mode": "host",
-    "env": {
-        "PREFECT_API_URL": "http://localhost:7100/api",
-    },
-})
+    "privileged": True,
+}
+
+if ts_authkey:
+    docker_job_variables = ts_authkey.apply(
+        lambda k: json.dumps(
+            {**_docker_job_vars, "env": {**_docker_env, "TS_AUTHKEY": k}}
+        )
+    )
+else:
+    docker_job_variables = json.dumps(
+        {**_docker_job_vars, "env": _docker_env}
+    )
 
 # -- scraper-run (kent worker, in-process) --
 
