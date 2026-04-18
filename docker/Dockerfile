@@ -2,25 +2,35 @@ FROM prefecthq/prefect:3-python3.13
 
 RUN apt-get update && \
     apt-get install -y curl libpq-dev && \
-    curl -fsSL https://tailscale.com/install.sh | sh && \
-    curl -fsSL -o /tmp/litestream.deb \
-        https://github.com/benbjohnson/litestream/releases/download/v0.3.13/litestream-v0.3.13-linux-$(dpkg --print-architecture).deb && \
-    dpkg -i /tmp/litestream.deb && \
-    rm /tmp/litestream.deb && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install uv
 
-COPY juriscraper /juriscraper
-COPY kent /kent
-COPY steno /steno
-COPY en_banc/pyproject.toml en_banc/uv.lock /app/
-COPY en_banc/infrastructure/sdks /app/infrastructure/sdks
-WORKDIR /app
-RUN uv pip install --system --override /dev/null \
-    juriscraper "/kent[persistent-driver,web]" /steno .
+# Copy only package metadata from sibling repos for install
+COPY --from=juriscraper pyproject.toml README* LICENSE* /build/juriscraper/
+COPY --from=juriscraper juriscraper /build/juriscraper/juriscraper
+COPY --from=kent pyproject.toml README* LICENSE* /build/kent/
+COPY --from=kent kent /build/kent/kent
+COPY --from=steno pyproject.toml README* LICENSE* /build/steno/
+COPY --from=steno steno /build/steno/steno
 
-COPY en_banc /app
+WORKDIR /app
+RUN uv pip install --system \
+    /build/juriscraper \
+    "/build/kent[persistent-driver,web]" \
+    /build/steno \
+    prefect-aws \
+    prefect-sqlalchemy \
+    sqlmodel \
+    psycopg2-binary \
+    boto3 \
+    pyyaml \
+    eyecite \
+    "sqlmesh[postgres]"
+
+COPY en_banc/flows /app/flows
+COPY en_banc/warehouse /app/warehouse
+COPY en_banc/sql_processing /app/sql_processing
 COPY en_banc/docker/entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

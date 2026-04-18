@@ -2,7 +2,7 @@ import pulumi
 import pulumi_aws as aws
 
 # ---------------------------------------------------------------------------
-# AWS resources (LocalStack)
+# S3 buckets (via MinIO, S3-compatible)
 # ---------------------------------------------------------------------------
 
 s3_buckets = ["scrapers", "emails"]

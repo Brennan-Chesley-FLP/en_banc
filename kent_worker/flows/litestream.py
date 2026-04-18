@@ -208,9 +208,9 @@ class LitestreamReplicator:
         logger.info(
             "Stopping litestream replication (PID %d)", self._process.pid
         )
-        self._process.send_signal(signal.SIGINT)
+        self._process.send_signal(signal.SIGTERM)
         try:
-            self._process.wait(timeout=30)
+            self._process.wait(timeout=120)
         except subprocess.TimeoutExpired:
             logger.warning("Litestream did not stop gracefully, killing")
             self._process.kill()

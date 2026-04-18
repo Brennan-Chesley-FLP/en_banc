@@ -1,4 +1,3 @@
-import os
 import json
 
 import pulumi
@@ -17,7 +16,7 @@ docker_pool = prefect.WorkPool(
 scraper_pool = prefect.WorkPool(
     "scraper-pool",
     name="scraper-pool",
-    type="process",
+    type="in-process",
 )
 
 sync_pool = prefect.WorkPool(
@@ -27,24 +26,19 @@ sync_pool = prefect.WorkPool(
 )
 
 # ---------------------------------------------------------------------------
-# Prefect deployments
+# Deployments
 # ---------------------------------------------------------------------------
-
-ts_authkey = os.environ.get("TS_AUTHKEY", "")
 
 docker_job_variables = json.dumps({
     "image": "localhost/en-banc:latest",
     "image_pull_policy": "Never",
     "network_mode": "host",
     "env": {
-        "PREFECT_API_URL": "http://localhost:4200/api",
-        "TS_AUTHKEY": ts_authkey,
-    },
-    "container_create_kwargs": {
-        "cap_add": ["NET_ADMIN", "NET_RAW"],
-        "devices": ["/dev/net/tun:/dev/net/tun"],
+        "PREFECT_API_URL": "http://localhost:7100/api",
     },
 })
+
+# -- scraper-run (kent worker, in-process) --
 
 scraper_run_flow = prefect.Flow(
     "scraper-run-flow",
@@ -102,6 +96,28 @@ scraper_run_deployment = prefect.Deployment(
     opts=pulumi.ResourceOptions(depends_on=[scraper_pool]),
 )
 
+# -- warehouse-load (docker pool) --
+
+warehouse_load_flow = prefect.Flow(
+    "warehouse-load-flow",
+    name="warehouse-load",
+    tags=["en-banc", "warehouse"],
+)
+
+warehouse_load_deployment = prefect.Deployment(
+    "warehouse-load",
+    name="warehouse-load",
+    flow_id=warehouse_load_flow.id,
+    entrypoint="flows/warehouse_load.py:warehouse_load_flow",
+    path="/app",
+    work_pool_name="docker-pool",
+    job_variables=docker_job_variables,
+    tags=["en-banc", "warehouse"],
+    opts=pulumi.ResourceOptions(depends_on=[docker_pool]),
+)
+
+# -- sqlmesh-transforms (docker pool) --
+
 sqlmesh_flow = prefect.Flow(
     "sqlmesh-transforms-flow",
     name="sqlmesh-transforms",
@@ -119,6 +135,8 @@ sqlmesh_deployment = prefect.Deployment(
     tags=["en-banc", "transforms"],
     opts=pulumi.ResourceOptions(depends_on=[docker_pool]),
 )
+
+# -- follow-up (docker pool) --
 
 follow_up_flow = prefect.Flow(
     "follow-up-flow",
@@ -138,6 +156,8 @@ follow_up_deployment = prefect.Deployment(
     opts=pulumi.ResourceOptions(depends_on=[docker_pool]),
 )
 
+# -- sync-warehouse (sync pool, runs inside CL Django) --
+
 sync_warehouse_flow = prefect.Flow(
     "sync-warehouse-flow",
     name="sync-warehouse",
@@ -153,4 +173,120 @@ sync_warehouse_deployment = prefect.Deployment(
     work_pool_name="sync-pool",
     tags=["en-banc", "sync"],
     opts=pulumi.ResourceOptions(depends_on=[sync_pool]),
+)
+
+# ---------------------------------------------------------------------------
+# Concurrency limits (one per scraper schema, limit=1)
+# ---------------------------------------------------------------------------
+
+for schema in ["ala_publicportal", "conn_jud_ct_gov"]:
+    prefect.GlobalConcurrencyLimit(
+        f"scraper-{schema}",
+        name=f"scraper:{schema}",
+        limit=1,
+        active=True,
+    )
+
+# ---------------------------------------------------------------------------
+# Automations — wire the event-driven pipeline
+# ---------------------------------------------------------------------------
+
+# scrape.uploaded → warehouse-load (with event payload as parameters)
+prefect.Automation(
+    "scrape-uploaded-trigger",
+    name="scrape-uploaded-trigger",
+    enabled=True,
+    trigger=prefect.AutomationTriggerArgs(
+        event=prefect.AutomationTriggerEventArgs(
+            posture="Reactive",
+            expects=["scrape.uploaded"],
+            threshold=1,
+            within=0,
+        ),
+    ),
+    actions=[
+        prefect.AutomationActionArgs(
+            type="run-deployment",
+            source="selected",
+            deployment_id=warehouse_load_deployment.id,
+            parameters=json.dumps({
+                "s3_uri": "{{ event.payload.s3_uri }}",
+                "scraper_schema": "{{ event.payload.scraper_schema }}",
+            }),
+        ),
+    ],
+)
+
+# scrape.completed (Alabama) → sqlmesh-transforms
+prefect.Automation(
+    "scrape-completed-ala",
+    name="scrape-completed-ala-publicportal",
+    enabled=True,
+    trigger=prefect.AutomationTriggerArgs(
+        event=prefect.AutomationTriggerEventArgs(
+            posture="Reactive",
+            match=json.dumps(
+                {"prefect.resource.id": "scraper.ala_publicportal"}
+            ),
+            expects=["scrape.completed"],
+            threshold=1,
+            within=0,
+        ),
+    ),
+    actions=[
+        prefect.AutomationActionArgs(
+            type="run-deployment",
+            source="selected",
+            deployment_id=sqlmesh_deployment.id,
+            parameters=json.dumps({"scraper_schema": "ala_publicportal"}),
+        ),
+    ],
+)
+
+# scrape.completed (Connecticut) → sqlmesh-transforms
+prefect.Automation(
+    "scrape-completed-conn",
+    name="scrape-completed-conn-jud-ct-gov",
+    enabled=True,
+    trigger=prefect.AutomationTriggerArgs(
+        event=prefect.AutomationTriggerEventArgs(
+            posture="Reactive",
+            match=json.dumps(
+                {"prefect.resource.id": "scraper.conn_jud_ct_gov"}
+            ),
+            expects=["scrape.completed"],
+            threshold=1,
+            within=0,
+        ),
+    ),
+    actions=[
+        prefect.AutomationActionArgs(
+            type="run-deployment",
+            source="selected",
+            deployment_id=sqlmesh_deployment.id,
+            parameters=json.dumps({"scraper_schema": "conn_jud_ct_gov"}),
+        ),
+    ],
+)
+
+# sync.prepared → sync-warehouse
+prefect.Automation(
+    "sync-prepared-trigger",
+    name="sync-prepared-trigger",
+    enabled=True,
+    trigger=prefect.AutomationTriggerArgs(
+        event=prefect.AutomationTriggerEventArgs(
+            posture="Reactive",
+            expects=["sync.prepared"],
+            threshold=1,
+            within=0,
+        ),
+    ),
+    actions=[
+        prefect.AutomationActionArgs(
+            type="run-deployment",
+            source="selected",
+            deployment_id=sync_warehouse_deployment.id,
+        ),
+    ],
 )

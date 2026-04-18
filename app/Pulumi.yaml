@@ -9,13 +9,11 @@ config:
   pulumi:tags:
     value:
       pulumi:template: python
-  aws:region: us-west-2
+  aws:region: us-east-1
   aws:endpoints:
     - s3: http://mini.bopp-justice.ts.net:7110
-      sns: http://mini.bopp-justice.ts.net:7110
-      sqs: http://mini.bopp-justice.ts.net:7110
-  aws:accessKey: test
-  aws:secretKey: test
+  aws:accessKey: minioadmin
+  aws:secretKey: minioadmin
   aws:s3UsePathStyle: true
   aws:skipCredentialsValidation: true
   aws:skipRequestingAccountId: true

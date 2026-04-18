@@ -187,7 +187,12 @@ if __name__ == "__main__":
     import asyncio
 
     async def main() -> None:
-        worker = InProcessWorker(work_pool_name="scraper-pool")
+        limit_env = os.environ.get("WORKER_CONCURRENCY_LIMIT")
+        limit = int(limit_env) if limit_env else None
+        worker = InProcessWorker(
+            work_pool_name="scraper-pool",
+            limit=limit,
+        )
         await worker.start()
 
     asyncio.run(main())

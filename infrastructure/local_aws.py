@@ -1,4 +1,4 @@
-"""LocalStack on remote server for local AWS services."""
+"""MinIO on remote server for S3-compatible object storage."""
 
 import pulumi
 import pulumi_docker as docker
@@ -13,43 +13,45 @@ def create_remote_provider() -> docker.Provider:
     return docker.Provider("remote-docker", host=remote_host)
 
 
-def create_localstack(remote_provider: docker.Provider):
+def create_minio(remote_provider: docker.Provider):
     opts = pulumi.ResourceOptions(provider=remote_provider)
 
     image = docker.RemoteImage(
-        "localstack-image",
-        name="localstack/localstack:community-archive",
+        "minio-image",
+        name="minio/minio",
         keep_locally=True,
         opts=opts,
     )
 
     container = docker.Container(
-        "localstack",
+        "minio",
         image=image.image_id,
-        name="eb-localstack",
+        name="eb-minio",
         restart="unless-stopped",
+        command=["server", "/data", "--console-address", ":9001"],
         ports=[
             docker.ContainerPortArgs(
-                internal=4566,
+                internal=9000,
                 external=7110,
+            ),
+            docker.ContainerPortArgs(
+                internal=9001,
+                external=7111,
             ),
         ],
         envs=[
-            "SERVICES=s3,sns,sqs,secretsmanager,lambda",
-            "PERSISTENCE=1",
+            "MINIO_ROOT_USER=minioadmin",
+            "MINIO_ROOT_PASSWORD=minioadmin",
         ],
         volumes=[
             docker.ContainerVolumeArgs(
-                host_path="/Volumes/Public/freelaw/localstack",
-                container_path="/var/lib/localstack",
-            ),
-            docker.ContainerVolumeArgs(
-                host_path="/run/user/501/podman/podman.sock",
-                container_path="/var/run/docker.sock",
+                host_path="/Volumes/Public/freelaw/minio",
+                container_path="/data",
             ),
         ],
         opts=pulumi.ResourceOptions(provider=remote_provider, ignore_changes=["image"]),
     )
 
-    pulumi.export("localstack_url", "http://mini.bopp-justice.ts.net:7110")
-    pulumi.export("localstack_container_name", container.name)
+    pulumi.export("minio_api_url", "http://mini.bopp-justice.ts.net:7110")
+    pulumi.export("minio_console_url", "http://mini.bopp-justice.ts.net:7111")
+    pulumi.export("minio_container_name", container.name)

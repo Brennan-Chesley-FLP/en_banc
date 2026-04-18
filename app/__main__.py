@@ -26,8 +26,8 @@ for name, bucket in buckets.items():
 # ---------------------------------------------------------------------------
 
 aws_creds = {
-    "aws_access_key_id": "test",
-    "aws_secret_access_key": "test",
+    "aws_access_key_id": "minioadmin",
+    "aws_secret_access_key": "minioadmin",
     "region_name": "us-east-1",
 }
 

@@ -92,7 +92,7 @@ def create_courtlistener(network: docker.Network):
         image=selenium_image.image_id,
         name="eb-selenium",
         ports=[
-            docker.ContainerPortArgs(internal=5900, external=5900),
+            docker.ContainerPortArgs(internal=5900, external=7130),
         ],
         envs=["JAVA_OPTS=-Dwebdriver.chrome.whitelistedIps="],
         volumes=[
@@ -198,7 +198,7 @@ def create_courtlistener(network: docker.Network):
             "ES_JAVA_OPTS=-Xms512m -Xmx512m",
         ],
         ports=[
-            docker.ContainerPortArgs(internal=9200, external=9200),
+            docker.ContainerPortArgs(internal=9200, external=7140),
         ],
         volumes=[
             docker.ContainerVolumeArgs(
@@ -333,7 +333,7 @@ def create_courtlistener(network: docker.Network):
         user="root",
         envs=cl_envs,
         ports=[
-            docker.ContainerPortArgs(internal=8000, external=8000),
+            docker.ContainerPortArgs(internal=8000, external=7150),
         ],
         volumes=[
             docker.ContainerVolumeArgs(
@@ -355,4 +355,32 @@ def create_courtlistener(network: docker.Network):
         ),
     )
 
-    pulumi.export("courtlistener_url", "http://localhost:8000")
+    # -----------------------------------------------------------------------
+    # Sync worker — runs `manage.py sync_worker` inside the CL Django image
+    # -----------------------------------------------------------------------
+    docker.Container(
+        "eb-sync-worker",
+        image="eb-django:dev",
+        name="eb-sync-worker",
+        entrypoints=["python"],
+        command=["manage.py", "sync_worker"],
+        working_dir="/opt/courtlistener",
+        envs=cl_envs,
+        restart="unless-stopped",
+        volumes=[
+            docker.ContainerVolumeArgs(
+                host_path=cl_base, container_path="/opt/courtlistener",
+            ),
+        ],
+        networks_advanced=[
+            docker.ContainerNetworksAdvancedArgs(
+                name=network.name, aliases=["eb-sync-worker"],
+            )
+        ],
+        opts=pulumi.ResourceOptions(
+            depends_on=[eb_redis, eb_es, eb_doctor, eb_disclosures],
+            ignore_changes=["image"],
+        ),
+    )
+
+    pulumi.export("courtlistener_url", "http://localhost:7150")

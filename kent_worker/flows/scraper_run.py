@@ -6,11 +6,15 @@ Orchestrates scraper execution through S3 upload. After uploading, emits a
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import os
+from collections import defaultdict
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+import aiosqlite
 import prefect.runtime
 from prefect import flow, get_run_logger, task
 from prefect.artifacts import create_markdown_artifact
@@ -21,6 +25,69 @@ from prefect_aws.s3 import S3Bucket
 from flows.s3_archive import S3_BLOCK_NAME, make_s3_archive_callback
 
 logger = logging.getLogger(__name__)
+
+PROGRESS_INTERVAL = 300  # 5 minutes
+STATUS_COLUMNS = ("pending", "in_progress", "completed", "failed")
+
+
+async def _log_progress(db_path: Path, stop: asyncio.Event) -> None:
+    """Periodically log a status table of requests by continuation."""
+    log = get_run_logger()
+
+    while not stop.is_set():
+        try:
+            await asyncio.wait_for(stop.wait(), timeout=PROGRESS_INTERVAL)
+            break  # stop was set
+        except asyncio.TimeoutError:
+            pass  # interval elapsed, log progress
+
+        try:
+            async with aiosqlite.connect(db_path) as conn:
+                cursor = await conn.execute(
+                    "SELECT continuation, status, COUNT(*) "
+                    "FROM requests GROUP BY continuation, status"
+                )
+                rows = await cursor.fetchall()
+        except Exception:
+            log.warning("Progress query failed", exc_info=True)
+            continue
+
+        if not rows:
+            continue
+
+        # Build {continuation: {status: count}}
+        table: dict[str, dict[str, int]] = defaultdict(
+            lambda: {s: 0 for s in STATUS_COLUMNS}
+        )
+        for continuation, status, count in rows:
+            table[continuation][status] = count
+
+        # Format table
+        continuations = sorted(table)
+        col_w = max(
+            len(max(STATUS_COLUMNS, key=len)),
+            max(
+                len(str(table[c][s]))
+                for c in continuations
+                for s in STATUS_COLUMNS
+            ),
+        )
+        cont_w = max(len("continuation"), max(len(c) for c in continuations))
+
+        now = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
+        header = f"{'[' + now + ']':<{cont_w}}  " + "  ".join(
+            f"{s:>{col_w}}" for s in STATUS_COLUMNS
+        )
+        sep = "-" * len(header)
+        lines = [sep, header, sep]
+        for c in continuations:
+            vals = "  ".join(
+                f"{table[c][s]:>{col_w}}" for s in STATUS_COLUMNS
+            )
+            lines.append(f"{c:<{cont_w}}  {vals}")
+        lines.append(sep)
+
+        log.info("Scraper progress:\n%s", "\n".join(lines))
 
 
 # ---------------------------------------------------------------------------
@@ -78,7 +145,15 @@ async def run_scraper_task(
     ) as driver:
         driver.on_archive = archive_callback
         log.info("Starting scraper: %s", scraper_path)
-        await driver.run(setup_signal_handlers=False)
+
+        stop_progress = asyncio.Event()
+        progress_task = asyncio.create_task(_log_progress(db_path, stop_progress))
+        try:
+            await driver.run(setup_signal_handlers=False)
+        finally:
+            stop_progress.set()
+            await progress_task
+
         log.info("Scraper run completed")
 
     return db_path
@@ -197,7 +272,7 @@ async def upload_db(db_path: Path, scraper_schema: str) -> str:
     run_name = prefect.runtime.flow_run.name
     s3_key = f"scraper_runs/{scraper_schema}/{run_name}.db"
 
-    s3_bucket.upload_from_path(str(db_path), to_path=s3_key)
+    await s3_bucket.aupload_from_path(str(db_path), to_path=s3_key)
 
     bucket_name = s3_bucket.bucket_name
     s3_uri = f"s3://{bucket_name}/{s3_key}"

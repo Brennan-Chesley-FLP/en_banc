@@ -24,12 +24,7 @@ def create_kent_worker(remote_provider: docker.Provider):
             f"PREFECT_API_URL={config.get('prefect-api-url') or 'http://brennans-macbook-pro.bopp-justice.ts.net:7100/api'}",
             "SCRAPER_RUNS_DIR=/app/runs",
             "PREFECT_LOGGING_EXTRA_LOGGERS=kent,kent.driver,kent.driver.persistent_driver,juriscraper",
-        ],
-        volumes=[
-            docker.ContainerVolumeArgs(
-                host_path=config.get("kent-runs-dir") or "/Users/bc/kent_worker/runs",
-                container_path="/app/runs",
-            ),
+            f"WORKER_CONCURRENCY_LIMIT={config.get('kent-worker-limit') or '4'}",
         ],
         opts=pulumi.ResourceOptions(
             provider=remote_provider,
