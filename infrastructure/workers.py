@@ -34,15 +34,6 @@ def create_kent_worker(remote_provider: docker.Provider):
         image="en-banc-kent-worker:latest",
         name="en-banc-kent-worker",
         restart="unless-stopped",
-        capabilities=docker.ContainerCapabilitiesArgs(
-            adds=["NET_ADMIN", "NET_RAW"],
-        ),
-        devices=[
-            docker.ContainerDeviceArgs(
-                host_path="/dev/net/tun",
-                container_path="/dev/net/tun",
-            ),
-        ],
         envs=env_vars,
         opts=pulumi.ResourceOptions(
             provider=remote_provider,

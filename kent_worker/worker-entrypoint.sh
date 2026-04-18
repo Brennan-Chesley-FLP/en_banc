@@ -4,7 +4,7 @@ set -e
 # Start Tailscale if auth key is provided
 if [ -n "$TS_AUTHKEY" ]; then
     echo "Starting Tailscale..."
-    tailscaled --state=/var/lib/tailscale/tailscaled.state &
+    tailscaled --tun=userspace-networking --state=/var/lib/tailscale/tailscaled.state &
     TSPID=$!
 
     # Wait for tailscaled socket

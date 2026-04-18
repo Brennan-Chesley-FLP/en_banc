@@ -2,7 +2,7 @@
 set -e
 
 if [ -n "$TS_AUTHKEY" ]; then
-    tailscaled --state=/var/lib/tailscale/tailscaled.state &
+    tailscaled --tun=userspace-networking --state=/var/lib/tailscale/tailscaled.state &
 
     # Wait for tailscaled to be ready
     for i in $(seq 1 30); do
