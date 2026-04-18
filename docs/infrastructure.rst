@@ -88,9 +88,24 @@ All local services are exposed in the **7100** range:
    * - PostgreSQL (prefect)
      - 7104
      - localhost
-   * - LocalStack
+   * - MinIO API (S3)
      - 7110
      - mini.bopp-justice.ts.net
+   * - MinIO Console
+     - 7111
+     - mini.bopp-justice.ts.net
+   * - pgAdmin
+     - 7120
+     - localhost
+   * - CourtListener Selenium VNC
+     - 7130
+     - localhost
+   * - CourtListener Elasticsearch
+     - 7140
+     - localhost
+   * - CourtListener Django
+     - 7150
+     - localhost
 
 
 Remote Docker Host

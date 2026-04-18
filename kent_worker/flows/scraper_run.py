@@ -26,20 +26,24 @@ from flows.s3_archive import S3_BLOCK_NAME, make_s3_archive_callback
 
 logger = logging.getLogger(__name__)
 
-PROGRESS_INTERVAL = 300  # 5 minutes
+PROGRESS_INITIAL_DELAY = 30  # first table after 30 seconds
+PROGRESS_INTERVAL = 300  # then every 5 minutes
 STATUS_COLUMNS = ("pending", "in_progress", "completed", "failed")
 
 
-async def _log_progress(db_path: Path, stop: asyncio.Event) -> None:
+async def _log_progress(
+    db_path: Path, stop: asyncio.Event, log: logging.Logger
+) -> None:
     """Periodically log a status table of requests by continuation."""
-    log = get_run_logger()
+    delay = PROGRESS_INITIAL_DELAY
 
     while not stop.is_set():
         try:
-            await asyncio.wait_for(stop.wait(), timeout=PROGRESS_INTERVAL)
+            await asyncio.wait_for(stop.wait(), timeout=delay)
             break  # stop was set
         except asyncio.TimeoutError:
             pass  # interval elapsed, log progress
+        delay = PROGRESS_INTERVAL  # subsequent waits use the full interval
 
         try:
             async with aiosqlite.connect(db_path) as conn:
@@ -147,7 +151,9 @@ async def run_scraper_task(
         log.info("Starting scraper: %s", scraper_path)
 
         stop_progress = asyncio.Event()
-        progress_task = asyncio.create_task(_log_progress(db_path, stop_progress))
+        progress_task = asyncio.create_task(
+            _log_progress(db_path, stop_progress, log)
+        )
         try:
             await driver.run(setup_signal_handlers=False)
         finally:

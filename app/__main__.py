@@ -25,10 +25,18 @@ for name, bucket in buckets.items():
 # Prefect blocks
 # ---------------------------------------------------------------------------
 
+config = pulumi.Config()
+minio_endpoint = (
+    config.get("minio-endpoint") or "http://mini.bopp-justice.ts.net:7110"
+)
+
 aws_creds = {
     "aws_access_key_id": "minioadmin",
     "aws_secret_access_key": "minioadmin",
     "region_name": "us-east-1",
+    "aws_client_parameters": {
+        "endpoint_url": minio_endpoint,
+    },
 }
 
 # Chain all blocks sequentially to avoid Prefect server concurrency bugs
@@ -69,7 +77,6 @@ for name, bucket in buckets.items():
 # Database blocks (SQLAlchemy connectors)
 # ---------------------------------------------------------------------------
 
-config = pulumi.Config()
 pg_password = config.get("pg-password") or "postgres"
 
 for db_name, db_config in DATABASES.items():

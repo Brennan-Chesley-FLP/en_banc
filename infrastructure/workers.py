@@ -25,6 +25,9 @@ def create_kent_worker(remote_provider: docker.Provider):
             "SCRAPER_RUNS_DIR=/app/runs",
             "PREFECT_LOGGING_EXTRA_LOGGERS=kent,kent.driver,kent.driver.persistent_driver,juriscraper",
             f"WORKER_CONCURRENCY_LIMIT={config.get('kent-worker-limit') or '4'}",
+            f"LITESTREAM_S3_ENDPOINT={config.get('minio-endpoint') or 'http://mini.bopp-justice.ts.net:7110'}",
+            "AWS_ACCESS_KEY_ID=minioadmin",
+            "AWS_SECRET_ACCESS_KEY=minioadmin",
         ],
         opts=pulumi.ResourceOptions(
             provider=remote_provider,
