@@ -1,0 +1,14 @@
+.venv
+.git
+__pycache__
+**/__pycache__
+*.pyc
+.localstack
+localstack
+localstack_data
+runs
+*.db
+.DS_Store
+.pytest_cache
+.ruff_cache
+.mypy_cache

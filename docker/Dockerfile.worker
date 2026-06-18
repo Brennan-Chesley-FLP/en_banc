@@ -1,0 +1,48 @@
+# Worker image: runs JKent scrapes via the in-process Prefect worker.
+#
+# Build context is the en_banc repo root; juriscraper and jkent are pulled in
+# as named build contexts (they live as sibling repos), e.g.:
+#
+#   docker buildx build \
+#       --build-context juriscraper=../juriscraper \
+#       --build-context jkent=../jkent \
+#       -f docker/Dockerfile.worker -t en-banc-worker ..
+#
+# docker-compose.yml wires these up via build.additional_contexts.
+FROM prefecthq/prefect:3-python3.13
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl libpq-dev \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --no-cache-dir uv
+
+# JKent and juriscraper are editable siblings; copy both so juriscraper's
+# unconstrained `jkent` dependency resolves to the local source tree.
+COPY --from=jkent . /jkent
+COPY --from=juriscraper . /juriscraper
+
+# Install jkent[operational] (DB engine + HTTP/browser transports), then
+# juriscraper (its `jkent` dep is satisfied by the package just installed),
+# plus the Prefect/S3 runtime deps the worker and flows need.
+RUN uv pip install --system --no-cache \
+    "/jkent[operational]" \
+    /juriscraper \
+    prefect-aws \
+    boto3 \
+    psycopg2-binary
+
+# Browser engine for Firefox-alike (FF_ALIKE) scrapers. Heavy layer — drop
+# if you only run plain-HTTP scrapers.
+RUN playwright install-deps firefox \
+    && python -m camoufox fetch
+
+# Application code (flows + the in-process worker) ships in the image; the
+# worker loads flows with ignore_storage=True. Build context is the en_banc
+# repo root, so copy its contents directly (see .dockerignore for exclusions).
+COPY . /app
+WORKDIR /app
+RUN chmod +x /app/docker/worker-entrypoint.sh \
+    && cp /app/docker/worker-entrypoint.sh /worker-entrypoint.sh
+
+ENTRYPOINT ["/worker-entrypoint.sh"]

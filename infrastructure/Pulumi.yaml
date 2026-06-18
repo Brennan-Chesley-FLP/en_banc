@@ -4,14 +4,13 @@ runtime:
   options:
     toolchain: uv
 config:
-  aws:region: us-east-1
-  aws:endpoints:
-    - s3: http://localhost:4566
-      sns: http://localhost:4566
-      sqs: http://localhost:4566
-  aws:accessKey: test
-  aws:secretKey: test
-  aws:s3UsePathStyle: true
-  aws:skipCredentialsValidation: true
-  aws:skipRequestingAccountId: true
+  # Prefect API the pulumi-prefect provider talks to.
   prefect:endpoint: http://localhost:4200/api
+  # SeaweedFS S3 gateway. Override per-stack; secret key should be set with
+  #   pulumi config set --secret en-banc:s3SecretKey <value>
+  en-banc:s3Endpoint: http://mini.bopp-justice.ts.net:8333
+  en-banc:s3AccessKey: en-banc
+  en-banc:s3SecretKey: en-banc-secret
+  # Max simultaneous runs per JKent scraper (one global limit is created per
+  # discovered scraper).
+  en-banc:scraperConcurrency: "1"

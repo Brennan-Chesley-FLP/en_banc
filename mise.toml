@@ -1,26 +1,25 @@
 [env]
 PREFECT_API_URL = "http://localhost:4200/api"
-LOCALSTACK_DATA_DIR = "./localstack"
+# SeaweedFS S3 gateway (external — runs on mini). Mirrors the Pulumi
+# en-banc:s3Endpoint default; used by local tooling/boto3 if needed.
+EN_BANC_S3_ENDPOINT = "http://mini.bopp-justice.ts.net:8333"
 DOCKER_HOST="unix:///var/folders/b4/0n6kw4ws2gb41m3324c37q540000gn/T/podman/podman-machine-default-api.sock"
 DOCKER_HOST_SOCKET="/var/folders/b4/0n6kw4ws2gb41m3324c37q540000gn/T/podman/podman-machine-default-api.sock"
-# TS_AUTHKEY = "tskey-auth-..."
 
 [tasks.up]
-description = "Start all services with Podman"
-run = "cd docker && podman compose up -d"
-
-[tasks.deploy]
-description = "Deploy Prefect flows"
-depends = ["up"]
-run = """
-uv run prefect work-pool create docker-pool --type docker 2>/dev/null || true
-uv run prefect deploy --all
-"""
+description = "Start Postgres, Prefect server, and the scraper worker"
+# Uses BuildKit additional_contexts to pull in the juriscraper/jkent sibling
+# repos. Requires `docker compose` (Compose v2); on a podman-only host build
+# the worker image separately (see docker/Dockerfile.worker header).
+run = "cd docker && docker compose up -d --build"
 
 [tasks.infra]
-description = "Provision LocalStack resources and Prefect blocks/deployments with Pulumi"
+description = "Provision SeaweedFS buckets and Prefect blocks/deployment with Pulumi"
 depends = ["up"]
 run = """
+# Register the prefect-aws block types so Pulumi can create s3-bucket /
+# aws-credentials block documents against them.
+uv run prefect block register -m prefect_aws
 cd infrastructure
 pulumi package add terraform-provider prefecthq/prefect 2>/dev/null || true
 pulumi stack init dev 2>/dev/null || true

@@ -18,8 +18,7 @@ services:
     image: prefecthq/prefect:3-python3.13
     restart: unless-stopped
     command: >
-      bash -c "pip install prefect-aws &&
-               prefect server start --host 0.0.0.0"
+      bash -c "pip install prefect-aws && prefect server start --host 0.0.0.0"
     ports:
       - "4200:4200"
     environment:
@@ -30,17 +29,28 @@ services:
       postgres:
         condition: service_healthy
 
-  # Worker runs on host: mise x -- uv run prefect worker start --pool docker-pool --type docker
-
-  localstack:
-    image: localstack/localstack
+  worker:
+    build:
+      # Context is the en_banc repo root; juriscraper and jkent are sibling
+      # repos pulled in as named build contexts (BuildKit / Compose v2).
+      context: ..
+      dockerfile: docker/Dockerfile.worker
+      additional_contexts:
+        juriscraper: ../../juriscraper
+        jkent: ../../jkent
+    image: en-banc-worker
     restart: unless-stopped
-    ports:
-      - "4566:4566"
     environment:
-      SERVICES: s3,sns,sqs
+      PREFECT_API_URL: http://prefect-server:4200/api
+      SCRAPER_RUNS_DIR: /app/runs
+      # Max JKent runs this worker executes at once; start another worker for
+      # more capacity. Override on the host: WORKER_CONCURRENCY=8 docker compose up
+      WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-4}
     volumes:
-      - ${LOCALSTACK_DATA_DIR:-./.localstack}:/var/lib/localstack
+      - worker_runs:/app/runs
+    depends_on:
+      - prefect-server
 
 volumes:
   postgres_data:
+  worker_runs:
