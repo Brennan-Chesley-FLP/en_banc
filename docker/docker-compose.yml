@@ -30,14 +30,10 @@ services:
         condition: service_healthy
 
   worker:
-    build:
-      # Context is the en_banc repo root; juriscraper and jkent are sibling
-      # repos pulled in as named build contexts (BuildKit / Compose v2).
-      context: ..
-      dockerfile: docker/Dockerfile.worker
-      additional_contexts:
-        juriscraper: ../../juriscraper
-        jkent: ../../jkent
+    # Built out-of-band — this image needs juriscraper/jkent as additional
+    # build contexts, which compose builders (esp. podman -> classic
+    # docker-compose) don't reliably support. Build it first with
+    # `mise run build-worker` (see docker/Dockerfile.worker for the command).
     image: en-banc-worker
     restart: unless-stopped
     environment:

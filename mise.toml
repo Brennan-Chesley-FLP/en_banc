@@ -9,10 +9,13 @@ DOCKER_HOST_SOCKET="/var/folders/b4/0n6kw4ws2gb41m3324c37q540000gn/T/podman/podm
 [tasks.build-worker]
 description = "Build the JKent scraper worker image (podman, with sibling contexts)"
 dir = "{{ config_root }}"
+# Extra args are forwarded to `podman build`, e.g. enable browser scrapers:
+#   mise run build-worker -- --build-arg INSTALL_BROWSERS=1
 run = """
 podman build \
   --build-context juriscraper=../juriscraper \
   --build-context jkent=../jkent \
+  "$@" \
   -f docker/Dockerfile.worker -t en-banc-worker .
 """
 

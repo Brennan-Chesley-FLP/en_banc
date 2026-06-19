@@ -11,7 +11,16 @@
 #       -f docker/Dockerfile.worker -t en-banc-worker .
 #
 # (docker buildx uses the same --build-context flags.)
+#
+# Browser support (camoufox/Firefox, for FF_ALIKE scrapers) is off by default
+# to keep the image lean. Opt in with --build-arg INSTALL_BROWSERS=1:
+#
+#   mise run build-worker -- --build-arg INSTALL_BROWSERS=1
 FROM prefecthq/prefect:3-python3.13
+
+# 0 = plain-HTTP scrapers only (lean); 1 = also install the Firefox-alike
+# browser engine for FF_ALIKE scrapers (heavy: pulls a full browser).
+ARG INSTALL_BROWSERS=0
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl libpq-dev \
@@ -34,10 +43,13 @@ RUN uv pip install --system --no-cache \
     boto3 \
     psycopg2-binary
 
-# Browser engine for Firefox-alike (FF_ALIKE) scrapers. Heavy layer — drop
-# if you only run plain-HTTP scrapers.
-RUN playwright install-deps firefox \
-    && python -m camoufox fetch
+# Browser engine for Firefox-alike (FF_ALIKE) scrapers. Skipped unless
+# INSTALL_BROWSERS=1 — it's a heavy layer (full browser download).
+RUN if [ "$INSTALL_BROWSERS" = "1" ]; then \
+        playwright install-deps firefox && python -m camoufox fetch; \
+    else \
+        echo "Skipping browser install (INSTALL_BROWSERS=$INSTALL_BROWSERS)"; \
+    fi
 
 # Application code (flows + the in-process worker) ships in the image; the
 # worker loads flows with ignore_storage=True. Build context is the en_banc
