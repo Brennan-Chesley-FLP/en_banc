@@ -6,12 +6,22 @@ EN_BANC_S3_ENDPOINT = "http://mini.bopp-justice.ts.net:8333"
 DOCKER_HOST="unix:///var/folders/b4/0n6kw4ws2gb41m3324c37q540000gn/T/podman/podman-machine-default-api.sock"
 DOCKER_HOST_SOCKET="/var/folders/b4/0n6kw4ws2gb41m3324c37q540000gn/T/podman/podman-machine-default-api.sock"
 
+[tasks.build-worker]
+description = "Build the JKent scraper worker image (podman, with sibling contexts)"
+dir = "{{ config_root }}"
+run = """
+podman build \
+  --build-context juriscraper=../juriscraper \
+  --build-context jkent=../jkent \
+  -f docker/Dockerfile.worker -t en-banc-worker .
+"""
+
 [tasks.up]
 description = "Start Postgres, Prefect server, and the scraper worker"
-# Uses BuildKit additional_contexts to pull in the juriscraper/jkent sibling
-# repos. Requires `docker compose` (Compose v2); on a podman-only host build
-# the worker image separately (see docker/Dockerfile.worker header).
-run = "cd docker && docker compose up -d --build"
+# Build the worker image first (podman compose doesn't reliably support
+# build.additional_contexts), then bring the stack up using that image.
+depends = ["build-worker"]
+run = "cd docker && podman compose up -d"
 
 [tasks.infra]
 description = "Provision SeaweedFS buckets and Prefect blocks/deployment with Pulumi"

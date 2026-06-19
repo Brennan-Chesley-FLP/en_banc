@@ -1,14 +1,16 @@
 # Worker image: runs JKent scrapes via the in-process Prefect worker.
 #
-# Build context is the en_banc repo root; juriscraper and jkent are pulled in
-# as named build contexts (they live as sibling repos), e.g.:
+# Build context is the en_banc repo root (.); juriscraper and jkent are pulled
+# in as named build contexts (they live as sibling repos). docker-compose.yml
+# wires these up via build.additional_contexts; for a manual build pass them
+# explicitly (run from the en_banc root):
 #
-#   docker buildx build \
+#   podman build \
 #       --build-context juriscraper=../juriscraper \
 #       --build-context jkent=../jkent \
-#       -f docker/Dockerfile.worker -t en-banc-worker ..
+#       -f docker/Dockerfile.worker -t en-banc-worker .
 #
-# docker-compose.yml wires these up via build.additional_contexts.
+# (docker buildx uses the same --build-context flags.)
 FROM prefecthq/prefect:3-python3.13
 
 RUN apt-get update \
