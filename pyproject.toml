@@ -17,6 +17,17 @@ dependencies = [
     "pulumi-aws>=6.0.0",
     "pulumi-local>=1.3.0",
     "pulumi-prefect",
+    # OpenTelemetry SDK + exporter + instrumentors. jkent depends only on the
+    # OTel *API* (opentelemetry-distro), emitting no-ops until en_banc configures
+    # an SDK here; see EN_BANC_OTEL.md. The instrumentors cover jkent's HTTP
+    # transport (httpx), its per-run SQLite engine (sqlalchemy), and en_banc's
+    # S3 uploads (botocore).
+    "opentelemetry-sdk",
+    "opentelemetry-exporter-otlp",
+    "opentelemetry-instrumentation-httpx",
+    "opentelemetry-instrumentation-sqlalchemy",
+    "opentelemetry-instrumentation-botocore",
+    "opentelemetry-instrumentation-asyncio",
 ]
 
 [tool.uv.sources]

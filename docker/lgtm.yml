@@ -1,0 +1,45 @@
+# Local observability backend for the scraper workers' OpenTelemetry output.
+#
+# grafana/otel-lgtm is Grafana's all-in-one dev image: an OpenTelemetry Collector
+# feeding Loki (logs), Grafana Tempo (traces), and Grafana Mimir (metrics), with
+# Grafana pre-wired to all three. It's the receiving end for the OTLP data
+# workers.telemetry emits (see EN_BANC_OTEL.md). Meant for local use only — not a
+# production deployment.
+#
+# Run it (separate from the worker stack):
+#
+#   podman compose -f docker/lgtm.yml up -d
+#
+# Then open Grafana at http://localhost:3000 (anonymous admin, no login) and
+# explore the Tempo/Mimir/Loki data sources for jkent's spans and metrics.
+#
+# Point the workers at it by enabling telemetry when you start the worker stack.
+# The workers run in a *different* compose project, so they reach this container
+# via the host gateway rather than a shared network:
+#
+#   OTEL_SDK_DISABLED=false \
+#   OTEL_EXPORTER_OTLP_ENDPOINT=http://host.containers.internal:4317 \
+#     podman compose up -d scraper-worker
+#
+# (host.containers.internal is the podman host alias; on Docker Desktop use
+# host.docker.internal. If you'd rather wire them on one network, create an
+# external network and attach both compose projects to it instead.)
+
+services:
+  lgtm:
+    image: grafana/otel-lgtm:latest
+    container_name: otel-lgtm
+    restart: unless-stopped
+    ports:
+      - "3000:3000"   # Grafana UI
+      - "4317:4317"   # OTLP/gRPC  (OTEL_EXPORTER_OTLP_ENDPOINT target)
+      - "4318:4318"   # OTLP/HTTP
+    volumes:
+      # Persist Grafana + the TSDB/trace/log stores across restarts so dashboards
+      # and captured telemetry survive `down`/`up`. Drop this to run ephemeral.
+      - lgtm_data:/data
+      - lgtm_grafana:/otel-lgtm/grafana
+
+volumes:
+  lgtm_data:
+  lgtm_grafana:

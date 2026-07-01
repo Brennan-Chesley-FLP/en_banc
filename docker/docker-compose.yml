@@ -47,6 +47,15 @@ services:
       # Max JKent runs this worker executes at once; start another worker for
       # more capacity. Override on the host: WORKER_CONCURRENCY=8 docker compose up
       WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-4}
+      # How scrapes are dispatched for concurrency isolation: runloop (default,
+      # shared event loop), thread (own thread+loop each), or process (own
+      # subprocess each). See workers.in_process.resolve_run_pool.
+      RUN_POOL: ${RUN_POOL:-runloop}
+      # OpenTelemetry: off by default (jkent's spans/metrics stay no-ops). Enable
+      # by pointing at an OTLP collector and clearing the disable flag, e.g.
+      # OTEL_SDK_DISABLED=false OTEL_EXPORTER_OTLP_ENDPOINT=http://otel:4317
+      OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-true}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
     volumes:
       - worker_runs:/app/runs
     depends_on:
@@ -68,6 +77,10 @@ services:
       # One browser scrape at a time. Not host-overridable: the single-scrape
       # constraint is the whole point of this worker.
       WORKER_CONCURRENCY: 1
+      # Isolation regime + telemetry, same knobs as the HTTP worker.
+      RUN_POOL: ${RUN_POOL:-runloop}
+      OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-true}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
     volumes:
       - browser_worker_runs:/app/runs
     depends_on:

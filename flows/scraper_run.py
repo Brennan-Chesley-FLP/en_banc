@@ -24,12 +24,45 @@ from prefect_aws.s3 import S3Bucket
 
 from flows.s3_archive import make_s3_archive_handler
 from flows.shutdown import get_shutdown_event
+from workers.telemetry import instrument_run_engine, run_baggage
 
 # Name of the Prefect S3Bucket block holding scrape DB artifacts.
 SCRAPES_S3_BLOCK_NAME = "scrapes"
 
 # How often the background stats logger reports scrape progress to the run logs.
 STATS_LOG_INTERVAL_SECONDS = 300
+
+# Per-run continuation-worker pool cap (jkent's RunBootstrapper ``max_workers``).
+# This is the number of concurrent continuation workers a *single* run may ramp
+# up to — distinct from WORKER_CONCURRENCY, which is how many runs a worker
+# executes at once. Dial MAX_CONTINUATION_WORKERS to test whether more workers
+# inside one run improves throughput (EN_BANC_OTEL.md §5). jkent caps this to 1
+# for STRICTLY_SERIAL scrapers regardless, so raising it is safe.
+DEFAULT_MAX_CONTINUATION_WORKERS = 10
+
+
+def resolve_max_continuation_workers() -> int:
+    """Return the per-run continuation-worker cap from ``MAX_CONTINUATION_WORKERS``.
+
+    Defaults to :data:`DEFAULT_MAX_CONTINUATION_WORKERS`. Both the scraper worker
+    and the browser worker run this flow and read the same env var, so one
+    setting dials the pool for whichever worker runs the scrape.
+
+    Raises:
+        ValueError: If set to a non-integer or a value below 1.
+    """
+    raw = os.environ.get(
+        "MAX_CONTINUATION_WORKERS", str(DEFAULT_MAX_CONTINUATION_WORKERS)
+    ).strip()
+    try:
+        value = int(raw)
+    except ValueError:
+        raise ValueError(
+            f"MAX_CONTINUATION_WORKERS must be an integer, got {raw!r}"
+        ) from None
+    if value < 1:
+        raise ValueError(f"MAX_CONTINUATION_WORKERS must be >= 1, got {value}")
+    return value
 
 
 async def _log_stats_periodically(
@@ -225,46 +258,60 @@ async def run_scraper_task(
         prefix=f"{scraper_schema}/"
     )
 
-    log.info("Commencing scrape: %s", scraper_path)
+    max_workers = resolve_max_continuation_workers()
+    log.info(
+        "Commencing scrape: %s (max_continuation_workers=%d)",
+        scraper_path, max_workers,
+    )
     async with RunBootstrapper(
         scraper,
         db_path=db_path,
         seed_params=seed_params,
         archive_handler=archive_handler,
         resume=True,
+        max_workers=max_workers,
         setup_signal_handlers=False,
     ) as run:
+        # Bind the SQLAlchemy instrumentor to this run's per-run engine so its DB
+        # spans nest under jkent's request spans (EN_BANC_OTEL.md §2). No-op when
+        # telemetry is disabled.
+        instrument_run_engine(run)
+
         # Race the scrape against the shutdown signal. JKent's signal handlers
         # no-op off the main thread (the worker runs flows off-main-thread), so
         # we drive run.stop() ourselves when the process is asked to shut down.
         shutdown = get_shutdown_event()
-        scrape = asyncio.ensure_future(run.run())
-        drain_signal = asyncio.ensure_future(shutdown.wait())
-        # Report progress to the logs every few minutes while the scrape runs.
-        # Cancelled in the finally so it never outlives the scrape.
-        stats_logger = asyncio.ensure_future(_log_stats_periodically(run, log))
-        try:
-            await asyncio.wait(
-                {scrape, drain_signal}, return_when=asyncio.FIRST_COMPLETED
-            )
+        # Attach the flow-run identity as OTel baggage *before* scheduling the run
+        # so its context snapshot carries it; jkent stamps `flow_run_id` on its
+        # spans/metrics for cross-run correlation (§3). No-op when disabled.
+        with run_baggage(str(prefect.runtime.flow_run.id), scraper_schema):
+            scrape = asyncio.ensure_future(run.run())
+            drain_signal = asyncio.ensure_future(shutdown.wait())
+            # Report progress to the logs every few minutes while the scrape runs.
+            # Cancelled in the finally so it never outlives the scrape.
+            stats_logger = asyncio.ensure_future(_log_stats_periodically(run, log))
+            try:
+                await asyncio.wait(
+                    {scrape, drain_signal}, return_when=asyncio.FIRST_COMPLETED
+                )
 
-            if not scrape.done():
-                # Shutdown won the race: drain cooperatively. run.stop() lets the
-                # in-flight request finish, then run.run() returns normally with
-                # the run finalized as "interrupted" and the DB left resumable.
-                log.warning("Shutdown requested; draining scrape for resume: %s", db_path)
-                run.stop()
+                if not scrape.done():
+                    # Shutdown won the race: drain cooperatively. run.stop() lets the
+                    # in-flight request finish, then run.run() returns normally with
+                    # the run finalized as "interrupted" and the DB left resumable.
+                    log.warning("Shutdown requested; draining scrape for resume: %s", db_path)
+                    run.stop()
+                    await scrape
+                    log.warning("Scrape drained (interrupted); DB preserved: %s", db_path)
+                    return None
+
+                drain_signal.cancel()
+                # Surface any scrape error (or confirm clean completion).
                 await scrape
-                log.warning("Scrape drained (interrupted); DB preserved: %s", db_path)
-                return None
-
-            drain_signal.cancel()
-            # Surface any scrape error (or confirm clean completion).
-            await scrape
-        finally:
-            stats_logger.cancel()
-            with contextlib.suppress(asyncio.CancelledError):
-                await stats_logger
+            finally:
+                stats_logger.cancel()
+                with contextlib.suppress(asyncio.CancelledError):
+                    await stats_logger
 
     log.info("Scraper run completed: %s", db_path)
     return db_path

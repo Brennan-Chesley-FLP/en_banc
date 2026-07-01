@@ -46,12 +46,21 @@ COPY --from=juriscraper . /src/juriscraper
 # exists in this builder stage, so the editable `.pth` would dangle once the
 # final stage copies /usr/local but not /src — jkent would fail to import at
 # runtime. --no-editable bakes jkent's code into site-packages instead.
+# OpenTelemetry SDK + exporter + instrumentors ship in the image too: jkent
+# depends only on the OTel API and stays no-op until this SDK is present (see
+# EN_BANC_OTEL.md). Kept in sync with pyproject.toml's dependency list.
 RUN uv pip install --system --no-cache --no-editable \
     "/src/jkent[operational]" \
     /src/juriscraper \
     prefect-aws \
     boto3 \
     psycopg2-binary \
+    opentelemetry-sdk \
+    opentelemetry-exporter-otlp \
+    opentelemetry-instrumentation-httpx \
+    opentelemetry-instrumentation-sqlalchemy \
+    opentelemetry-instrumentation-botocore \
+    opentelemetry-instrumentation-asyncio \
     && uv pip uninstall --system uv 2>/dev/null || true
 
 # ---------------------------------------------------------------------------
