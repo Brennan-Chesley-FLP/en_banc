@@ -1,9 +1,9 @@
-"""JKent scraper discovery and concurrency-limit naming.
+"""JKent scraper discovery and schema-name derivation.
 
-``scraper_limit_name`` is a pure function shared by the scrape flow (which
-*acquires* a scraper's global concurrency limit at runtime) and the Pulumi
-program (which *creates* one limit per scraper). Keeping it in one place
-guarantees the two sides agree on the name.
+``scraper_schema_name`` is a pure function used by the Pulumi program to name
+each scraper's deployment and work queue, and bound as the ``scraper_schema``
+parameter the scrape flow receives (where it becomes the S3 key prefix).
+Keeping it in one place guarantees those uses agree.
 
 ``discover_scraper_paths`` walks the ``juriscraper`` package for JKent
 ``BaseScraper`` subclasses; only the Pulumi program calls it, so its heavy
@@ -12,18 +12,73 @@ imports (juriscraper, jkent) are deferred into the function body.
 
 from __future__ import annotations
 
-# Prefix for the per-scraper global concurrency limit names.
-LIMIT_PREFIX = "scraper:"
+import re
 
 
-def scraper_limit_name(scraper_path: str) -> str:
-    """Canonical global-concurrency-limit name for a scraper.
+def scraper_schema_name(scraper_path: str) -> str:
+    """Canonical schema/namespace slug for a scraper.
+
+    Derived from the class name with any trailing ``Scraper`` removed and the
+    remainder converted to ``snake_case`` (e.g. ``ArkansasAppellateScraper`` ->
+    ``arkansas_appellate``). Used as the S3 key prefix, the deployment name, and
+    the work-queue name, so all three always agree.
 
     Args:
         scraper_path: ``"module.path:ClassName"`` import path (the same value
             the ``scraper-run`` flow receives as ``scraper_path``).
     """
-    return f"{LIMIT_PREFIX}{scraper_path}"
+    class_name = scraper_path.rpartition(":")[2].rpartition(".")[2]
+    name = re.sub(r"Scraper$", "", class_name)
+    # Split camel/Pascal case into words, then collapse to snake_case.
+    name = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", name)
+    name = re.sub(r"(?<=[A-Z])(?=[A-Z][a-z])", "_", name)
+    return re.sub(r"_+", "_", name).strip("_").lower()
+
+
+def scraper_court_ids(scraper_path: str) -> list[str]:
+    """Return the CourtListener court ids a scraper covers, sorted.
+
+    Reads the scraper class's ``court_ids`` attribute (a set; empty if the
+    scraper doesn't declare any). Used by the Pulumi program to tag each
+    scraper's deployment with the courts it covers. Imports the scraper module,
+    so (like ``discover_scraper_paths``) it pulls in juriscraper/jkent.
+
+    Args:
+        scraper_path: ``"module.path:ClassName"`` import path.
+    """
+    import importlib
+
+    module_path, _, qualname = scraper_path.partition(":")
+    obj: object = importlib.import_module(module_path)
+    for part in qualname.split("."):
+        obj = getattr(obj, part)
+    return sorted(getattr(obj, "court_ids", None) or ())
+
+
+def scraper_needs_browser(scraper_path: str) -> bool:
+    """Whether a scraper requires a live browser transport.
+
+    Reuses jkent's transport-selection predicate (``needs_browser`` reads the
+    class's ``driver_requirements`` against ``BROWSER_REQUIREMENTS``) so worker
+    routing agrees with what the driver actually does at run time. The Pulumi
+    program uses this to send browser scrapers to the ``browser-pool`` (whose
+    worker has a browser engine installed and runs one scrape at a time) and
+    everything else to the lean HTTP ``scraper-pool``.
+
+    The predicate reads a ClassVar, so the scraper is never instantiated.
+
+    Args:
+        scraper_path: ``"module.path:ClassName"`` import path.
+    """
+    import importlib
+
+    from jkent.driver.unified_driver.bootstrap import needs_browser
+
+    module_path, _, qualname = scraper_path.partition(":")
+    obj: object = importlib.import_module(module_path)
+    for part in qualname.split("."):
+        obj = getattr(obj, part)
+    return needs_browser(obj)
 
 
 def discover_scraper_paths(package: str = "juriscraper") -> list[str]:

@@ -20,14 +20,15 @@ __all__ = ['GlobalConcurrencyLimitArgs', 'GlobalConcurrencyLimit']
 class GlobalConcurrencyLimitArgs:
     def __init__(__self__, *,
                  limit: pulumi.Input[_builtins.float],
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 active: Optional[pulumi.Input[_builtins.bool]] = None,
-                 active_slots: Optional[pulumi.Input[_builtins.float]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 slot_decay_per_second: Optional[pulumi.Input[_builtins.float]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 active: pulumi.Input[Optional[_builtins.bool]] = None,
+                 active_slots: pulumi.Input[Optional[_builtins.float]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 slot_decay_per_second: pulumi.Input[Optional[_builtins.float]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a GlobalConcurrencyLimit resource.
+
         :param pulumi.Input[_builtins.float] limit: The maximum number of tasks that can run simultaneously.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID)
         :param pulumi.Input[_builtins.bool] active: Whether the global concurrency limit is active.
@@ -64,91 +65,92 @@ class GlobalConcurrencyLimitArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID)
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def active(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def active(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the global concurrency limit is active.
         """
         return pulumi.get(self, "active")
 
     @active.setter
-    def active(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def active(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "active", value)
 
     @_builtins.property
     @pulumi.getter(name="activeSlots")
-    def active_slots(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def active_slots(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The number of active slots.
         """
         return pulumi.get(self, "active_slots")
 
     @active_slots.setter
-    def active_slots(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def active_slots(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "active_slots", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The name of the global concurrency limit.
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="slotDecayPerSecond")
-    def slot_decay_per_second(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def slot_decay_per_second(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Slot Decay Per Second (number or null)
         """
         return pulumi.get(self, "slot_decay_per_second")
 
     @slot_decay_per_second.setter
-    def slot_decay_per_second(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def slot_decay_per_second(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "slot_decay_per_second", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID)
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
 @pulumi.input_type
 class _GlobalConcurrencyLimitState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 active: Optional[pulumi.Input[_builtins.bool]] = None,
-                 active_slots: Optional[pulumi.Input[_builtins.float]] = None,
-                 created: Optional[pulumi.Input[_builtins.str]] = None,
-                 limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 slot_decay_per_second: Optional[pulumi.Input[_builtins.float]] = None,
-                 updated: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 active: pulumi.Input[Optional[_builtins.bool]] = None,
+                 active_slots: pulumi.Input[Optional[_builtins.float]] = None,
+                 created: pulumi.Input[Optional[_builtins.str]] = None,
+                 limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 slot_decay_per_second: pulumi.Input[Optional[_builtins.float]] = None,
+                 updated: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering GlobalConcurrencyLimit resources.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID)
         :param pulumi.Input[_builtins.bool] active: Whether the global concurrency limit is active.
         :param pulumi.Input[_builtins.float] active_slots: The number of active slots.
@@ -180,110 +182,110 @@ class _GlobalConcurrencyLimitState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID)
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def active(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def active(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the global concurrency limit is active.
         """
         return pulumi.get(self, "active")
 
     @active.setter
-    def active(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def active(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "active", value)
 
     @_builtins.property
     @pulumi.getter(name="activeSlots")
-    def active_slots(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def active_slots(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The number of active slots.
         """
         return pulumi.get(self, "active_slots")
 
     @active_slots.setter
-    def active_slots(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def active_slots(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "active_slots", value)
 
     @_builtins.property
     @pulumi.getter
-    def created(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def created(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was created (RFC3339)
         """
         return pulumi.get(self, "created")
 
     @created.setter
-    def created(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def created(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "created", value)
 
     @_builtins.property
     @pulumi.getter
-    def limit(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def limit(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The maximum number of tasks that can run simultaneously.
         """
         return pulumi.get(self, "limit")
 
     @limit.setter
-    def limit(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def limit(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "limit", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The name of the global concurrency limit.
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="slotDecayPerSecond")
-    def slot_decay_per_second(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def slot_decay_per_second(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Slot Decay Per Second (number or null)
         """
         return pulumi.get(self, "slot_decay_per_second")
 
     @slot_decay_per_second.setter
-    def slot_decay_per_second(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def slot_decay_per_second(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "slot_decay_per_second", value)
 
     @_builtins.property
     @pulumi.getter
-    def updated(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def updated(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was updated (RFC3339)
         """
         return pulumi.get(self, "updated")
 
     @updated.setter
-    def updated(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def updated(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "updated", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID)
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
@@ -293,16 +295,17 @@ class GlobalConcurrencyLimit(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 active: Optional[pulumi.Input[_builtins.bool]] = None,
-                 active_slots: Optional[pulumi.Input[_builtins.float]] = None,
-                 limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 slot_decay_per_second: Optional[pulumi.Input[_builtins.float]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 active: pulumi.Input[Optional[_builtins.bool]] = None,
+                 active_slots: pulumi.Input[Optional[_builtins.float]] = None,
+                 limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 slot_decay_per_second: pulumi.Input[Optional[_builtins.float]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a GlobalConcurrencyLimit resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID)
@@ -321,6 +324,7 @@ class GlobalConcurrencyLimit(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a GlobalConcurrencyLimit resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param GlobalConcurrencyLimitArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -336,13 +340,13 @@ class GlobalConcurrencyLimit(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 active: Optional[pulumi.Input[_builtins.bool]] = None,
-                 active_slots: Optional[pulumi.Input[_builtins.float]] = None,
-                 limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 slot_decay_per_second: Optional[pulumi.Input[_builtins.float]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 active: pulumi.Input[Optional[_builtins.bool]] = None,
+                 active_slots: pulumi.Input[Optional[_builtins.float]] = None,
+                 limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 slot_decay_per_second: pulumi.Input[Optional[_builtins.float]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -374,15 +378,15 @@ class GlobalConcurrencyLimit(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            active: Optional[pulumi.Input[_builtins.bool]] = None,
-            active_slots: Optional[pulumi.Input[_builtins.float]] = None,
-            created: Optional[pulumi.Input[_builtins.str]] = None,
-            limit: Optional[pulumi.Input[_builtins.float]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            slot_decay_per_second: Optional[pulumi.Input[_builtins.float]] = None,
-            updated: Optional[pulumi.Input[_builtins.str]] = None,
-            workspace_id: Optional[pulumi.Input[_builtins.str]] = None) -> 'GlobalConcurrencyLimit':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            active: pulumi.Input[Optional[_builtins.bool]] = None,
+            active_slots: pulumi.Input[Optional[_builtins.float]] = None,
+            created: pulumi.Input[Optional[_builtins.str]] = None,
+            limit: pulumi.Input[Optional[_builtins.float]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            slot_decay_per_second: pulumi.Input[Optional[_builtins.float]] = None,
+            updated: pulumi.Input[Optional[_builtins.str]] = None,
+            workspace_id: pulumi.Input[Optional[_builtins.str]] = None) -> 'GlobalConcurrencyLimit':
         """
         Get an existing GlobalConcurrencyLimit resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

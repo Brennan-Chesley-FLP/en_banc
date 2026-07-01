@@ -20,14 +20,15 @@ __all__ = ['BlockArgs', 'Block']
 class BlockArgs:
     def __init__(__self__, *,
                  type_slug: pulumi.Input[_builtins.str],
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 data: Optional[pulumi.Input[_builtins.str]] = None,
-                 data_wo: Optional[pulumi.Input[_builtins.str]] = None,
-                 data_wo_version: Optional[pulumi.Input[_builtins.float]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 data: pulumi.Input[Optional[_builtins.str]] = None,
+                 data_wo: pulumi.Input[Optional[_builtins.str]] = None,
+                 data_wo_version: pulumi.Input[Optional[_builtins.float]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a Block resource.
+
         :param pulumi.Input[_builtins.str] type_slug: Block Type slug, which determines the schema of the <span pulumi-lang-nodejs="`data`" pulumi-lang-dotnet="`Data`" pulumi-lang-go="`data`" pulumi-lang-python="`data`" pulumi-lang-yaml="`data`" pulumi-lang-java="`data`">`data`</span> JSON attribute. Use `prefect block type ls` to view all available Block type slugs.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID) where the Block is located
         :param pulumi.Input[_builtins.str] data: The user-inputted Block payload, as a JSON string. Use <span pulumi-lang-nodejs="`jsonencode`" pulumi-lang-dotnet="`Jsonencode`" pulumi-lang-go="`jsonencode`" pulumi-lang-python="`jsonencode`" pulumi-lang-yaml="`jsonencode`" pulumi-lang-java="`jsonencode`">`jsonencode`</span> on the provided value to satisfy the underlying JSON type. The value's schema will depend on the selected <span pulumi-lang-nodejs="`type`" pulumi-lang-dotnet="`Type`" pulumi-lang-go="`type`" pulumi-lang-python="`type`" pulumi-lang-yaml="`type`" pulumi-lang-java="`type`">`type`</span> slug. Use `prefect block type inspect <slug>` to view the data schema for a given Block type.
@@ -64,91 +65,92 @@ class BlockArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID) where the Block is located
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def data(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def data(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The user-inputted Block payload, as a JSON string. Use <span pulumi-lang-nodejs="`jsonencode`" pulumi-lang-dotnet="`Jsonencode`" pulumi-lang-go="`jsonencode`" pulumi-lang-python="`jsonencode`" pulumi-lang-yaml="`jsonencode`" pulumi-lang-java="`jsonencode`">`jsonencode`</span> on the provided value to satisfy the underlying JSON type. The value's schema will depend on the selected <span pulumi-lang-nodejs="`type`" pulumi-lang-dotnet="`Type`" pulumi-lang-go="`type`" pulumi-lang-python="`type`" pulumi-lang-yaml="`type`" pulumi-lang-java="`type`">`type`</span> slug. Use `prefect block type inspect <slug>` to view the data schema for a given Block type.
         """
         return pulumi.get(self, "data")
 
     @data.setter
-    def data(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def data(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "data", value)
 
     @_builtins.property
     @pulumi.getter(name="dataWo")
-    def data_wo(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def data_wo(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The user-inputted Block payload, as a JSON string. Use <span pulumi-lang-nodejs="`jsonencode`" pulumi-lang-dotnet="`Jsonencode`" pulumi-lang-go="`jsonencode`" pulumi-lang-python="`jsonencode`" pulumi-lang-yaml="`jsonencode`" pulumi-lang-java="`jsonencode`">`jsonencode`</span> on the provided value to satisfy the underlying JSON type. The value's schema will depend on the selected <span pulumi-lang-nodejs="`type`" pulumi-lang-dotnet="`Type`" pulumi-lang-go="`type`" pulumi-lang-python="`type`" pulumi-lang-yaml="`type`" pulumi-lang-java="`type`">`type`</span> slug. Use `prefect block type inspect <slug>` to view the data schema for a given Block type.
         """
         return pulumi.get(self, "data_wo")
 
     @data_wo.setter
-    def data_wo(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def data_wo(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "data_wo", value)
 
     @_builtins.property
     @pulumi.getter(name="dataWoVersion")
-    def data_wo_version(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def data_wo_version(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The version of the <span pulumi-lang-nodejs="`dataWo`" pulumi-lang-dotnet="`DataWo`" pulumi-lang-go="`dataWo`" pulumi-lang-python="`data_wo`" pulumi-lang-yaml="`dataWo`" pulumi-lang-java="`dataWo`">`data_wo`</span> attribute. This is used to track changes to the <span pulumi-lang-nodejs="`dataWo`" pulumi-lang-dotnet="`DataWo`" pulumi-lang-go="`dataWo`" pulumi-lang-python="`data_wo`" pulumi-lang-yaml="`dataWo`" pulumi-lang-java="`dataWo`">`data_wo`</span> attribute and trigger updates when the value changes.
         """
         return pulumi.get(self, "data_wo_version")
 
     @data_wo_version.setter
-    def data_wo_version(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def data_wo_version(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "data_wo_version", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Unique name of the Block
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID) where the Block is located. In Prefect Cloud, either the <span pulumi-lang-nodejs="`prefect.Block`" pulumi-lang-dotnet="`prefect.Block`" pulumi-lang-go="`Block`" pulumi-lang-python="`Block`" pulumi-lang-yaml="`prefect.Block`" pulumi-lang-java="`prefect.Block`">`prefect.Block`</span> resource or the provider's <span pulumi-lang-nodejs="`workspaceId`" pulumi-lang-dotnet="`WorkspaceId`" pulumi-lang-go="`workspaceId`" pulumi-lang-python="`workspace_id`" pulumi-lang-yaml="`workspaceId`" pulumi-lang-java="`workspaceId`">`workspace_id`</span> must be set.
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
 @pulumi.input_type
 class _BlockState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 created: Optional[pulumi.Input[_builtins.str]] = None,
-                 data: Optional[pulumi.Input[_builtins.str]] = None,
-                 data_wo: Optional[pulumi.Input[_builtins.str]] = None,
-                 data_wo_version: Optional[pulumi.Input[_builtins.float]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 type_slug: Optional[pulumi.Input[_builtins.str]] = None,
-                 updated: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 created: pulumi.Input[Optional[_builtins.str]] = None,
+                 data: pulumi.Input[Optional[_builtins.str]] = None,
+                 data_wo: pulumi.Input[Optional[_builtins.str]] = None,
+                 data_wo_version: pulumi.Input[Optional[_builtins.float]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 type_slug: pulumi.Input[Optional[_builtins.str]] = None,
+                 updated: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering Block resources.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID) where the Block is located
         :param pulumi.Input[_builtins.str] created: Timestamp of when the resource was created (RFC3339)
         :param pulumi.Input[_builtins.str] data: The user-inputted Block payload, as a JSON string. Use <span pulumi-lang-nodejs="`jsonencode`" pulumi-lang-dotnet="`Jsonencode`" pulumi-lang-go="`jsonencode`" pulumi-lang-python="`jsonencode`" pulumi-lang-yaml="`jsonencode`" pulumi-lang-java="`jsonencode`">`jsonencode`</span> on the provided value to satisfy the underlying JSON type. The value's schema will depend on the selected <span pulumi-lang-nodejs="`type`" pulumi-lang-dotnet="`Type`" pulumi-lang-go="`type`" pulumi-lang-python="`type`" pulumi-lang-yaml="`type`" pulumi-lang-java="`type`">`type`</span> slug. Use `prefect block type inspect <slug>` to view the data schema for a given Block type.
@@ -180,110 +182,110 @@ class _BlockState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID) where the Block is located
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def created(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def created(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was created (RFC3339)
         """
         return pulumi.get(self, "created")
 
     @created.setter
-    def created(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def created(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "created", value)
 
     @_builtins.property
     @pulumi.getter
-    def data(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def data(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The user-inputted Block payload, as a JSON string. Use <span pulumi-lang-nodejs="`jsonencode`" pulumi-lang-dotnet="`Jsonencode`" pulumi-lang-go="`jsonencode`" pulumi-lang-python="`jsonencode`" pulumi-lang-yaml="`jsonencode`" pulumi-lang-java="`jsonencode`">`jsonencode`</span> on the provided value to satisfy the underlying JSON type. The value's schema will depend on the selected <span pulumi-lang-nodejs="`type`" pulumi-lang-dotnet="`Type`" pulumi-lang-go="`type`" pulumi-lang-python="`type`" pulumi-lang-yaml="`type`" pulumi-lang-java="`type`">`type`</span> slug. Use `prefect block type inspect <slug>` to view the data schema for a given Block type.
         """
         return pulumi.get(self, "data")
 
     @data.setter
-    def data(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def data(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "data", value)
 
     @_builtins.property
     @pulumi.getter(name="dataWo")
-    def data_wo(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def data_wo(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The user-inputted Block payload, as a JSON string. Use <span pulumi-lang-nodejs="`jsonencode`" pulumi-lang-dotnet="`Jsonencode`" pulumi-lang-go="`jsonencode`" pulumi-lang-python="`jsonencode`" pulumi-lang-yaml="`jsonencode`" pulumi-lang-java="`jsonencode`">`jsonencode`</span> on the provided value to satisfy the underlying JSON type. The value's schema will depend on the selected <span pulumi-lang-nodejs="`type`" pulumi-lang-dotnet="`Type`" pulumi-lang-go="`type`" pulumi-lang-python="`type`" pulumi-lang-yaml="`type`" pulumi-lang-java="`type`">`type`</span> slug. Use `prefect block type inspect <slug>` to view the data schema for a given Block type.
         """
         return pulumi.get(self, "data_wo")
 
     @data_wo.setter
-    def data_wo(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def data_wo(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "data_wo", value)
 
     @_builtins.property
     @pulumi.getter(name="dataWoVersion")
-    def data_wo_version(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def data_wo_version(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The version of the <span pulumi-lang-nodejs="`dataWo`" pulumi-lang-dotnet="`DataWo`" pulumi-lang-go="`dataWo`" pulumi-lang-python="`data_wo`" pulumi-lang-yaml="`dataWo`" pulumi-lang-java="`dataWo`">`data_wo`</span> attribute. This is used to track changes to the <span pulumi-lang-nodejs="`dataWo`" pulumi-lang-dotnet="`DataWo`" pulumi-lang-go="`dataWo`" pulumi-lang-python="`data_wo`" pulumi-lang-yaml="`dataWo`" pulumi-lang-java="`dataWo`">`data_wo`</span> attribute and trigger updates when the value changes.
         """
         return pulumi.get(self, "data_wo_version")
 
     @data_wo_version.setter
-    def data_wo_version(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def data_wo_version(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "data_wo_version", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Unique name of the Block
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="typeSlug")
-    def type_slug(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def type_slug(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Block Type slug, which determines the schema of the <span pulumi-lang-nodejs="`data`" pulumi-lang-dotnet="`Data`" pulumi-lang-go="`data`" pulumi-lang-python="`data`" pulumi-lang-yaml="`data`" pulumi-lang-java="`data`">`data`</span> JSON attribute. Use `prefect block type ls` to view all available Block type slugs.
         """
         return pulumi.get(self, "type_slug")
 
     @type_slug.setter
-    def type_slug(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def type_slug(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "type_slug", value)
 
     @_builtins.property
     @pulumi.getter
-    def updated(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def updated(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was updated (RFC3339)
         """
         return pulumi.get(self, "updated")
 
     @updated.setter
-    def updated(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def updated(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "updated", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID) where the Block is located. In Prefect Cloud, either the <span pulumi-lang-nodejs="`prefect.Block`" pulumi-lang-dotnet="`prefect.Block`" pulumi-lang-go="`Block`" pulumi-lang-python="`Block`" pulumi-lang-yaml="`prefect.Block`" pulumi-lang-java="`prefect.Block`">`prefect.Block`</span> resource or the provider's <span pulumi-lang-nodejs="`workspaceId`" pulumi-lang-dotnet="`WorkspaceId`" pulumi-lang-go="`workspaceId`" pulumi-lang-python="`workspace_id`" pulumi-lang-yaml="`workspaceId`" pulumi-lang-java="`workspaceId`">`workspace_id`</span> must be set.
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
@@ -293,16 +295,17 @@ class Block(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 data: Optional[pulumi.Input[_builtins.str]] = None,
-                 data_wo: Optional[pulumi.Input[_builtins.str]] = None,
-                 data_wo_version: Optional[pulumi.Input[_builtins.float]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 type_slug: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 data: pulumi.Input[Optional[_builtins.str]] = None,
+                 data_wo: pulumi.Input[Optional[_builtins.str]] = None,
+                 data_wo_version: pulumi.Input[Optional[_builtins.float]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 type_slug: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a Block resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID) where the Block is located
@@ -321,6 +324,7 @@ class Block(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a Block resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param BlockArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -336,13 +340,13 @@ class Block(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 data: Optional[pulumi.Input[_builtins.str]] = None,
-                 data_wo: Optional[pulumi.Input[_builtins.str]] = None,
-                 data_wo_version: Optional[pulumi.Input[_builtins.float]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 type_slug: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 data: pulumi.Input[Optional[_builtins.str]] = None,
+                 data_wo: pulumi.Input[Optional[_builtins.str]] = None,
+                 data_wo_version: pulumi.Input[Optional[_builtins.float]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 type_slug: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -376,15 +380,15 @@ class Block(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            created: Optional[pulumi.Input[_builtins.str]] = None,
-            data: Optional[pulumi.Input[_builtins.str]] = None,
-            data_wo: Optional[pulumi.Input[_builtins.str]] = None,
-            data_wo_version: Optional[pulumi.Input[_builtins.float]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            type_slug: Optional[pulumi.Input[_builtins.str]] = None,
-            updated: Optional[pulumi.Input[_builtins.str]] = None,
-            workspace_id: Optional[pulumi.Input[_builtins.str]] = None) -> 'Block':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            created: pulumi.Input[Optional[_builtins.str]] = None,
+            data: pulumi.Input[Optional[_builtins.str]] = None,
+            data_wo: pulumi.Input[Optional[_builtins.str]] = None,
+            data_wo_version: pulumi.Input[Optional[_builtins.float]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            type_slug: pulumi.Input[Optional[_builtins.str]] = None,
+            updated: pulumi.Input[Optional[_builtins.str]] = None,
+            workspace_id: pulumi.Input[Optional[_builtins.str]] = None) -> 'Block':
         """
         Get an existing Block resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

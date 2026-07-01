@@ -82,7 +82,7 @@ def get_teams(account_id: Optional[_builtins.str] = None,
         account_id=pulumi.get(__ret__, 'account_id'),
         id=pulumi.get(__ret__, 'id'),
         teams=pulumi.get(__ret__, 'teams'))
-def get_teams_output(account_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_teams_output(account_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                      opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetTeamsResult]:
     """
     Use this data source to access information about an existing resource.

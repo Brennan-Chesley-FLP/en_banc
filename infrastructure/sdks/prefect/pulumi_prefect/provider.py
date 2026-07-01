@@ -19,17 +19,18 @@ __all__ = ['ProviderArgs', 'Provider']
 @pulumi.input_type
 class ProviderArgs:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 basic_auth_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 csrf_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 custom_headers: Optional[pulumi.Input[_builtins.str]] = None,
-                 endpoint: Optional[pulumi.Input[_builtins.str]] = None,
-                 profile: Optional[pulumi.Input[_builtins.str]] = None,
-                 profile_file: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 basic_auth_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 csrf_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 custom_headers: pulumi.Input[Optional[_builtins.str]] = None,
+                 endpoint: pulumi.Input[Optional[_builtins.str]] = None,
+                 profile: pulumi.Input[Optional[_builtins.str]] = None,
+                 profile_file: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a Provider resource.
+
         :param pulumi.Input[_builtins.str] account_id: Default Prefect Cloud Account ID. Can also be set via the `PREFECT_CLOUD_ACCOUNT_ID` environment variable.
         :param pulumi.Input[_builtins.str] api_key: Prefect Cloud API key. Can also be set via the `PREFECT_API_KEY` environment variable.
         :param pulumi.Input[_builtins.str] basic_auth_key: Prefect basic auth key. Can also be set via the `PREFECT_BASIC_AUTH_KEY` environment variable.
@@ -61,110 +62,110 @@ class ProviderArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Default Prefect Cloud Account ID. Can also be set via the `PREFECT_CLOUD_ACCOUNT_ID` environment variable.
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="apiKey")
-    def api_key(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def api_key(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Prefect Cloud API key. Can also be set via the `PREFECT_API_KEY` environment variable.
         """
         return pulumi.get(self, "api_key")
 
     @api_key.setter
-    def api_key(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def api_key(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "api_key", value)
 
     @_builtins.property
     @pulumi.getter(name="basicAuthKey")
-    def basic_auth_key(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def basic_auth_key(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Prefect basic auth key. Can also be set via the `PREFECT_BASIC_AUTH_KEY` environment variable.
         """
         return pulumi.get(self, "basic_auth_key")
 
     @basic_auth_key.setter
-    def basic_auth_key(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def basic_auth_key(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "basic_auth_key", value)
 
     @_builtins.property
     @pulumi.getter(name="csrfEnabled")
-    def csrf_enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def csrf_enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Enable CSRF protection for API requests. Defaults to false. If enabled, the provider will fetch a CSRF token from the Prefect API and include it in all requests. This should be enabled if your Prefect server instance has CSRF protection active. Can also be set via the `PREFECT_CSRF_ENABLED` environment variable.
         """
         return pulumi.get(self, "csrf_enabled")
 
     @csrf_enabled.setter
-    def csrf_enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def csrf_enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "csrf_enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="customHeaders")
-    def custom_headers(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def custom_headers(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Custom HTTP headers to include in all Prefect API requests as a JSON string. Useful for adding authentication headers required by proxies, CDNs, or security systems like Cloudflare Access. Can also be set via the `PREFECT_CLIENT_CUSTOM_HEADERS` environment variable. Example: `{"CF-Access-Client-Id": "your-id", "CF-Access-Client-Secret": "your-secret"}`. Protected headers (User-Agent, Prefect-Csrf-Token, Prefect-Csrf-Client) cannot be overridden.
         """
         return pulumi.get(self, "custom_headers")
 
     @custom_headers.setter
-    def custom_headers(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def custom_headers(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "custom_headers", value)
 
     @_builtins.property
     @pulumi.getter
-    def endpoint(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def endpoint(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The Prefect API URL. Can also be set via the `PREFECT_API_URL` environment variable. Defaults to `https://api.prefect.cloud` if not configured. Can optionally include the default account ID and workspace ID in the following format: `https://api.prefect.cloud/api/accounts/<accountID>/workspaces/<workspaceID>`. This is the same format used for the `PREFECT_API_URL` value in the Prefect CLI configuration file. The <span pulumi-lang-nodejs="`accountId`" pulumi-lang-dotnet="`AccountId`" pulumi-lang-go="`accountId`" pulumi-lang-python="`account_id`" pulumi-lang-yaml="`accountId`" pulumi-lang-java="`accountId`">`account_id`</span> and <span pulumi-lang-nodejs="`workspaceId`" pulumi-lang-dotnet="`WorkspaceId`" pulumi-lang-go="`workspaceId`" pulumi-lang-python="`workspace_id`" pulumi-lang-yaml="`workspaceId`" pulumi-lang-java="`workspaceId`">`workspace_id`</span> attributes and their matching environment variables will take priority over any account and workspace ID values provided in the <span pulumi-lang-nodejs="`endpoint`" pulumi-lang-dotnet="`Endpoint`" pulumi-lang-go="`endpoint`" pulumi-lang-python="`endpoint`" pulumi-lang-yaml="`endpoint`" pulumi-lang-java="`endpoint`">`endpoint`</span> attribute.
         """
         return pulumi.get(self, "endpoint")
 
     @endpoint.setter
-    def endpoint(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def endpoint(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "endpoint", value)
 
     @_builtins.property
     @pulumi.getter
-    def profile(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def profile(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Prefect profile name to use for authentication. If not specified, uses the active profile from `~/.prefect/profiles.toml`. This allows you to use a specific profile instead of the active one.
         """
         return pulumi.get(self, "profile")
 
     @profile.setter
-    def profile(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def profile(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "profile", value)
 
     @_builtins.property
     @pulumi.getter(name="profileFile")
-    def profile_file(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def profile_file(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Path to the Prefect profiles file. If not specified, uses the default location `~/.prefect/profiles.toml`. This allows you to use a custom profiles file location.
         """
         return pulumi.get(self, "profile_file")
 
     @profile_file.setter
-    def profile_file(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def profile_file(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "profile_file", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Default Prefect Cloud Workspace ID.
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
@@ -174,21 +175,22 @@ class Provider(pulumi.ProviderResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 basic_auth_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 csrf_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 custom_headers: Optional[pulumi.Input[_builtins.str]] = None,
-                 endpoint: Optional[pulumi.Input[_builtins.str]] = None,
-                 profile: Optional[pulumi.Input[_builtins.str]] = None,
-                 profile_file: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 basic_auth_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 csrf_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 custom_headers: pulumi.Input[Optional[_builtins.str]] = None,
+                 endpoint: pulumi.Input[Optional[_builtins.str]] = None,
+                 profile: pulumi.Input[Optional[_builtins.str]] = None,
+                 profile_file: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         The provider type for the prefect package. By default, resources use package-wide configuration
         settings, however an explicit `Provider` instance may be created and passed during resource
         construction to achieve fine-grained programmatic control over provider settings. See the
         [documentation](https://www.pulumi.com/docs/reference/programming-model/#providers) for more information.
+
 
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -214,6 +216,7 @@ class Provider(pulumi.ProviderResource):
         construction to achieve fine-grained programmatic control over provider settings. See the
         [documentation](https://www.pulumi.com/docs/reference/programming-model/#providers) for more information.
 
+
         :param str resource_name: The name of the resource.
         :param ProviderArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -229,15 +232,15 @@ class Provider(pulumi.ProviderResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 basic_auth_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 csrf_enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 custom_headers: Optional[pulumi.Input[_builtins.str]] = None,
-                 endpoint: Optional[pulumi.Input[_builtins.str]] = None,
-                 profile: Optional[pulumi.Input[_builtins.str]] = None,
-                 profile_file: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 basic_auth_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 csrf_enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 custom_headers: pulumi.Input[Optional[_builtins.str]] = None,
+                 endpoint: pulumi.Input[Optional[_builtins.str]] = None,
+                 profile: pulumi.Input[Optional[_builtins.str]] = None,
+                 profile_file: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):

@@ -29,16 +29,21 @@ services:
       postgres:
         condition: service_healthy
 
-  worker:
-    # Built out-of-band — this image needs juriscraper/jkent as additional
-    # build contexts, which compose builders (esp. podman -> classic
-    # docker-compose) don't reliably support. Build it first with
-    # `mise run build-worker` (see docker/Dockerfile.worker for the command).
+  # HTTP scraper worker: serves the lean `scraper-pool` (no browser engine).
+  # Built out-of-band — this image needs juriscraper/jkent as additional
+  # build contexts, which compose builders (esp. podman -> classic
+  # docker-compose) don't reliably support. Build it first with
+  # `mise run build-worker` (see docker/Dockerfile.worker for the command).
+  scraper-worker:
     image: en-banc-worker
     restart: unless-stopped
+    # Give in-flight scrapes time to drain gracefully on stop before SIGKILL.
+    # Must exceed WORKER_SHUTDOWN_GRACE_SECONDS (default 110s) in the worker.
+    stop_grace_period: 120s
     environment:
       PREFECT_API_URL: http://prefect-server:4200/api
       SCRAPER_RUNS_DIR: /app/runs
+      WORKER_POOL_NAME: scraper-pool
       # Max JKent runs this worker executes at once; start another worker for
       # more capacity. Override on the host: WORKER_CONCURRENCY=8 docker compose up
       WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-4}
@@ -47,6 +52,28 @@ services:
     depends_on:
       - prefect-server
 
+  # Browser scraper worker: serves `browser-pool` and runs scrapers that need a
+  # live browser (FF_ALIKE/CHROME_ALIKE/JS_EVAL/captcha handlers). Uses the
+  # browser-enabled image (built with --build-arg INSTALL_BROWSERS=1, tagged
+  # en-banc-worker-browser via `mise run build-worker-browser`) and runs exactly
+  # one scrape at a time — a real browser is heavy, so concurrency is pinned 1.
+  browser-worker:
+    image: en-banc-worker-browser
+    restart: unless-stopped
+    stop_grace_period: 120s
+    environment:
+      PREFECT_API_URL: http://prefect-server:4200/api
+      SCRAPER_RUNS_DIR: /app/runs
+      WORKER_POOL_NAME: browser-pool
+      # One browser scrape at a time. Not host-overridable: the single-scrape
+      # constraint is the whole point of this worker.
+      WORKER_CONCURRENCY: 1
+    volumes:
+      - browser_worker_runs:/app/runs
+    depends_on:
+      - prefect-server
+
 volumes:
   postgres_data:
   worker_runs:
+  browser_worker_runs:

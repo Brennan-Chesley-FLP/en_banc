@@ -61,36 +61,31 @@ __all__ = [
     'GetAccountSettingsArgsDict',
 ]
 
-MYPY = False
-
-if not MYPY:
-    class AccountSettingsArgsDict(TypedDict):
-        ai_log_summaries: NotRequired[pulumi.Input[_builtins.bool]]
-        """
-        Whether to use AI to generate log summaries.
-        """
-        allow_public_workspaces: NotRequired[pulumi.Input[_builtins.bool]]
-        """
-        Whether or not this account allows public workspaces
-        """
-        enforce_webhook_authentication: NotRequired[pulumi.Input[_builtins.bool]]
-        """
-        Whether to enforce webhook authentication
-        """
-        managed_execution: NotRequired[pulumi.Input[_builtins.bool]]
-        """
-        Whether to enable the use of managed work pools
-        """
-elif False:
-    AccountSettingsArgsDict: TypeAlias = Mapping[str, Any]
+class AccountSettingsArgsDict(TypedDict):
+    ai_log_summaries: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Whether to use AI to generate log summaries.
+    """
+    allow_public_workspaces: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Whether or not this account allows public workspaces
+    """
+    enforce_webhook_authentication: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Whether to enforce webhook authentication
+    """
+    managed_execution: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Whether to enable the use of managed work pools
+    """
 
 @pulumi.input_type
 class AccountSettingsArgs:
     def __init__(__self__, *,
-                 ai_log_summaries: Optional[pulumi.Input[_builtins.bool]] = None,
-                 allow_public_workspaces: Optional[pulumi.Input[_builtins.bool]] = None,
-                 enforce_webhook_authentication: Optional[pulumi.Input[_builtins.bool]] = None,
-                 managed_execution: Optional[pulumi.Input[_builtins.bool]] = None):
+                 ai_log_summaries: pulumi.Input[Optional[_builtins.bool]] = None,
+                 allow_public_workspaces: pulumi.Input[Optional[_builtins.bool]] = None,
+                 enforce_webhook_authentication: pulumi.Input[Optional[_builtins.bool]] = None,
+                 managed_execution: pulumi.Input[Optional[_builtins.bool]] = None):
         """
         :param pulumi.Input[_builtins.bool] ai_log_summaries: Whether to use AI to generate log summaries.
         :param pulumi.Input[_builtins.bool] allow_public_workspaces: Whether or not this account allows public workspaces
@@ -108,136 +103,133 @@ class AccountSettingsArgs:
 
     @_builtins.property
     @pulumi.getter(name="aiLogSummaries")
-    def ai_log_summaries(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def ai_log_summaries(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether to use AI to generate log summaries.
         """
         return pulumi.get(self, "ai_log_summaries")
 
     @ai_log_summaries.setter
-    def ai_log_summaries(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def ai_log_summaries(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "ai_log_summaries", value)
 
     @_builtins.property
     @pulumi.getter(name="allowPublicWorkspaces")
-    def allow_public_workspaces(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def allow_public_workspaces(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether or not this account allows public workspaces
         """
         return pulumi.get(self, "allow_public_workspaces")
 
     @allow_public_workspaces.setter
-    def allow_public_workspaces(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def allow_public_workspaces(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "allow_public_workspaces", value)
 
     @_builtins.property
     @pulumi.getter(name="enforceWebhookAuthentication")
-    def enforce_webhook_authentication(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enforce_webhook_authentication(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether to enforce webhook authentication
         """
         return pulumi.get(self, "enforce_webhook_authentication")
 
     @enforce_webhook_authentication.setter
-    def enforce_webhook_authentication(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enforce_webhook_authentication(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enforce_webhook_authentication", value)
 
     @_builtins.property
     @pulumi.getter(name="managedExecution")
-    def managed_execution(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def managed_execution(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether to enable the use of managed work pools
         """
         return pulumi.get(self, "managed_execution")
 
     @managed_execution.setter
-    def managed_execution(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def managed_execution(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "managed_execution", value)
 
 
-if not MYPY:
-    class AutomationActionArgsDict(TypedDict):
-        type: pulumi.Input[_builtins.str]
-        """
-        The type of action to perform. Possible values: do-nothing, run-deployment, pause-deployment, resume-deployment, cancel-flow-run, change-flow-run-state, pause-work-queue, resume-work-queue, send-notification, call-webhook, pause-automation, resume-automation, suspend-flow-run, resume-flow-run, declare-incident, pause-work-pool, resume-work-pool
-        """
-        automation_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Automation) ID of the automation to apply this action to
-        """
-        block_document_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Webhook / Notification) ID of the block to use
-        """
-        body: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Notification) Body of the notification
-        """
-        deployment_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment) ID of the deployment to apply this action to
-        """
-        job_variables: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment) (JSON) Job variables to pass to the created flow run. Use `jsonencode()`.
-        """
-        message: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Flow Run State Change) Message to associate with the state change
-        """
-        name: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Flow Run State Change) Name of the state to change the flow run to
-        """
-        parameters: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment) (JSON) Parameters to pass to the deployment. Use `jsonencode()`.
-        """
-        payload: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Webhook) Payload to send when calling the webhook
-        """
-        source: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment / Work Pool / Work Queue / Automation) Whether this action applies to a specific selected resource or to a specific resource by ID - 'selected' or 'inferred'
-        """
-        state: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Flow Run State Change) Type of state to change the flow run to
-        """
-        subject: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Notification) Subject of the notification
-        """
-        work_pool_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Work Pool) ID of the work pool to apply this action to
-        """
-        work_queue_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Work Queue) ID of the work queue to apply this action to
-        """
-elif False:
-    AutomationActionArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationActionArgsDict(TypedDict):
+    type: pulumi.Input[_builtins.str]
+    """
+    The type of action to perform. Possible values: do-nothing, run-deployment, pause-deployment, resume-deployment, cancel-flow-run, change-flow-run-state, pause-work-queue, resume-work-queue, send-notification, call-webhook, pause-automation, resume-automation, suspend-flow-run, resume-flow-run, declare-incident, pause-work-pool, resume-work-pool
+    """
+    automation_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Automation) ID of the automation to apply this action to
+    """
+    block_document_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Webhook / Notification) ID of the block to use
+    """
+    body: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Notification) Body of the notification
+    """
+    deployment_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment) ID of the deployment to apply this action to
+    """
+    job_variables: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment) (JSON) Job variables to pass to the created flow run. Use `jsonencode()`.
+    """
+    message: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Flow Run State Change) Message to associate with the state change
+    """
+    name: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Flow Run State Change) Name of the state to change the flow run to
+    """
+    parameters: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment) (JSON) Parameters to pass to the deployment. Use `jsonencode()`.
+    """
+    payload: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Webhook) Payload to send when calling the webhook
+    """
+    source: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment / Work Pool / Work Queue / Automation) Whether this action applies to a specific selected resource or to a specific resource by ID - 'selected' or 'inferred'
+    """
+    state: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Flow Run State Change) Type of state to change the flow run to
+    """
+    subject: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Notification) Subject of the notification
+    """
+    work_pool_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Work Pool) ID of the work pool to apply this action to
+    """
+    work_queue_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Work Queue) ID of the work queue to apply this action to
+    """
 
 @pulumi.input_type
 class AutomationActionArgs:
     def __init__(__self__, *,
                  type: pulumi.Input[_builtins.str],
-                 automation_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 block_document_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 body: Optional[pulumi.Input[_builtins.str]] = None,
-                 deployment_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 job_variables: Optional[pulumi.Input[_builtins.str]] = None,
-                 message: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 parameters: Optional[pulumi.Input[_builtins.str]] = None,
-                 payload: Optional[pulumi.Input[_builtins.str]] = None,
-                 source: Optional[pulumi.Input[_builtins.str]] = None,
-                 state: Optional[pulumi.Input[_builtins.str]] = None,
-                 subject: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_pool_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_queue_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 automation_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 block_document_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 body: pulumi.Input[Optional[_builtins.str]] = None,
+                 deployment_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 job_variables: pulumi.Input[Optional[_builtins.str]] = None,
+                 message: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 parameters: pulumi.Input[Optional[_builtins.str]] = None,
+                 payload: pulumi.Input[Optional[_builtins.str]] = None,
+                 source: pulumi.Input[Optional[_builtins.str]] = None,
+                 state: pulumi.Input[Optional[_builtins.str]] = None,
+                 subject: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_pool_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_queue_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.str] type: The type of action to perform. Possible values: do-nothing, run-deployment, pause-deployment, resume-deployment, cancel-flow-run, change-flow-run-state, pause-work-queue, resume-work-queue, send-notification, call-webhook, pause-automation, resume-automation, suspend-flow-run, resume-flow-run, declare-incident, pause-work-pool, resume-work-pool
         :param pulumi.Input[_builtins.str] automation_id: (Automation) ID of the automation to apply this action to
@@ -299,256 +291,253 @@ class AutomationActionArgs:
 
     @_builtins.property
     @pulumi.getter(name="automationId")
-    def automation_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def automation_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Automation) ID of the automation to apply this action to
         """
         return pulumi.get(self, "automation_id")
 
     @automation_id.setter
-    def automation_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def automation_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "automation_id", value)
 
     @_builtins.property
     @pulumi.getter(name="blockDocumentId")
-    def block_document_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def block_document_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Webhook / Notification) ID of the block to use
         """
         return pulumi.get(self, "block_document_id")
 
     @block_document_id.setter
-    def block_document_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def block_document_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "block_document_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def body(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def body(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Notification) Body of the notification
         """
         return pulumi.get(self, "body")
 
     @body.setter
-    def body(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def body(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "body", value)
 
     @_builtins.property
     @pulumi.getter(name="deploymentId")
-    def deployment_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def deployment_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment) ID of the deployment to apply this action to
         """
         return pulumi.get(self, "deployment_id")
 
     @deployment_id.setter
-    def deployment_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def deployment_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "deployment_id", value)
 
     @_builtins.property
     @pulumi.getter(name="jobVariables")
-    def job_variables(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def job_variables(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment) (JSON) Job variables to pass to the created flow run. Use `jsonencode()`.
         """
         return pulumi.get(self, "job_variables")
 
     @job_variables.setter
-    def job_variables(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def job_variables(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "job_variables", value)
 
     @_builtins.property
     @pulumi.getter
-    def message(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def message(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Flow Run State Change) Message to associate with the state change
         """
         return pulumi.get(self, "message")
 
     @message.setter
-    def message(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def message(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "message", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Flow Run State Change) Name of the state to change the flow run to
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def parameters(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def parameters(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment) (JSON) Parameters to pass to the deployment. Use `jsonencode()`.
         """
         return pulumi.get(self, "parameters")
 
     @parameters.setter
-    def parameters(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def parameters(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "parameters", value)
 
     @_builtins.property
     @pulumi.getter
-    def payload(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def payload(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Webhook) Payload to send when calling the webhook
         """
         return pulumi.get(self, "payload")
 
     @payload.setter
-    def payload(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def payload(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "payload", value)
 
     @_builtins.property
     @pulumi.getter
-    def source(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def source(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment / Work Pool / Work Queue / Automation) Whether this action applies to a specific selected resource or to a specific resource by ID - 'selected' or 'inferred'
         """
         return pulumi.get(self, "source")
 
     @source.setter
-    def source(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def source(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "source", value)
 
     @_builtins.property
     @pulumi.getter
-    def state(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def state(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Flow Run State Change) Type of state to change the flow run to
         """
         return pulumi.get(self, "state")
 
     @state.setter
-    def state(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def state(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "state", value)
 
     @_builtins.property
     @pulumi.getter
-    def subject(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def subject(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Notification) Subject of the notification
         """
         return pulumi.get(self, "subject")
 
     @subject.setter
-    def subject(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def subject(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "subject", value)
 
     @_builtins.property
     @pulumi.getter(name="workPoolId")
-    def work_pool_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def work_pool_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Work Pool) ID of the work pool to apply this action to
         """
         return pulumi.get(self, "work_pool_id")
 
     @work_pool_id.setter
-    def work_pool_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def work_pool_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "work_pool_id", value)
 
     @_builtins.property
     @pulumi.getter(name="workQueueId")
-    def work_queue_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def work_queue_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Work Queue) ID of the work queue to apply this action to
         """
         return pulumi.get(self, "work_queue_id")
 
     @work_queue_id.setter
-    def work_queue_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def work_queue_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "work_queue_id", value)
 
 
-if not MYPY:
-    class AutomationActionsOnResolfArgsDict(TypedDict):
-        type: pulumi.Input[_builtins.str]
-        """
-        The type of action to perform. Possible values: do-nothing, run-deployment, pause-deployment, resume-deployment, cancel-flow-run, change-flow-run-state, pause-work-queue, resume-work-queue, send-notification, call-webhook, pause-automation, resume-automation, suspend-flow-run, resume-flow-run, declare-incident, pause-work-pool, resume-work-pool
-        """
-        automation_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Automation) ID of the automation to apply this action to
-        """
-        block_document_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Webhook / Notification) ID of the block to use
-        """
-        body: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Notification) Body of the notification
-        """
-        deployment_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment) ID of the deployment to apply this action to
-        """
-        job_variables: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment) (JSON) Job variables to pass to the created flow run. Use `jsonencode()`.
-        """
-        message: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Flow Run State Change) Message to associate with the state change
-        """
-        name: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Flow Run State Change) Name of the state to change the flow run to
-        """
-        parameters: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment) (JSON) Parameters to pass to the deployment. Use `jsonencode()`.
-        """
-        payload: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Webhook) Payload to send when calling the webhook
-        """
-        source: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment / Work Pool / Work Queue / Automation) Whether this action applies to a specific selected resource or to a specific resource by ID - 'selected' or 'inferred'
-        """
-        state: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Flow Run State Change) Type of state to change the flow run to
-        """
-        subject: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Notification) Subject of the notification
-        """
-        work_pool_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Work Pool) ID of the work pool to apply this action to
-        """
-        work_queue_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Work Queue) ID of the work queue to apply this action to
-        """
-elif False:
-    AutomationActionsOnResolfArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationActionsOnResolfArgsDict(TypedDict):
+    type: pulumi.Input[_builtins.str]
+    """
+    The type of action to perform. Possible values: do-nothing, run-deployment, pause-deployment, resume-deployment, cancel-flow-run, change-flow-run-state, pause-work-queue, resume-work-queue, send-notification, call-webhook, pause-automation, resume-automation, suspend-flow-run, resume-flow-run, declare-incident, pause-work-pool, resume-work-pool
+    """
+    automation_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Automation) ID of the automation to apply this action to
+    """
+    block_document_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Webhook / Notification) ID of the block to use
+    """
+    body: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Notification) Body of the notification
+    """
+    deployment_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment) ID of the deployment to apply this action to
+    """
+    job_variables: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment) (JSON) Job variables to pass to the created flow run. Use `jsonencode()`.
+    """
+    message: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Flow Run State Change) Message to associate with the state change
+    """
+    name: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Flow Run State Change) Name of the state to change the flow run to
+    """
+    parameters: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment) (JSON) Parameters to pass to the deployment. Use `jsonencode()`.
+    """
+    payload: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Webhook) Payload to send when calling the webhook
+    """
+    source: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment / Work Pool / Work Queue / Automation) Whether this action applies to a specific selected resource or to a specific resource by ID - 'selected' or 'inferred'
+    """
+    state: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Flow Run State Change) Type of state to change the flow run to
+    """
+    subject: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Notification) Subject of the notification
+    """
+    work_pool_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Work Pool) ID of the work pool to apply this action to
+    """
+    work_queue_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Work Queue) ID of the work queue to apply this action to
+    """
 
 @pulumi.input_type
 class AutomationActionsOnResolfArgs:
     def __init__(__self__, *,
                  type: pulumi.Input[_builtins.str],
-                 automation_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 block_document_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 body: Optional[pulumi.Input[_builtins.str]] = None,
-                 deployment_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 job_variables: Optional[pulumi.Input[_builtins.str]] = None,
-                 message: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 parameters: Optional[pulumi.Input[_builtins.str]] = None,
-                 payload: Optional[pulumi.Input[_builtins.str]] = None,
-                 source: Optional[pulumi.Input[_builtins.str]] = None,
-                 state: Optional[pulumi.Input[_builtins.str]] = None,
-                 subject: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_pool_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_queue_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 automation_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 block_document_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 body: pulumi.Input[Optional[_builtins.str]] = None,
+                 deployment_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 job_variables: pulumi.Input[Optional[_builtins.str]] = None,
+                 message: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 parameters: pulumi.Input[Optional[_builtins.str]] = None,
+                 payload: pulumi.Input[Optional[_builtins.str]] = None,
+                 source: pulumi.Input[Optional[_builtins.str]] = None,
+                 state: pulumi.Input[Optional[_builtins.str]] = None,
+                 subject: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_pool_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_queue_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.str] type: The type of action to perform. Possible values: do-nothing, run-deployment, pause-deployment, resume-deployment, cancel-flow-run, change-flow-run-state, pause-work-queue, resume-work-queue, send-notification, call-webhook, pause-automation, resume-automation, suspend-flow-run, resume-flow-run, declare-incident, pause-work-pool, resume-work-pool
         :param pulumi.Input[_builtins.str] automation_id: (Automation) ID of the automation to apply this action to
@@ -610,256 +599,253 @@ class AutomationActionsOnResolfArgs:
 
     @_builtins.property
     @pulumi.getter(name="automationId")
-    def automation_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def automation_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Automation) ID of the automation to apply this action to
         """
         return pulumi.get(self, "automation_id")
 
     @automation_id.setter
-    def automation_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def automation_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "automation_id", value)
 
     @_builtins.property
     @pulumi.getter(name="blockDocumentId")
-    def block_document_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def block_document_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Webhook / Notification) ID of the block to use
         """
         return pulumi.get(self, "block_document_id")
 
     @block_document_id.setter
-    def block_document_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def block_document_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "block_document_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def body(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def body(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Notification) Body of the notification
         """
         return pulumi.get(self, "body")
 
     @body.setter
-    def body(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def body(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "body", value)
 
     @_builtins.property
     @pulumi.getter(name="deploymentId")
-    def deployment_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def deployment_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment) ID of the deployment to apply this action to
         """
         return pulumi.get(self, "deployment_id")
 
     @deployment_id.setter
-    def deployment_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def deployment_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "deployment_id", value)
 
     @_builtins.property
     @pulumi.getter(name="jobVariables")
-    def job_variables(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def job_variables(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment) (JSON) Job variables to pass to the created flow run. Use `jsonencode()`.
         """
         return pulumi.get(self, "job_variables")
 
     @job_variables.setter
-    def job_variables(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def job_variables(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "job_variables", value)
 
     @_builtins.property
     @pulumi.getter
-    def message(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def message(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Flow Run State Change) Message to associate with the state change
         """
         return pulumi.get(self, "message")
 
     @message.setter
-    def message(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def message(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "message", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Flow Run State Change) Name of the state to change the flow run to
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def parameters(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def parameters(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment) (JSON) Parameters to pass to the deployment. Use `jsonencode()`.
         """
         return pulumi.get(self, "parameters")
 
     @parameters.setter
-    def parameters(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def parameters(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "parameters", value)
 
     @_builtins.property
     @pulumi.getter
-    def payload(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def payload(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Webhook) Payload to send when calling the webhook
         """
         return pulumi.get(self, "payload")
 
     @payload.setter
-    def payload(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def payload(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "payload", value)
 
     @_builtins.property
     @pulumi.getter
-    def source(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def source(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment / Work Pool / Work Queue / Automation) Whether this action applies to a specific selected resource or to a specific resource by ID - 'selected' or 'inferred'
         """
         return pulumi.get(self, "source")
 
     @source.setter
-    def source(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def source(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "source", value)
 
     @_builtins.property
     @pulumi.getter
-    def state(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def state(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Flow Run State Change) Type of state to change the flow run to
         """
         return pulumi.get(self, "state")
 
     @state.setter
-    def state(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def state(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "state", value)
 
     @_builtins.property
     @pulumi.getter
-    def subject(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def subject(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Notification) Subject of the notification
         """
         return pulumi.get(self, "subject")
 
     @subject.setter
-    def subject(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def subject(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "subject", value)
 
     @_builtins.property
     @pulumi.getter(name="workPoolId")
-    def work_pool_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def work_pool_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Work Pool) ID of the work pool to apply this action to
         """
         return pulumi.get(self, "work_pool_id")
 
     @work_pool_id.setter
-    def work_pool_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def work_pool_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "work_pool_id", value)
 
     @_builtins.property
     @pulumi.getter(name="workQueueId")
-    def work_queue_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def work_queue_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Work Queue) ID of the work queue to apply this action to
         """
         return pulumi.get(self, "work_queue_id")
 
     @work_queue_id.setter
-    def work_queue_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def work_queue_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "work_queue_id", value)
 
 
-if not MYPY:
-    class AutomationActionsOnTriggerArgsDict(TypedDict):
-        type: pulumi.Input[_builtins.str]
-        """
-        The type of action to perform. Possible values: do-nothing, run-deployment, pause-deployment, resume-deployment, cancel-flow-run, change-flow-run-state, pause-work-queue, resume-work-queue, send-notification, call-webhook, pause-automation, resume-automation, suspend-flow-run, resume-flow-run, declare-incident, pause-work-pool, resume-work-pool
-        """
-        automation_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Automation) ID of the automation to apply this action to
-        """
-        block_document_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Webhook / Notification) ID of the block to use
-        """
-        body: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Notification) Body of the notification
-        """
-        deployment_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment) ID of the deployment to apply this action to
-        """
-        job_variables: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment) (JSON) Job variables to pass to the created flow run. Use `jsonencode()`.
-        """
-        message: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Flow Run State Change) Message to associate with the state change
-        """
-        name: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Flow Run State Change) Name of the state to change the flow run to
-        """
-        parameters: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment) (JSON) Parameters to pass to the deployment. Use `jsonencode()`.
-        """
-        payload: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Webhook) Payload to send when calling the webhook
-        """
-        source: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Deployment / Work Pool / Work Queue / Automation) Whether this action applies to a specific selected resource or to a specific resource by ID - 'selected' or 'inferred'
-        """
-        state: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Flow Run State Change) Type of state to change the flow run to
-        """
-        subject: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Notification) Subject of the notification
-        """
-        work_pool_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Work Pool) ID of the work pool to apply this action to
-        """
-        work_queue_id: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Work Queue) ID of the work queue to apply this action to
-        """
-elif False:
-    AutomationActionsOnTriggerArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationActionsOnTriggerArgsDict(TypedDict):
+    type: pulumi.Input[_builtins.str]
+    """
+    The type of action to perform. Possible values: do-nothing, run-deployment, pause-deployment, resume-deployment, cancel-flow-run, change-flow-run-state, pause-work-queue, resume-work-queue, send-notification, call-webhook, pause-automation, resume-automation, suspend-flow-run, resume-flow-run, declare-incident, pause-work-pool, resume-work-pool
+    """
+    automation_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Automation) ID of the automation to apply this action to
+    """
+    block_document_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Webhook / Notification) ID of the block to use
+    """
+    body: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Notification) Body of the notification
+    """
+    deployment_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment) ID of the deployment to apply this action to
+    """
+    job_variables: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment) (JSON) Job variables to pass to the created flow run. Use `jsonencode()`.
+    """
+    message: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Flow Run State Change) Message to associate with the state change
+    """
+    name: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Flow Run State Change) Name of the state to change the flow run to
+    """
+    parameters: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment) (JSON) Parameters to pass to the deployment. Use `jsonencode()`.
+    """
+    payload: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Webhook) Payload to send when calling the webhook
+    """
+    source: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Deployment / Work Pool / Work Queue / Automation) Whether this action applies to a specific selected resource or to a specific resource by ID - 'selected' or 'inferred'
+    """
+    state: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Flow Run State Change) Type of state to change the flow run to
+    """
+    subject: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Notification) Subject of the notification
+    """
+    work_pool_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Work Pool) ID of the work pool to apply this action to
+    """
+    work_queue_id: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Work Queue) ID of the work queue to apply this action to
+    """
 
 @pulumi.input_type
 class AutomationActionsOnTriggerArgs:
     def __init__(__self__, *,
                  type: pulumi.Input[_builtins.str],
-                 automation_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 block_document_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 body: Optional[pulumi.Input[_builtins.str]] = None,
-                 deployment_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 job_variables: Optional[pulumi.Input[_builtins.str]] = None,
-                 message: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 parameters: Optional[pulumi.Input[_builtins.str]] = None,
-                 payload: Optional[pulumi.Input[_builtins.str]] = None,
-                 source: Optional[pulumi.Input[_builtins.str]] = None,
-                 state: Optional[pulumi.Input[_builtins.str]] = None,
-                 subject: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_pool_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_queue_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 automation_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 block_document_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 body: pulumi.Input[Optional[_builtins.str]] = None,
+                 deployment_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 job_variables: pulumi.Input[Optional[_builtins.str]] = None,
+                 message: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 parameters: pulumi.Input[Optional[_builtins.str]] = None,
+                 payload: pulumi.Input[Optional[_builtins.str]] = None,
+                 source: pulumi.Input[Optional[_builtins.str]] = None,
+                 state: pulumi.Input[Optional[_builtins.str]] = None,
+                 subject: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_pool_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_queue_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.str] type: The type of action to perform. Possible values: do-nothing, run-deployment, pause-deployment, resume-deployment, cancel-flow-run, change-flow-run-state, pause-work-queue, resume-work-queue, send-notification, call-webhook, pause-automation, resume-automation, suspend-flow-run, resume-flow-run, declare-incident, pause-work-pool, resume-work-pool
         :param pulumi.Input[_builtins.str] automation_id: (Automation) ID of the automation to apply this action to
@@ -921,201 +907,198 @@ class AutomationActionsOnTriggerArgs:
 
     @_builtins.property
     @pulumi.getter(name="automationId")
-    def automation_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def automation_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Automation) ID of the automation to apply this action to
         """
         return pulumi.get(self, "automation_id")
 
     @automation_id.setter
-    def automation_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def automation_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "automation_id", value)
 
     @_builtins.property
     @pulumi.getter(name="blockDocumentId")
-    def block_document_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def block_document_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Webhook / Notification) ID of the block to use
         """
         return pulumi.get(self, "block_document_id")
 
     @block_document_id.setter
-    def block_document_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def block_document_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "block_document_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def body(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def body(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Notification) Body of the notification
         """
         return pulumi.get(self, "body")
 
     @body.setter
-    def body(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def body(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "body", value)
 
     @_builtins.property
     @pulumi.getter(name="deploymentId")
-    def deployment_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def deployment_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment) ID of the deployment to apply this action to
         """
         return pulumi.get(self, "deployment_id")
 
     @deployment_id.setter
-    def deployment_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def deployment_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "deployment_id", value)
 
     @_builtins.property
     @pulumi.getter(name="jobVariables")
-    def job_variables(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def job_variables(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment) (JSON) Job variables to pass to the created flow run. Use `jsonencode()`.
         """
         return pulumi.get(self, "job_variables")
 
     @job_variables.setter
-    def job_variables(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def job_variables(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "job_variables", value)
 
     @_builtins.property
     @pulumi.getter
-    def message(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def message(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Flow Run State Change) Message to associate with the state change
         """
         return pulumi.get(self, "message")
 
     @message.setter
-    def message(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def message(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "message", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Flow Run State Change) Name of the state to change the flow run to
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def parameters(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def parameters(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment) (JSON) Parameters to pass to the deployment. Use `jsonencode()`.
         """
         return pulumi.get(self, "parameters")
 
     @parameters.setter
-    def parameters(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def parameters(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "parameters", value)
 
     @_builtins.property
     @pulumi.getter
-    def payload(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def payload(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Webhook) Payload to send when calling the webhook
         """
         return pulumi.get(self, "payload")
 
     @payload.setter
-    def payload(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def payload(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "payload", value)
 
     @_builtins.property
     @pulumi.getter
-    def source(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def source(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Deployment / Work Pool / Work Queue / Automation) Whether this action applies to a specific selected resource or to a specific resource by ID - 'selected' or 'inferred'
         """
         return pulumi.get(self, "source")
 
     @source.setter
-    def source(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def source(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "source", value)
 
     @_builtins.property
     @pulumi.getter
-    def state(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def state(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Flow Run State Change) Type of state to change the flow run to
         """
         return pulumi.get(self, "state")
 
     @state.setter
-    def state(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def state(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "state", value)
 
     @_builtins.property
     @pulumi.getter
-    def subject(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def subject(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Notification) Subject of the notification
         """
         return pulumi.get(self, "subject")
 
     @subject.setter
-    def subject(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def subject(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "subject", value)
 
     @_builtins.property
     @pulumi.getter(name="workPoolId")
-    def work_pool_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def work_pool_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Work Pool) ID of the work pool to apply this action to
         """
         return pulumi.get(self, "work_pool_id")
 
     @work_pool_id.setter
-    def work_pool_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def work_pool_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "work_pool_id", value)
 
     @_builtins.property
     @pulumi.getter(name="workQueueId")
-    def work_queue_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def work_queue_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Work Queue) ID of the work queue to apply this action to
         """
         return pulumi.get(self, "work_queue_id")
 
     @work_queue_id.setter
-    def work_queue_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def work_queue_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "work_queue_id", value)
 
 
-if not MYPY:
-    class AutomationTriggerArgsDict(TypedDict):
-        compound: NotRequired[pulumi.Input['AutomationTriggerCompoundArgsDict']]
-        """
-        A composite trigger that requires some number of triggers to have fired within the given time period
-        """
-        event: NotRequired[pulumi.Input['AutomationTriggerEventArgsDict']]
-        """
-        A trigger that fires based on the presence or absence of events within a given period of time
-        """
-        metric: NotRequired[pulumi.Input['AutomationTriggerMetricArgsDict']]
-        """
-        A trigger that fires based on the results of a metric query
-        """
-        sequence: NotRequired[pulumi.Input['AutomationTriggerSequenceArgsDict']]
-        """
-        A composite trigger that requires triggers to fire in a specific order
-        """
-elif False:
-    AutomationTriggerArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerArgsDict(TypedDict):
+    compound: NotRequired[pulumi.Input[Optional['AutomationTriggerCompoundArgsDict']]]
+    """
+    A composite trigger that requires some number of triggers to have fired within the given time period
+    """
+    event: NotRequired[pulumi.Input[Optional['AutomationTriggerEventArgsDict']]]
+    """
+    A trigger that fires based on the presence or absence of events within a given period of time
+    """
+    metric: NotRequired[pulumi.Input[Optional['AutomationTriggerMetricArgsDict']]]
+    """
+    A trigger that fires based on the results of a metric query
+    """
+    sequence: NotRequired[pulumi.Input[Optional['AutomationTriggerSequenceArgsDict']]]
+    """
+    A composite trigger that requires triggers to fire in a specific order
+    """
 
 @pulumi.input_type
 class AutomationTriggerArgs:
     def __init__(__self__, *,
-                 compound: Optional[pulumi.Input['AutomationTriggerCompoundArgs']] = None,
-                 event: Optional[pulumi.Input['AutomationTriggerEventArgs']] = None,
-                 metric: Optional[pulumi.Input['AutomationTriggerMetricArgs']] = None,
-                 sequence: Optional[pulumi.Input['AutomationTriggerSequenceArgs']] = None):
+                 compound: pulumi.Input[Optional['AutomationTriggerCompoundArgs']] = None,
+                 event: pulumi.Input[Optional['AutomationTriggerEventArgs']] = None,
+                 metric: pulumi.Input[Optional['AutomationTriggerMetricArgs']] = None,
+                 sequence: pulumi.Input[Optional['AutomationTriggerSequenceArgs']] = None):
         """
         :param pulumi.Input['AutomationTriggerCompoundArgs'] compound: A composite trigger that requires some number of triggers to have fired within the given time period
         :param pulumi.Input['AutomationTriggerEventArgs'] event: A trigger that fires based on the presence or absence of events within a given period of time
@@ -1133,76 +1116,73 @@ class AutomationTriggerArgs:
 
     @_builtins.property
     @pulumi.getter
-    def compound(self) -> Optional[pulumi.Input['AutomationTriggerCompoundArgs']]:
+    def compound(self) -> pulumi.Input[Optional['AutomationTriggerCompoundArgs']]:
         """
         A composite trigger that requires some number of triggers to have fired within the given time period
         """
         return pulumi.get(self, "compound")
 
     @compound.setter
-    def compound(self, value: Optional[pulumi.Input['AutomationTriggerCompoundArgs']]):
+    def compound(self, value: pulumi.Input[Optional['AutomationTriggerCompoundArgs']]):
         pulumi.set(self, "compound", value)
 
     @_builtins.property
     @pulumi.getter
-    def event(self) -> Optional[pulumi.Input['AutomationTriggerEventArgs']]:
+    def event(self) -> pulumi.Input[Optional['AutomationTriggerEventArgs']]:
         """
         A trigger that fires based on the presence or absence of events within a given period of time
         """
         return pulumi.get(self, "event")
 
     @event.setter
-    def event(self, value: Optional[pulumi.Input['AutomationTriggerEventArgs']]):
+    def event(self, value: pulumi.Input[Optional['AutomationTriggerEventArgs']]):
         pulumi.set(self, "event", value)
 
     @_builtins.property
     @pulumi.getter
-    def metric(self) -> Optional[pulumi.Input['AutomationTriggerMetricArgs']]:
+    def metric(self) -> pulumi.Input[Optional['AutomationTriggerMetricArgs']]:
         """
         A trigger that fires based on the results of a metric query
         """
         return pulumi.get(self, "metric")
 
     @metric.setter
-    def metric(self, value: Optional[pulumi.Input['AutomationTriggerMetricArgs']]):
+    def metric(self, value: pulumi.Input[Optional['AutomationTriggerMetricArgs']]):
         pulumi.set(self, "metric", value)
 
     @_builtins.property
     @pulumi.getter
-    def sequence(self) -> Optional[pulumi.Input['AutomationTriggerSequenceArgs']]:
+    def sequence(self) -> pulumi.Input[Optional['AutomationTriggerSequenceArgs']]:
         """
         A composite trigger that requires triggers to fire in a specific order
         """
         return pulumi.get(self, "sequence")
 
     @sequence.setter
-    def sequence(self, value: Optional[pulumi.Input['AutomationTriggerSequenceArgs']]):
+    def sequence(self, value: pulumi.Input[Optional['AutomationTriggerSequenceArgs']]):
         pulumi.set(self, "sequence", value)
 
 
-if not MYPY:
-    class AutomationTriggerCompoundArgsDict(TypedDict):
-        require: Any
-        """
-        How many triggers must fire ('any', 'all', or a number)
-        """
-        triggers: pulumi.Input[Sequence[pulumi.Input['AutomationTriggerCompoundTriggerArgsDict']]]
-        """
-        The ordered list of triggers that must fire in sequence
-        """
-        within: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        The time period in seconds over which the events must occur
-        """
-elif False:
-    AutomationTriggerCompoundArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerCompoundArgsDict(TypedDict):
+    require: Any
+    """
+    How many triggers must fire ('any', 'all', or a number)
+    """
+    triggers: pulumi.Input[Sequence[pulumi.Input['AutomationTriggerCompoundTriggerArgsDict']]]
+    """
+    The ordered list of triggers that must fire in sequence
+    """
+    within: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    The time period in seconds over which the events must occur
+    """
 
 @pulumi.input_type
 class AutomationTriggerCompoundArgs:
     def __init__(__self__, *,
                  require: Any,
                  triggers: pulumi.Input[Sequence[pulumi.Input['AutomationTriggerCompoundTriggerArgs']]],
-                 within: Optional[pulumi.Input[_builtins.float]] = None):
+                 within: pulumi.Input[Optional[_builtins.float]] = None):
         """
         :param Any require: How many triggers must fire ('any', 'all', or a number)
         :param pulumi.Input[Sequence[pulumi.Input['AutomationTriggerCompoundTriggerArgs']]] triggers: The ordered list of triggers that must fire in sequence
@@ -1239,35 +1219,32 @@ class AutomationTriggerCompoundArgs:
 
     @_builtins.property
     @pulumi.getter
-    def within(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def within(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The time period in seconds over which the events must occur
         """
         return pulumi.get(self, "within")
 
     @within.setter
-    def within(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def within(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "within", value)
 
 
-if not MYPY:
-    class AutomationTriggerCompoundTriggerArgsDict(TypedDict):
-        event: NotRequired[pulumi.Input['AutomationTriggerCompoundTriggerEventArgsDict']]
-        """
-        A trigger that fires based on the presence or absence of events within a given period of time
-        """
-        metric: NotRequired[pulumi.Input['AutomationTriggerCompoundTriggerMetricArgsDict']]
-        """
-        A trigger that fires based on the results of a metric query
-        """
-elif False:
-    AutomationTriggerCompoundTriggerArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerCompoundTriggerArgsDict(TypedDict):
+    event: NotRequired[pulumi.Input[Optional['AutomationTriggerCompoundTriggerEventArgsDict']]]
+    """
+    A trigger that fires based on the presence or absence of events within a given period of time
+    """
+    metric: NotRequired[pulumi.Input[Optional['AutomationTriggerCompoundTriggerMetricArgsDict']]]
+    """
+    A trigger that fires based on the results of a metric query
+    """
 
 @pulumi.input_type
 class AutomationTriggerCompoundTriggerArgs:
     def __init__(__self__, *,
-                 event: Optional[pulumi.Input['AutomationTriggerCompoundTriggerEventArgs']] = None,
-                 metric: Optional[pulumi.Input['AutomationTriggerCompoundTriggerMetricArgs']] = None):
+                 event: pulumi.Input[Optional['AutomationTriggerCompoundTriggerEventArgs']] = None,
+                 metric: pulumi.Input[Optional['AutomationTriggerCompoundTriggerMetricArgs']] = None):
         """
         :param pulumi.Input['AutomationTriggerCompoundTriggerEventArgs'] event: A trigger that fires based on the presence or absence of events within a given period of time
         :param pulumi.Input['AutomationTriggerCompoundTriggerMetricArgs'] metric: A trigger that fires based on the results of a metric query
@@ -1279,77 +1256,74 @@ class AutomationTriggerCompoundTriggerArgs:
 
     @_builtins.property
     @pulumi.getter
-    def event(self) -> Optional[pulumi.Input['AutomationTriggerCompoundTriggerEventArgs']]:
+    def event(self) -> pulumi.Input[Optional['AutomationTriggerCompoundTriggerEventArgs']]:
         """
         A trigger that fires based on the presence or absence of events within a given period of time
         """
         return pulumi.get(self, "event")
 
     @event.setter
-    def event(self, value: Optional[pulumi.Input['AutomationTriggerCompoundTriggerEventArgs']]):
+    def event(self, value: pulumi.Input[Optional['AutomationTriggerCompoundTriggerEventArgs']]):
         pulumi.set(self, "event", value)
 
     @_builtins.property
     @pulumi.getter
-    def metric(self) -> Optional[pulumi.Input['AutomationTriggerCompoundTriggerMetricArgs']]:
+    def metric(self) -> pulumi.Input[Optional['AutomationTriggerCompoundTriggerMetricArgs']]:
         """
         A trigger that fires based on the results of a metric query
         """
         return pulumi.get(self, "metric")
 
     @metric.setter
-    def metric(self, value: Optional[pulumi.Input['AutomationTriggerCompoundTriggerMetricArgs']]):
+    def metric(self, value: pulumi.Input[Optional['AutomationTriggerCompoundTriggerMetricArgs']]):
         pulumi.set(self, "metric", value)
 
 
-if not MYPY:
-    class AutomationTriggerCompoundTriggerEventArgsDict(TypedDict):
-        posture: pulumi.Input[_builtins.str]
-        """
-        The posture of this trigger, either Reactive or Proactive
-        """
-        afters: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
-        """
-        The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
-        """
-        expects: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
-        """
-        The event(s) this trigger is expecting to see. If empty, this trigger will match any event
-        """
-        for_eaches: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
-        """
-        Evaluate the trigger separately for each distinct value of these labels on the resource
-        """
-        match: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
-        """
-        match_related: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
-        """
-        threshold: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        The number of events required for this trigger to fire (Reactive) or expected (Proactive)
-        """
-        within: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        The time period in seconds over which the events must occur
-        """
-elif False:
-    AutomationTriggerCompoundTriggerEventArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerCompoundTriggerEventArgsDict(TypedDict):
+    posture: pulumi.Input[_builtins.str]
+    """
+    The posture of this trigger, either Reactive or Proactive
+    """
+    afters: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
+    """
+    expects: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    The event(s) this trigger is expecting to see. If empty, this trigger will match any event
+    """
+    for_eaches: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    Evaluate the trigger separately for each distinct value of these labels on the resource
+    """
+    match: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
+    """
+    match_related: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
+    """
+    threshold: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    The number of events required for this trigger to fire (Reactive) or expected (Proactive)
+    """
+    within: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    The time period in seconds over which the events must occur
+    """
 
 @pulumi.input_type
 class AutomationTriggerCompoundTriggerEventArgs:
     def __init__(__self__, *,
                  posture: pulumi.Input[_builtins.str],
-                 afters: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 expects: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 for_eaches: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 match: Optional[pulumi.Input[_builtins.str]] = None,
-                 match_related: Optional[pulumi.Input[_builtins.str]] = None,
-                 threshold: Optional[pulumi.Input[_builtins.float]] = None,
-                 within: Optional[pulumi.Input[_builtins.float]] = None):
+                 afters: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 expects: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 for_eaches: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 match: pulumi.Input[Optional[_builtins.str]] = None,
+                 match_related: pulumi.Input[Optional[_builtins.str]] = None,
+                 threshold: pulumi.Input[Optional[_builtins.float]] = None,
+                 within: pulumi.Input[Optional[_builtins.float]] = None):
         """
         :param pulumi.Input[_builtins.str] posture: The posture of this trigger, either Reactive or Proactive
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] afters: The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
@@ -1390,109 +1364,106 @@ class AutomationTriggerCompoundTriggerEventArgs:
 
     @_builtins.property
     @pulumi.getter
-    def afters(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def afters(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
         """
         return pulumi.get(self, "afters")
 
     @afters.setter
-    def afters(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def afters(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "afters", value)
 
     @_builtins.property
     @pulumi.getter
-    def expects(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def expects(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         The event(s) this trigger is expecting to see. If empty, this trigger will match any event
         """
         return pulumi.get(self, "expects")
 
     @expects.setter
-    def expects(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def expects(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "expects", value)
 
     @_builtins.property
     @pulumi.getter(name="forEaches")
-    def for_eaches(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def for_eaches(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Evaluate the trigger separately for each distinct value of these labels on the resource
         """
         return pulumi.get(self, "for_eaches")
 
     @for_eaches.setter
-    def for_eaches(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def for_eaches(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "for_eaches", value)
 
     @_builtins.property
     @pulumi.getter
-    def match(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match")
 
     @match.setter
-    def match(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match", value)
 
     @_builtins.property
     @pulumi.getter(name="matchRelated")
-    def match_related(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match_related(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match_related")
 
     @match_related.setter
-    def match_related(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match_related(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match_related", value)
 
     @_builtins.property
     @pulumi.getter
-    def threshold(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def threshold(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The number of events required for this trigger to fire (Reactive) or expected (Proactive)
         """
         return pulumi.get(self, "threshold")
 
     @threshold.setter
-    def threshold(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def threshold(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "threshold", value)
 
     @_builtins.property
     @pulumi.getter
-    def within(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def within(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The time period in seconds over which the events must occur
         """
         return pulumi.get(self, "within")
 
     @within.setter
-    def within(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def within(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "within", value)
 
 
-if not MYPY:
-    class AutomationTriggerCompoundTriggerMetricArgsDict(TypedDict):
-        metric: pulumi.Input['AutomationTriggerCompoundTriggerMetricMetricArgsDict']
-        match: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
-        """
-        match_related: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
-        """
-elif False:
-    AutomationTriggerCompoundTriggerMetricArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerCompoundTriggerMetricArgsDict(TypedDict):
+    metric: pulumi.Input['AutomationTriggerCompoundTriggerMetricMetricArgsDict']
+    match: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
+    """
+    match_related: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
+    """
 
 @pulumi.input_type
 class AutomationTriggerCompoundTriggerMetricArgs:
     def __init__(__self__, *,
                  metric: pulumi.Input['AutomationTriggerCompoundTriggerMetricMetricArgs'],
-                 match: Optional[pulumi.Input[_builtins.str]] = None,
-                 match_related: Optional[pulumi.Input[_builtins.str]] = None):
+                 match: pulumi.Input[Optional[_builtins.str]] = None,
+                 match_related: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.str] match: (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
         :param pulumi.Input[_builtins.str] match_related: (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
@@ -1514,53 +1485,50 @@ class AutomationTriggerCompoundTriggerMetricArgs:
 
     @_builtins.property
     @pulumi.getter
-    def match(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match")
 
     @match.setter
-    def match(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match", value)
 
     @_builtins.property
     @pulumi.getter(name="matchRelated")
-    def match_related(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match_related(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match_related")
 
     @match_related.setter
-    def match_related(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match_related(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match_related", value)
 
 
-if not MYPY:
-    class AutomationTriggerCompoundTriggerMetricMetricArgsDict(TypedDict):
-        firing_for: pulumi.Input[_builtins.float]
-        """
-        The duration (seconds) for which the metric query must breach OR resolve continuously before the state is updated and actions are triggered.
-        """
-        name: pulumi.Input[_builtins.str]
-        """
-        The name of the metric to query
-        """
-        operator: pulumi.Input[_builtins.str]
-        """
-        The comparative operator used to evaluate the query result against the threshold value
-        """
-        range: pulumi.Input[_builtins.float]
-        """
-        The lookback duration (seconds) for a metric query. This duration is used to determine the time range over which the query will be executed.
-        """
-        threshold: pulumi.Input[_builtins.float]
-        """
-        The threshold value against which we'll compare the query results
-        """
-elif False:
-    AutomationTriggerCompoundTriggerMetricMetricArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerCompoundTriggerMetricMetricArgsDict(TypedDict):
+    firing_for: pulumi.Input[_builtins.float]
+    """
+    The duration (seconds) for which the metric query must breach OR resolve continuously before the state is updated and actions are triggered.
+    """
+    name: pulumi.Input[_builtins.str]
+    """
+    The name of the metric to query
+    """
+    operator: pulumi.Input[_builtins.str]
+    """
+    The comparative operator used to evaluate the query result against the threshold value
+    """
+    range: pulumi.Input[_builtins.float]
+    """
+    The lookback duration (seconds) for a metric query. This duration is used to determine the time range over which the query will be executed.
+    """
+    threshold: pulumi.Input[_builtins.float]
+    """
+    The threshold value against which we'll compare the query results
+    """
 
 @pulumi.input_type
 class AutomationTriggerCompoundTriggerMetricMetricArgs:
@@ -1644,54 +1612,51 @@ class AutomationTriggerCompoundTriggerMetricMetricArgs:
         pulumi.set(self, "threshold", value)
 
 
-if not MYPY:
-    class AutomationTriggerEventArgsDict(TypedDict):
-        posture: pulumi.Input[_builtins.str]
-        """
-        The posture of this trigger, either Reactive or Proactive
-        """
-        afters: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
-        """
-        The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
-        """
-        expects: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
-        """
-        The event(s) this trigger is expecting to see. If empty, this trigger will match any event
-        """
-        for_eaches: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
-        """
-        Evaluate the trigger separately for each distinct value of these labels on the resource
-        """
-        match: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
-        """
-        match_related: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
-        """
-        threshold: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        The number of events required for this trigger to fire (Reactive) or expected (Proactive)
-        """
-        within: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        The time period in seconds over which the events must occur
-        """
-elif False:
-    AutomationTriggerEventArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerEventArgsDict(TypedDict):
+    posture: pulumi.Input[_builtins.str]
+    """
+    The posture of this trigger, either Reactive or Proactive
+    """
+    afters: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
+    """
+    expects: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    The event(s) this trigger is expecting to see. If empty, this trigger will match any event
+    """
+    for_eaches: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    Evaluate the trigger separately for each distinct value of these labels on the resource
+    """
+    match: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
+    """
+    match_related: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
+    """
+    threshold: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    The number of events required for this trigger to fire (Reactive) or expected (Proactive)
+    """
+    within: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    The time period in seconds over which the events must occur
+    """
 
 @pulumi.input_type
 class AutomationTriggerEventArgs:
     def __init__(__self__, *,
                  posture: pulumi.Input[_builtins.str],
-                 afters: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 expects: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 for_eaches: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 match: Optional[pulumi.Input[_builtins.str]] = None,
-                 match_related: Optional[pulumi.Input[_builtins.str]] = None,
-                 threshold: Optional[pulumi.Input[_builtins.float]] = None,
-                 within: Optional[pulumi.Input[_builtins.float]] = None):
+                 afters: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 expects: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 for_eaches: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 match: pulumi.Input[Optional[_builtins.str]] = None,
+                 match_related: pulumi.Input[Optional[_builtins.str]] = None,
+                 threshold: pulumi.Input[Optional[_builtins.float]] = None,
+                 within: pulumi.Input[Optional[_builtins.float]] = None):
         """
         :param pulumi.Input[_builtins.str] posture: The posture of this trigger, either Reactive or Proactive
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] afters: The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
@@ -1732,109 +1697,106 @@ class AutomationTriggerEventArgs:
 
     @_builtins.property
     @pulumi.getter
-    def afters(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def afters(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
         """
         return pulumi.get(self, "afters")
 
     @afters.setter
-    def afters(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def afters(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "afters", value)
 
     @_builtins.property
     @pulumi.getter
-    def expects(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def expects(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         The event(s) this trigger is expecting to see. If empty, this trigger will match any event
         """
         return pulumi.get(self, "expects")
 
     @expects.setter
-    def expects(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def expects(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "expects", value)
 
     @_builtins.property
     @pulumi.getter(name="forEaches")
-    def for_eaches(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def for_eaches(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Evaluate the trigger separately for each distinct value of these labels on the resource
         """
         return pulumi.get(self, "for_eaches")
 
     @for_eaches.setter
-    def for_eaches(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def for_eaches(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "for_eaches", value)
 
     @_builtins.property
     @pulumi.getter
-    def match(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match")
 
     @match.setter
-    def match(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match", value)
 
     @_builtins.property
     @pulumi.getter(name="matchRelated")
-    def match_related(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match_related(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match_related")
 
     @match_related.setter
-    def match_related(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match_related(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match_related", value)
 
     @_builtins.property
     @pulumi.getter
-    def threshold(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def threshold(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The number of events required for this trigger to fire (Reactive) or expected (Proactive)
         """
         return pulumi.get(self, "threshold")
 
     @threshold.setter
-    def threshold(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def threshold(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "threshold", value)
 
     @_builtins.property
     @pulumi.getter
-    def within(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def within(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The time period in seconds over which the events must occur
         """
         return pulumi.get(self, "within")
 
     @within.setter
-    def within(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def within(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "within", value)
 
 
-if not MYPY:
-    class AutomationTriggerMetricArgsDict(TypedDict):
-        metric: pulumi.Input['AutomationTriggerMetricMetricArgsDict']
-        match: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
-        """
-        match_related: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
-        """
-elif False:
-    AutomationTriggerMetricArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerMetricArgsDict(TypedDict):
+    metric: pulumi.Input['AutomationTriggerMetricMetricArgsDict']
+    match: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
+    """
+    match_related: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
+    """
 
 @pulumi.input_type
 class AutomationTriggerMetricArgs:
     def __init__(__self__, *,
                  metric: pulumi.Input['AutomationTriggerMetricMetricArgs'],
-                 match: Optional[pulumi.Input[_builtins.str]] = None,
-                 match_related: Optional[pulumi.Input[_builtins.str]] = None):
+                 match: pulumi.Input[Optional[_builtins.str]] = None,
+                 match_related: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.str] match: (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
         :param pulumi.Input[_builtins.str] match_related: (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
@@ -1856,53 +1818,50 @@ class AutomationTriggerMetricArgs:
 
     @_builtins.property
     @pulumi.getter
-    def match(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match")
 
     @match.setter
-    def match(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match", value)
 
     @_builtins.property
     @pulumi.getter(name="matchRelated")
-    def match_related(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match_related(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match_related")
 
     @match_related.setter
-    def match_related(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match_related(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match_related", value)
 
 
-if not MYPY:
-    class AutomationTriggerMetricMetricArgsDict(TypedDict):
-        firing_for: pulumi.Input[_builtins.float]
-        """
-        The duration (seconds) for which the metric query must breach OR resolve continuously before the state is updated and actions are triggered.
-        """
-        name: pulumi.Input[_builtins.str]
-        """
-        The name of the metric to query
-        """
-        operator: pulumi.Input[_builtins.str]
-        """
-        The comparative operator used to evaluate the query result against the threshold value
-        """
-        range: pulumi.Input[_builtins.float]
-        """
-        The lookback duration (seconds) for a metric query. This duration is used to determine the time range over which the query will be executed.
-        """
-        threshold: pulumi.Input[_builtins.float]
-        """
-        The threshold value against which we'll compare the query results
-        """
-elif False:
-    AutomationTriggerMetricMetricArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerMetricMetricArgsDict(TypedDict):
+    firing_for: pulumi.Input[_builtins.float]
+    """
+    The duration (seconds) for which the metric query must breach OR resolve continuously before the state is updated and actions are triggered.
+    """
+    name: pulumi.Input[_builtins.str]
+    """
+    The name of the metric to query
+    """
+    operator: pulumi.Input[_builtins.str]
+    """
+    The comparative operator used to evaluate the query result against the threshold value
+    """
+    range: pulumi.Input[_builtins.float]
+    """
+    The lookback duration (seconds) for a metric query. This duration is used to determine the time range over which the query will be executed.
+    """
+    threshold: pulumi.Input[_builtins.float]
+    """
+    The threshold value against which we'll compare the query results
+    """
 
 @pulumi.input_type
 class AutomationTriggerMetricMetricArgs:
@@ -1986,24 +1945,21 @@ class AutomationTriggerMetricMetricArgs:
         pulumi.set(self, "threshold", value)
 
 
-if not MYPY:
-    class AutomationTriggerSequenceArgsDict(TypedDict):
-        triggers: pulumi.Input[Sequence[pulumi.Input['AutomationTriggerSequenceTriggerArgsDict']]]
-        """
-        The ordered list of triggers that must fire in sequence
-        """
-        within: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        The time period in seconds over which the events must occur
-        """
-elif False:
-    AutomationTriggerSequenceArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerSequenceArgsDict(TypedDict):
+    triggers: pulumi.Input[Sequence[pulumi.Input['AutomationTriggerSequenceTriggerArgsDict']]]
+    """
+    The ordered list of triggers that must fire in sequence
+    """
+    within: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    The time period in seconds over which the events must occur
+    """
 
 @pulumi.input_type
 class AutomationTriggerSequenceArgs:
     def __init__(__self__, *,
                  triggers: pulumi.Input[Sequence[pulumi.Input['AutomationTriggerSequenceTriggerArgs']]],
-                 within: Optional[pulumi.Input[_builtins.float]] = None):
+                 within: pulumi.Input[Optional[_builtins.float]] = None):
         """
         :param pulumi.Input[Sequence[pulumi.Input['AutomationTriggerSequenceTriggerArgs']]] triggers: The ordered list of triggers that must fire in sequence
         :param pulumi.Input[_builtins.float] within: The time period in seconds over which the events must occur
@@ -2026,35 +1982,32 @@ class AutomationTriggerSequenceArgs:
 
     @_builtins.property
     @pulumi.getter
-    def within(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def within(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The time period in seconds over which the events must occur
         """
         return pulumi.get(self, "within")
 
     @within.setter
-    def within(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def within(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "within", value)
 
 
-if not MYPY:
-    class AutomationTriggerSequenceTriggerArgsDict(TypedDict):
-        event: NotRequired[pulumi.Input['AutomationTriggerSequenceTriggerEventArgsDict']]
-        """
-        A trigger that fires based on the presence or absence of events within a given period of time
-        """
-        metric: NotRequired[pulumi.Input['AutomationTriggerSequenceTriggerMetricArgsDict']]
-        """
-        A trigger that fires based on the results of a metric query
-        """
-elif False:
-    AutomationTriggerSequenceTriggerArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerSequenceTriggerArgsDict(TypedDict):
+    event: NotRequired[pulumi.Input[Optional['AutomationTriggerSequenceTriggerEventArgsDict']]]
+    """
+    A trigger that fires based on the presence or absence of events within a given period of time
+    """
+    metric: NotRequired[pulumi.Input[Optional['AutomationTriggerSequenceTriggerMetricArgsDict']]]
+    """
+    A trigger that fires based on the results of a metric query
+    """
 
 @pulumi.input_type
 class AutomationTriggerSequenceTriggerArgs:
     def __init__(__self__, *,
-                 event: Optional[pulumi.Input['AutomationTriggerSequenceTriggerEventArgs']] = None,
-                 metric: Optional[pulumi.Input['AutomationTriggerSequenceTriggerMetricArgs']] = None):
+                 event: pulumi.Input[Optional['AutomationTriggerSequenceTriggerEventArgs']] = None,
+                 metric: pulumi.Input[Optional['AutomationTriggerSequenceTriggerMetricArgs']] = None):
         """
         :param pulumi.Input['AutomationTriggerSequenceTriggerEventArgs'] event: A trigger that fires based on the presence or absence of events within a given period of time
         :param pulumi.Input['AutomationTriggerSequenceTriggerMetricArgs'] metric: A trigger that fires based on the results of a metric query
@@ -2066,77 +2019,74 @@ class AutomationTriggerSequenceTriggerArgs:
 
     @_builtins.property
     @pulumi.getter
-    def event(self) -> Optional[pulumi.Input['AutomationTriggerSequenceTriggerEventArgs']]:
+    def event(self) -> pulumi.Input[Optional['AutomationTriggerSequenceTriggerEventArgs']]:
         """
         A trigger that fires based on the presence or absence of events within a given period of time
         """
         return pulumi.get(self, "event")
 
     @event.setter
-    def event(self, value: Optional[pulumi.Input['AutomationTriggerSequenceTriggerEventArgs']]):
+    def event(self, value: pulumi.Input[Optional['AutomationTriggerSequenceTriggerEventArgs']]):
         pulumi.set(self, "event", value)
 
     @_builtins.property
     @pulumi.getter
-    def metric(self) -> Optional[pulumi.Input['AutomationTriggerSequenceTriggerMetricArgs']]:
+    def metric(self) -> pulumi.Input[Optional['AutomationTriggerSequenceTriggerMetricArgs']]:
         """
         A trigger that fires based on the results of a metric query
         """
         return pulumi.get(self, "metric")
 
     @metric.setter
-    def metric(self, value: Optional[pulumi.Input['AutomationTriggerSequenceTriggerMetricArgs']]):
+    def metric(self, value: pulumi.Input[Optional['AutomationTriggerSequenceTriggerMetricArgs']]):
         pulumi.set(self, "metric", value)
 
 
-if not MYPY:
-    class AutomationTriggerSequenceTriggerEventArgsDict(TypedDict):
-        posture: pulumi.Input[_builtins.str]
-        """
-        The posture of this trigger, either Reactive or Proactive
-        """
-        afters: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
-        """
-        The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
-        """
-        expects: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
-        """
-        The event(s) this trigger is expecting to see. If empty, this trigger will match any event
-        """
-        for_eaches: NotRequired[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]
-        """
-        Evaluate the trigger separately for each distinct value of these labels on the resource
-        """
-        match: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
-        """
-        match_related: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
-        """
-        threshold: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        The number of events required for this trigger to fire (Reactive) or expected (Proactive)
-        """
-        within: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        The time period in seconds over which the events must occur
-        """
-elif False:
-    AutomationTriggerSequenceTriggerEventArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerSequenceTriggerEventArgsDict(TypedDict):
+    posture: pulumi.Input[_builtins.str]
+    """
+    The posture of this trigger, either Reactive or Proactive
+    """
+    afters: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
+    """
+    expects: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    The event(s) this trigger is expecting to see. If empty, this trigger will match any event
+    """
+    for_eaches: NotRequired[pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]]
+    """
+    Evaluate the trigger separately for each distinct value of these labels on the resource
+    """
+    match: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
+    """
+    match_related: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
+    """
+    threshold: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    The number of events required for this trigger to fire (Reactive) or expected (Proactive)
+    """
+    within: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    The time period in seconds over which the events must occur
+    """
 
 @pulumi.input_type
 class AutomationTriggerSequenceTriggerEventArgs:
     def __init__(__self__, *,
                  posture: pulumi.Input[_builtins.str],
-                 afters: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 expects: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 for_eaches: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 match: Optional[pulumi.Input[_builtins.str]] = None,
-                 match_related: Optional[pulumi.Input[_builtins.str]] = None,
-                 threshold: Optional[pulumi.Input[_builtins.float]] = None,
-                 within: Optional[pulumi.Input[_builtins.float]] = None):
+                 afters: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 expects: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 for_eaches: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 match: pulumi.Input[Optional[_builtins.str]] = None,
+                 match_related: pulumi.Input[Optional[_builtins.str]] = None,
+                 threshold: pulumi.Input[Optional[_builtins.float]] = None,
+                 within: pulumi.Input[Optional[_builtins.float]] = None):
         """
         :param pulumi.Input[_builtins.str] posture: The posture of this trigger, either Reactive or Proactive
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] afters: The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
@@ -2177,109 +2127,106 @@ class AutomationTriggerSequenceTriggerEventArgs:
 
     @_builtins.property
     @pulumi.getter
-    def afters(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def afters(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         The event(s) which must first been seen to fire this trigger. If empty, then fire this trigger immediately
         """
         return pulumi.get(self, "afters")
 
     @afters.setter
-    def afters(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def afters(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "afters", value)
 
     @_builtins.property
     @pulumi.getter
-    def expects(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def expects(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         The event(s) this trigger is expecting to see. If empty, this trigger will match any event
         """
         return pulumi.get(self, "expects")
 
     @expects.setter
-    def expects(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def expects(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "expects", value)
 
     @_builtins.property
     @pulumi.getter(name="forEaches")
-    def for_eaches(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def for_eaches(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Evaluate the trigger separately for each distinct value of these labels on the resource
         """
         return pulumi.get(self, "for_eaches")
 
     @for_eaches.setter
-    def for_eaches(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def for_eaches(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "for_eaches", value)
 
     @_builtins.property
     @pulumi.getter
-    def match(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match")
 
     @match.setter
-    def match(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match", value)
 
     @_builtins.property
     @pulumi.getter(name="matchRelated")
-    def match_related(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match_related(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match_related")
 
     @match_related.setter
-    def match_related(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match_related(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match_related", value)
 
     @_builtins.property
     @pulumi.getter
-    def threshold(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def threshold(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The number of events required for this trigger to fire (Reactive) or expected (Proactive)
         """
         return pulumi.get(self, "threshold")
 
     @threshold.setter
-    def threshold(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def threshold(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "threshold", value)
 
     @_builtins.property
     @pulumi.getter
-    def within(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def within(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The time period in seconds over which the events must occur
         """
         return pulumi.get(self, "within")
 
     @within.setter
-    def within(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def within(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "within", value)
 
 
-if not MYPY:
-    class AutomationTriggerSequenceTriggerMetricArgsDict(TypedDict):
-        metric: pulumi.Input['AutomationTriggerSequenceTriggerMetricMetricArgsDict']
-        match: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
-        """
-        match_related: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
-        """
-elif False:
-    AutomationTriggerSequenceTriggerMetricArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerSequenceTriggerMetricArgsDict(TypedDict):
+    metric: pulumi.Input['AutomationTriggerSequenceTriggerMetricMetricArgsDict']
+    match: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
+    """
+    match_related: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
+    """
 
 @pulumi.input_type
 class AutomationTriggerSequenceTriggerMetricArgs:
     def __init__(__self__, *,
                  metric: pulumi.Input['AutomationTriggerSequenceTriggerMetricMetricArgs'],
-                 match: Optional[pulumi.Input[_builtins.str]] = None,
-                 match_related: Optional[pulumi.Input[_builtins.str]] = None):
+                 match: pulumi.Input[Optional[_builtins.str]] = None,
+                 match_related: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.str] match: (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
         :param pulumi.Input[_builtins.str] match_related: (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
@@ -2301,53 +2248,50 @@ class AutomationTriggerSequenceTriggerMetricArgs:
 
     @_builtins.property
     @pulumi.getter
-    def match(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match")
 
     @match.setter
-    def match(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match", value)
 
     @_builtins.property
     @pulumi.getter(name="matchRelated")
-    def match_related(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def match_related(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (JSON) Resource specification labels for related resources which this trigger will match. Use `jsonencode()`.
         """
         return pulumi.get(self, "match_related")
 
     @match_related.setter
-    def match_related(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def match_related(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "match_related", value)
 
 
-if not MYPY:
-    class AutomationTriggerSequenceTriggerMetricMetricArgsDict(TypedDict):
-        firing_for: pulumi.Input[_builtins.float]
-        """
-        The duration (seconds) for which the metric query must breach OR resolve continuously before the state is updated and actions are triggered.
-        """
-        name: pulumi.Input[_builtins.str]
-        """
-        The name of the metric to query
-        """
-        operator: pulumi.Input[_builtins.str]
-        """
-        The comparative operator used to evaluate the query result against the threshold value
-        """
-        range: pulumi.Input[_builtins.float]
-        """
-        The lookback duration (seconds) for a metric query. This duration is used to determine the time range over which the query will be executed.
-        """
-        threshold: pulumi.Input[_builtins.float]
-        """
-        The threshold value against which we'll compare the query results
-        """
-elif False:
-    AutomationTriggerSequenceTriggerMetricMetricArgsDict: TypeAlias = Mapping[str, Any]
+class AutomationTriggerSequenceTriggerMetricMetricArgsDict(TypedDict):
+    firing_for: pulumi.Input[_builtins.float]
+    """
+    The duration (seconds) for which the metric query must breach OR resolve continuously before the state is updated and actions are triggered.
+    """
+    name: pulumi.Input[_builtins.str]
+    """
+    The name of the metric to query
+    """
+    operator: pulumi.Input[_builtins.str]
+    """
+    The comparative operator used to evaluate the query result against the threshold value
+    """
+    range: pulumi.Input[_builtins.float]
+    """
+    The lookback duration (seconds) for a metric query. This duration is used to determine the time range over which the query will be executed.
+    """
+    threshold: pulumi.Input[_builtins.float]
+    """
+    The threshold value against which we'll compare the query results
+    """
 
 @pulumi.input_type
 class AutomationTriggerSequenceTriggerMetricMetricArgs:
@@ -2431,14 +2375,11 @@ class AutomationTriggerSequenceTriggerMetricMetricArgs:
         pulumi.set(self, "threshold", value)
 
 
-if not MYPY:
-    class DeploymentConcurrencyOptionsArgsDict(TypedDict):
-        collision_strategy: pulumi.Input[_builtins.str]
-        """
-        Enumeration of concurrency collision strategies.
-        """
-elif False:
-    DeploymentConcurrencyOptionsArgsDict: TypeAlias = Mapping[str, Any]
+class DeploymentConcurrencyOptionsArgsDict(TypedDict):
+    collision_strategy: pulumi.Input[_builtins.str]
+    """
+    Enumeration of concurrency collision strategies.
+    """
 
 @pulumi.input_type
 class DeploymentConcurrencyOptionsArgs:
@@ -2462,69 +2403,66 @@ class DeploymentConcurrencyOptionsArgs:
         pulumi.set(self, "collision_strategy", value)
 
 
-if not MYPY:
-    class DeploymentPullStepArgsDict(TypedDict):
-        type: pulumi.Input[_builtins.str]
-        """
-        The type of pull step
-        """
-        access_token: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (For type 'git_clone') Access token for the repository. Refer to a credentials block for security purposes. Used in leiu of 'credentials'.
-        """
-        branch: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (For type 'git_clone') The branch to clone. If not provided, the default branch is used.
-        """
-        bucket: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (For type 'pull_from_s3' and 'pull_from_gcs') The name of the bucket where files are stored.
-        """
-        container: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (For type 'pull_from_azure_blob_storage') The name of the container where files are stored.
-        """
-        credentials: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        Credentials to use for the pull step. Refer to a {GitHub,GitLab,BitBucket} credentials block.
-        """
-        directory: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (For type 'set_working_directory') The directory to set as the working directory.
-        """
-        folder: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (For type 'pull_from_*') The folder in the bucket/container where files are stored.
-        """
-        include_submodules: NotRequired[pulumi.Input[_builtins.bool]]
-        """
-        (For type 'git_clone') Whether to include submodules when cloning the repository.
-        """
-        repository: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (For type 'git_clone') The URL of the repository to clone.
-        """
-        requires: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        A list of Python package dependencies.
-        """
-elif False:
-    DeploymentPullStepArgsDict: TypeAlias = Mapping[str, Any]
+class DeploymentPullStepArgsDict(TypedDict):
+    type: pulumi.Input[_builtins.str]
+    """
+    The type of pull step
+    """
+    access_token: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (For type 'git_clone') Access token for the repository. Refer to a credentials block for security purposes. Used in leiu of 'credentials'.
+    """
+    branch: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (For type 'git_clone') The branch to clone. If not provided, the default branch is used.
+    """
+    bucket: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (For type 'pull_from_s3' and 'pull_from_gcs') The name of the bucket where files are stored.
+    """
+    container: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (For type 'pull_from_azure_blob_storage') The name of the container where files are stored.
+    """
+    credentials: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    Credentials to use for the pull step. Refer to a {GitHub,GitLab,BitBucket} credentials block.
+    """
+    directory: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (For type 'set_working_directory') The directory to set as the working directory.
+    """
+    folder: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (For type 'pull_from_*') The folder in the bucket/container where files are stored.
+    """
+    include_submodules: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    (For type 'git_clone') Whether to include submodules when cloning the repository.
+    """
+    repository: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (For type 'git_clone') The URL of the repository to clone.
+    """
+    requires: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    A list of Python package dependencies.
+    """
 
 @pulumi.input_type
 class DeploymentPullStepArgs:
     def __init__(__self__, *,
                  type: pulumi.Input[_builtins.str],
-                 access_token: Optional[pulumi.Input[_builtins.str]] = None,
-                 branch: Optional[pulumi.Input[_builtins.str]] = None,
-                 bucket: Optional[pulumi.Input[_builtins.str]] = None,
-                 container: Optional[pulumi.Input[_builtins.str]] = None,
-                 credentials: Optional[pulumi.Input[_builtins.str]] = None,
-                 directory: Optional[pulumi.Input[_builtins.str]] = None,
-                 folder: Optional[pulumi.Input[_builtins.str]] = None,
-                 include_submodules: Optional[pulumi.Input[_builtins.bool]] = None,
-                 repository: Optional[pulumi.Input[_builtins.str]] = None,
-                 requires: Optional[pulumi.Input[_builtins.str]] = None):
+                 access_token: pulumi.Input[Optional[_builtins.str]] = None,
+                 branch: pulumi.Input[Optional[_builtins.str]] = None,
+                 bucket: pulumi.Input[Optional[_builtins.str]] = None,
+                 container: pulumi.Input[Optional[_builtins.str]] = None,
+                 credentials: pulumi.Input[Optional[_builtins.str]] = None,
+                 directory: pulumi.Input[Optional[_builtins.str]] = None,
+                 folder: pulumi.Input[Optional[_builtins.str]] = None,
+                 include_submodules: pulumi.Input[Optional[_builtins.bool]] = None,
+                 repository: pulumi.Input[Optional[_builtins.str]] = None,
+                 requires: pulumi.Input[Optional[_builtins.str]] = None):
         """
         :param pulumi.Input[_builtins.str] type: The type of pull step
         :param pulumi.Input[_builtins.str] access_token: (For type 'git_clone') Access token for the repository. Refer to a credentials block for security purposes. Used in leiu of 'credentials'.
@@ -2574,178 +2512,175 @@ class DeploymentPullStepArgs:
 
     @_builtins.property
     @pulumi.getter(name="accessToken")
-    def access_token(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def access_token(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (For type 'git_clone') Access token for the repository. Refer to a credentials block for security purposes. Used in leiu of 'credentials'.
         """
         return pulumi.get(self, "access_token")
 
     @access_token.setter
-    def access_token(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def access_token(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "access_token", value)
 
     @_builtins.property
     @pulumi.getter
-    def branch(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def branch(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (For type 'git_clone') The branch to clone. If not provided, the default branch is used.
         """
         return pulumi.get(self, "branch")
 
     @branch.setter
-    def branch(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def branch(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "branch", value)
 
     @_builtins.property
     @pulumi.getter
-    def bucket(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def bucket(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (For type 'pull_from_s3' and 'pull_from_gcs') The name of the bucket where files are stored.
         """
         return pulumi.get(self, "bucket")
 
     @bucket.setter
-    def bucket(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def bucket(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "bucket", value)
 
     @_builtins.property
     @pulumi.getter
-    def container(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def container(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (For type 'pull_from_azure_blob_storage') The name of the container where files are stored.
         """
         return pulumi.get(self, "container")
 
     @container.setter
-    def container(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def container(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "container", value)
 
     @_builtins.property
     @pulumi.getter
-    def credentials(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def credentials(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Credentials to use for the pull step. Refer to a {GitHub,GitLab,BitBucket} credentials block.
         """
         return pulumi.get(self, "credentials")
 
     @credentials.setter
-    def credentials(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def credentials(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "credentials", value)
 
     @_builtins.property
     @pulumi.getter
-    def directory(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def directory(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (For type 'set_working_directory') The directory to set as the working directory.
         """
         return pulumi.get(self, "directory")
 
     @directory.setter
-    def directory(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def directory(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "directory", value)
 
     @_builtins.property
     @pulumi.getter
-    def folder(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def folder(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (For type 'pull_from_*') The folder in the bucket/container where files are stored.
         """
         return pulumi.get(self, "folder")
 
     @folder.setter
-    def folder(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def folder(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "folder", value)
 
     @_builtins.property
     @pulumi.getter(name="includeSubmodules")
-    def include_submodules(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def include_submodules(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         (For type 'git_clone') Whether to include submodules when cloning the repository.
         """
         return pulumi.get(self, "include_submodules")
 
     @include_submodules.setter
-    def include_submodules(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def include_submodules(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "include_submodules", value)
 
     @_builtins.property
     @pulumi.getter
-    def repository(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def repository(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (For type 'git_clone') The URL of the repository to clone.
         """
         return pulumi.get(self, "repository")
 
     @repository.setter
-    def repository(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def repository(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "repository", value)
 
     @_builtins.property
     @pulumi.getter
-    def requires(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def requires(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         A list of Python package dependencies.
         """
         return pulumi.get(self, "requires")
 
     @requires.setter
-    def requires(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def requires(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "requires", value)
 
 
-if not MYPY:
-    class ResourceSlaSlaArgsDict(TypedDict):
-        name: pulumi.Input[_builtins.str]
-        """
-        Name of the SLA
-        """
-        duration: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        (TimeToCompletion SLA) The maximum flow run duration in seconds allowed before the SLA is violated.
-        """
-        enabled: NotRequired[pulumi.Input[_builtins.bool]]
-        """
-        Whether the SLA is enabled
-        """
-        expected_event: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Freshness SLA) The event to expect for this SLA.
-        """
-        owner_resource: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        Resource that owns this SLA
-        """
-        resource_match: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        (Freshness SLA) The resource to match for this SLA. Use `jsonencode()`
-        """
-        severity: NotRequired[pulumi.Input[_builtins.str]]
-        """
-        Severity level of the SLA. Can be one of <span pulumi-lang-nodejs="`minor`" pulumi-lang-dotnet="`Minor`" pulumi-lang-go="`minor`" pulumi-lang-python="`minor`" pulumi-lang-yaml="`minor`" pulumi-lang-java="`minor`">`minor`</span>, <span pulumi-lang-nodejs="`low`" pulumi-lang-dotnet="`Low`" pulumi-lang-go="`low`" pulumi-lang-python="`low`" pulumi-lang-yaml="`low`" pulumi-lang-java="`low`">`low`</span>, <span pulumi-lang-nodejs="`moderate`" pulumi-lang-dotnet="`Moderate`" pulumi-lang-go="`moderate`" pulumi-lang-python="`moderate`" pulumi-lang-yaml="`moderate`" pulumi-lang-java="`moderate`">`moderate`</span>, <span pulumi-lang-nodejs="`high`" pulumi-lang-dotnet="`High`" pulumi-lang-go="`high`" pulumi-lang-python="`high`" pulumi-lang-yaml="`high`" pulumi-lang-java="`high`">`high`</span>, or <span pulumi-lang-nodejs="`critical`" pulumi-lang-dotnet="`Critical`" pulumi-lang-go="`critical`" pulumi-lang-python="`critical`" pulumi-lang-yaml="`critical`" pulumi-lang-java="`critical`">`critical`</span>. Defaults to <span pulumi-lang-nodejs="`high`" pulumi-lang-dotnet="`High`" pulumi-lang-go="`high`" pulumi-lang-python="`high`" pulumi-lang-yaml="`high`" pulumi-lang-java="`high`">`high`</span>.
-        """
-        stale_after: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        (Frequency SLA) The amount of time after a flow run is considered stale.
-        """
-        within: NotRequired[pulumi.Input[_builtins.float]]
-        """
-        (Freshness SLA or Lateness SLA) The amount of time after a flow run is considered stale or late.
-        """
-elif False:
-    ResourceSlaSlaArgsDict: TypeAlias = Mapping[str, Any]
+class ResourceSlaSlaArgsDict(TypedDict):
+    name: pulumi.Input[_builtins.str]
+    """
+    Name of the SLA
+    """
+    duration: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    (TimeToCompletion SLA) The maximum flow run duration in seconds allowed before the SLA is violated.
+    """
+    enabled: NotRequired[pulumi.Input[Optional[_builtins.bool]]]
+    """
+    Whether the SLA is enabled
+    """
+    expected_event: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Freshness SLA) The event to expect for this SLA.
+    """
+    owner_resource: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    Resource that owns this SLA
+    """
+    resource_match: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    (Freshness SLA) The resource to match for this SLA. Use `jsonencode()`
+    """
+    severity: NotRequired[pulumi.Input[Optional[_builtins.str]]]
+    """
+    Severity level of the SLA. Can be one of <span pulumi-lang-nodejs="`minor`" pulumi-lang-dotnet="`Minor`" pulumi-lang-go="`minor`" pulumi-lang-python="`minor`" pulumi-lang-yaml="`minor`" pulumi-lang-java="`minor`">`minor`</span>, <span pulumi-lang-nodejs="`low`" pulumi-lang-dotnet="`Low`" pulumi-lang-go="`low`" pulumi-lang-python="`low`" pulumi-lang-yaml="`low`" pulumi-lang-java="`low`">`low`</span>, <span pulumi-lang-nodejs="`moderate`" pulumi-lang-dotnet="`Moderate`" pulumi-lang-go="`moderate`" pulumi-lang-python="`moderate`" pulumi-lang-yaml="`moderate`" pulumi-lang-java="`moderate`">`moderate`</span>, <span pulumi-lang-nodejs="`high`" pulumi-lang-dotnet="`High`" pulumi-lang-go="`high`" pulumi-lang-python="`high`" pulumi-lang-yaml="`high`" pulumi-lang-java="`high`">`high`</span>, or <span pulumi-lang-nodejs="`critical`" pulumi-lang-dotnet="`Critical`" pulumi-lang-go="`critical`" pulumi-lang-python="`critical`" pulumi-lang-yaml="`critical`" pulumi-lang-java="`critical`">`critical`</span>. Defaults to <span pulumi-lang-nodejs="`high`" pulumi-lang-dotnet="`High`" pulumi-lang-go="`high`" pulumi-lang-python="`high`" pulumi-lang-yaml="`high`" pulumi-lang-java="`high`">`high`</span>.
+    """
+    stale_after: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    (Frequency SLA) The amount of time after a flow run is considered stale.
+    """
+    within: NotRequired[pulumi.Input[Optional[_builtins.float]]]
+    """
+    (Freshness SLA or Lateness SLA) The amount of time after a flow run is considered stale or late.
+    """
 
 @pulumi.input_type
 class ResourceSlaSlaArgs:
     def __init__(__self__, *,
                  name: pulumi.Input[_builtins.str],
-                 duration: Optional[pulumi.Input[_builtins.float]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 expected_event: Optional[pulumi.Input[_builtins.str]] = None,
-                 owner_resource: Optional[pulumi.Input[_builtins.str]] = None,
-                 resource_match: Optional[pulumi.Input[_builtins.str]] = None,
-                 severity: Optional[pulumi.Input[_builtins.str]] = None,
-                 stale_after: Optional[pulumi.Input[_builtins.float]] = None,
-                 within: Optional[pulumi.Input[_builtins.float]] = None):
+                 duration: pulumi.Input[Optional[_builtins.float]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 expected_event: pulumi.Input[Optional[_builtins.str]] = None,
+                 owner_resource: pulumi.Input[Optional[_builtins.str]] = None,
+                 resource_match: pulumi.Input[Optional[_builtins.str]] = None,
+                 severity: pulumi.Input[Optional[_builtins.str]] = None,
+                 stale_after: pulumi.Input[Optional[_builtins.float]] = None,
+                 within: pulumi.Input[Optional[_builtins.float]] = None):
         """
         :param pulumi.Input[_builtins.str] name: Name of the SLA
         :param pulumi.Input[_builtins.float] duration: (TimeToCompletion SLA) The maximum flow run duration in seconds allowed before the SLA is violated.
@@ -2789,117 +2724,114 @@ class ResourceSlaSlaArgs:
 
     @_builtins.property
     @pulumi.getter
-    def duration(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def duration(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         (TimeToCompletion SLA) The maximum flow run duration in seconds allowed before the SLA is violated.
         """
         return pulumi.get(self, "duration")
 
     @duration.setter
-    def duration(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def duration(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "duration", value)
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the SLA is enabled
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
     @pulumi.getter(name="expectedEvent")
-    def expected_event(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def expected_event(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Freshness SLA) The event to expect for this SLA.
         """
         return pulumi.get(self, "expected_event")
 
     @expected_event.setter
-    def expected_event(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def expected_event(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "expected_event", value)
 
     @_builtins.property
     @pulumi.getter(name="ownerResource")
-    def owner_resource(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def owner_resource(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Resource that owns this SLA
         """
         return pulumi.get(self, "owner_resource")
 
     @owner_resource.setter
-    def owner_resource(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def owner_resource(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "owner_resource", value)
 
     @_builtins.property
     @pulumi.getter(name="resourceMatch")
-    def resource_match(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def resource_match(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         (Freshness SLA) The resource to match for this SLA. Use `jsonencode()`
         """
         return pulumi.get(self, "resource_match")
 
     @resource_match.setter
-    def resource_match(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def resource_match(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "resource_match", value)
 
     @_builtins.property
     @pulumi.getter
-    def severity(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def severity(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Severity level of the SLA. Can be one of <span pulumi-lang-nodejs="`minor`" pulumi-lang-dotnet="`Minor`" pulumi-lang-go="`minor`" pulumi-lang-python="`minor`" pulumi-lang-yaml="`minor`" pulumi-lang-java="`minor`">`minor`</span>, <span pulumi-lang-nodejs="`low`" pulumi-lang-dotnet="`Low`" pulumi-lang-go="`low`" pulumi-lang-python="`low`" pulumi-lang-yaml="`low`" pulumi-lang-java="`low`">`low`</span>, <span pulumi-lang-nodejs="`moderate`" pulumi-lang-dotnet="`Moderate`" pulumi-lang-go="`moderate`" pulumi-lang-python="`moderate`" pulumi-lang-yaml="`moderate`" pulumi-lang-java="`moderate`">`moderate`</span>, <span pulumi-lang-nodejs="`high`" pulumi-lang-dotnet="`High`" pulumi-lang-go="`high`" pulumi-lang-python="`high`" pulumi-lang-yaml="`high`" pulumi-lang-java="`high`">`high`</span>, or <span pulumi-lang-nodejs="`critical`" pulumi-lang-dotnet="`Critical`" pulumi-lang-go="`critical`" pulumi-lang-python="`critical`" pulumi-lang-yaml="`critical`" pulumi-lang-java="`critical`">`critical`</span>. Defaults to <span pulumi-lang-nodejs="`high`" pulumi-lang-dotnet="`High`" pulumi-lang-go="`high`" pulumi-lang-python="`high`" pulumi-lang-yaml="`high`" pulumi-lang-java="`high`">`high`</span>.
         """
         return pulumi.get(self, "severity")
 
     @severity.setter
-    def severity(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def severity(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "severity", value)
 
     @_builtins.property
     @pulumi.getter(name="staleAfter")
-    def stale_after(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def stale_after(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         (Frequency SLA) The amount of time after a flow run is considered stale.
         """
         return pulumi.get(self, "stale_after")
 
     @stale_after.setter
-    def stale_after(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def stale_after(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "stale_after", value)
 
     @_builtins.property
     @pulumi.getter
-    def within(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def within(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         (Freshness SLA or Lateness SLA) The amount of time after a flow run is considered stale or late.
         """
         return pulumi.get(self, "within")
 
     @within.setter
-    def within(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def within(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "within", value)
 
 
-if not MYPY:
-    class GetAccountSettingsArgsDict(TypedDict):
-        ai_log_summaries: _builtins.bool
-        """
-        Whether to use AI to generate log summaries.
-        """
-        allow_public_workspaces: _builtins.bool
-        """
-        Whether or not this account allows public workspaces
-        """
-        managed_execution: _builtins.bool
-        """
-        Whether to enable the use of managed work pools
-        """
-elif False:
-    GetAccountSettingsArgsDict: TypeAlias = Mapping[str, Any]
+class GetAccountSettingsArgsDict(TypedDict):
+    ai_log_summaries: _builtins.bool
+    """
+    Whether to use AI to generate log summaries.
+    """
+    allow_public_workspaces: _builtins.bool
+    """
+    Whether or not this account allows public workspaces
+    """
+    managed_execution: _builtins.bool
+    """
+    Whether to enable the use of managed work pools
+    """
 
 @pulumi.input_type
 class GetAccountSettingsArgs:

@@ -19,10 +19,11 @@ __all__ = ['AccountMemberArgs', 'AccountMember']
 @pulumi.input_type
 class AccountMemberArgs:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_role_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_role_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a AccountMember resource.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID)
         :param pulumi.Input[_builtins.str] account_role_id: Acount Role ID (UUID)
         """
@@ -33,43 +34,44 @@ class AccountMemberArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID)
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="accountRoleId")
-    def account_role_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_role_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Acount Role ID (UUID)
         """
         return pulumi.get(self, "account_role_id")
 
     @account_role_id.setter
-    def account_role_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_role_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_role_id", value)
 
 
 @pulumi.input_type
 class _AccountMemberState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_role_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_role_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 actor_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 email: Optional[pulumi.Input[_builtins.str]] = None,
-                 first_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 handle: Optional[pulumi.Input[_builtins.str]] = None,
-                 last_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 user_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_role_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_role_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 actor_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 email: pulumi.Input[Optional[_builtins.str]] = None,
+                 first_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 handle: pulumi.Input[Optional[_builtins.str]] = None,
+                 last_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 user_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering AccountMember resources.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID)
         :param pulumi.Input[_builtins.str] account_role_id: Acount Role ID (UUID)
         :param pulumi.Input[_builtins.str] account_role_name: Name of Account Role assigned to member
@@ -101,110 +103,110 @@ class _AccountMemberState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID)
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="accountRoleId")
-    def account_role_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_role_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Acount Role ID (UUID)
         """
         return pulumi.get(self, "account_role_id")
 
     @account_role_id.setter
-    def account_role_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_role_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_role_id", value)
 
     @_builtins.property
     @pulumi.getter(name="accountRoleName")
-    def account_role_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_role_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of Account Role assigned to member
         """
         return pulumi.get(self, "account_role_name")
 
     @account_role_name.setter
-    def account_role_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_role_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_role_name", value)
 
     @_builtins.property
     @pulumi.getter(name="actorId")
-    def actor_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def actor_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Actor ID (UUID)
         """
         return pulumi.get(self, "actor_id")
 
     @actor_id.setter
-    def actor_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def actor_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "actor_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def email(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def email(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Member email
         """
         return pulumi.get(self, "email")
 
     @email.setter
-    def email(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def email(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "email", value)
 
     @_builtins.property
     @pulumi.getter(name="firstName")
-    def first_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def first_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Member's first name
         """
         return pulumi.get(self, "first_name")
 
     @first_name.setter
-    def first_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def first_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "first_name", value)
 
     @_builtins.property
     @pulumi.getter
-    def handle(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def handle(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Member handle, or a human-readable identifier
         """
         return pulumi.get(self, "handle")
 
     @handle.setter
-    def handle(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def handle(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "handle", value)
 
     @_builtins.property
     @pulumi.getter(name="lastName")
-    def last_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def last_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Member's last name
         """
         return pulumi.get(self, "last_name")
 
     @last_name.setter
-    def last_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def last_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "last_name", value)
 
     @_builtins.property
     @pulumi.getter(name="userId")
-    def user_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def user_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         User ID (UUID)
         """
         return pulumi.get(self, "user_id")
 
     @user_id.setter
-    def user_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def user_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "user_id", value)
 
 
@@ -214,11 +216,12 @@ class AccountMember(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_role_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_role_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a AccountMember resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID)
@@ -232,6 +235,7 @@ class AccountMember(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a AccountMember resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param AccountMemberArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -247,8 +251,8 @@ class AccountMember(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_role_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_role_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -278,15 +282,15 @@ class AccountMember(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            account_role_id: Optional[pulumi.Input[_builtins.str]] = None,
-            account_role_name: Optional[pulumi.Input[_builtins.str]] = None,
-            actor_id: Optional[pulumi.Input[_builtins.str]] = None,
-            email: Optional[pulumi.Input[_builtins.str]] = None,
-            first_name: Optional[pulumi.Input[_builtins.str]] = None,
-            handle: Optional[pulumi.Input[_builtins.str]] = None,
-            last_name: Optional[pulumi.Input[_builtins.str]] = None,
-            user_id: Optional[pulumi.Input[_builtins.str]] = None) -> 'AccountMember':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            account_role_id: pulumi.Input[Optional[_builtins.str]] = None,
+            account_role_name: pulumi.Input[Optional[_builtins.str]] = None,
+            actor_id: pulumi.Input[Optional[_builtins.str]] = None,
+            email: pulumi.Input[Optional[_builtins.str]] = None,
+            first_name: pulumi.Input[Optional[_builtins.str]] = None,
+            handle: pulumi.Input[Optional[_builtins.str]] = None,
+            last_name: pulumi.Input[Optional[_builtins.str]] = None,
+            user_id: pulumi.Input[Optional[_builtins.str]] = None) -> 'AccountMember':
         """
         Get an existing AccountMember resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

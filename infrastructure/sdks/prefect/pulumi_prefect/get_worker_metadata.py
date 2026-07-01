@@ -94,8 +94,8 @@ def get_worker_metadata(account_id: Optional[_builtins.str] = None,
         base_job_configs=pulumi.get(__ret__, 'base_job_configs'),
         id=pulumi.get(__ret__, 'id'),
         workspace_id=pulumi.get(__ret__, 'workspace_id'))
-def get_worker_metadata_output(account_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                               workspace_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_worker_metadata_output(account_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                               workspace_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                                opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetWorkerMetadataResult]:
     """
     Use this data source to access information about an existing resource.

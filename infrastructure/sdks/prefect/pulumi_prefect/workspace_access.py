@@ -22,10 +22,11 @@ class WorkspaceAccessArgs:
                  accessor_id: pulumi.Input[_builtins.str],
                  accessor_type: pulumi.Input[_builtins.str],
                  workspace_role_id: pulumi.Input[_builtins.str],
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a WorkspaceAccess resource.
+
         :param pulumi.Input[_builtins.str] accessor_id: ID (UUID) of accessor to the workspace. This can be an `account_member.user_id` or `service_account.id`
         :param pulumi.Input[_builtins.str] accessor_type: USER | SERVICE_ACCOUNT | TEAM
         :param pulumi.Input[_builtins.str] workspace_role_id: Workspace Role ID (UUID) to grant to accessor
@@ -78,39 +79,40 @@ class WorkspaceAccessArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID) where the workspace is located
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID) to grant access to
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
 @pulumi.input_type
 class _WorkspaceAccessState:
     def __init__(__self__, *,
-                 accessor_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 accessor_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_role_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 accessor_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 accessor_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_role_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering WorkspaceAccess resources.
+
         :param pulumi.Input[_builtins.str] accessor_id: ID (UUID) of accessor to the workspace. This can be an `account_member.user_id` or `service_account.id`
         :param pulumi.Input[_builtins.str] accessor_type: USER | SERVICE_ACCOUNT | TEAM
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID) where the workspace is located
@@ -130,62 +132,62 @@ class _WorkspaceAccessState:
 
     @_builtins.property
     @pulumi.getter(name="accessorId")
-    def accessor_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def accessor_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         ID (UUID) of accessor to the workspace. This can be an `account_member.user_id` or `service_account.id`
         """
         return pulumi.get(self, "accessor_id")
 
     @accessor_id.setter
-    def accessor_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def accessor_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "accessor_id", value)
 
     @_builtins.property
     @pulumi.getter(name="accessorType")
-    def accessor_type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def accessor_type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         USER | SERVICE_ACCOUNT | TEAM
         """
         return pulumi.get(self, "accessor_type")
 
     @accessor_type.setter
-    def accessor_type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def accessor_type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "accessor_type", value)
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID) where the workspace is located
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID) to grant access to
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceRoleId")
-    def workspace_role_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_role_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace Role ID (UUID) to grant to accessor
         """
         return pulumi.get(self, "workspace_role_id")
 
     @workspace_role_id.setter
-    def workspace_role_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_role_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_role_id", value)
 
 
@@ -195,14 +197,15 @@ class WorkspaceAccess(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 accessor_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 accessor_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_role_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 accessor_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 accessor_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_role_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a WorkspaceAccess resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] accessor_id: ID (UUID) of accessor to the workspace. This can be an `account_member.user_id` or `service_account.id`
@@ -219,6 +222,7 @@ class WorkspaceAccess(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a WorkspaceAccess resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param WorkspaceAccessArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -234,11 +238,11 @@ class WorkspaceAccess(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 accessor_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 accessor_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_role_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 accessor_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 accessor_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_role_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -270,11 +274,11 @@ class WorkspaceAccess(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            accessor_id: Optional[pulumi.Input[_builtins.str]] = None,
-            accessor_type: Optional[pulumi.Input[_builtins.str]] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
-            workspace_role_id: Optional[pulumi.Input[_builtins.str]] = None) -> 'WorkspaceAccess':
+            accessor_id: pulumi.Input[Optional[_builtins.str]] = None,
+            accessor_type: pulumi.Input[Optional[_builtins.str]] = None,
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
+            workspace_role_id: pulumi.Input[Optional[_builtins.str]] = None) -> 'WorkspaceAccess':
         """
         Get an existing WorkspaceAccess resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

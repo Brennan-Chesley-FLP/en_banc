@@ -22,14 +22,15 @@ __all__ = ['AccountArgs', 'Account']
 class AccountArgs:
     def __init__(__self__, *,
                  handle: pulumi.Input[_builtins.str],
-                 billing_email: Optional[pulumi.Input[_builtins.str]] = None,
-                 domain_names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 link: Optional[pulumi.Input[_builtins.str]] = None,
-                 location: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 settings: Optional[pulumi.Input['AccountSettingsArgs']] = None):
+                 billing_email: pulumi.Input[Optional[_builtins.str]] = None,
+                 domain_names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 link: pulumi.Input[Optional[_builtins.str]] = None,
+                 location: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 settings: pulumi.Input[Optional['AccountSettingsArgs']] = None):
         """
         The set of arguments for constructing a Account resource.
+
         :param pulumi.Input[_builtins.str] handle: Unique handle of the account
         :param pulumi.Input[_builtins.str] billing_email: Billing email to apply to the account's Stripe customer
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] domain_names: The list of domain names for enabling SSO in Prefect Cloud.
@@ -70,91 +71,92 @@ class AccountArgs:
     @_builtins.property
     @pulumi.getter(name="billingEmail")
     @_utilities.deprecated("""Deprecated""")
-    def billing_email(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def billing_email(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Billing email to apply to the account's Stripe customer
         """
         return pulumi.get(self, "billing_email")
 
     @billing_email.setter
-    def billing_email(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def billing_email(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "billing_email", value)
 
     @_builtins.property
     @pulumi.getter(name="domainNames")
-    def domain_names(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def domain_names(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         The list of domain names for enabling SSO in Prefect Cloud.
         """
         return pulumi.get(self, "domain_names")
 
     @domain_names.setter
-    def domain_names(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def domain_names(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "domain_names", value)
 
     @_builtins.property
     @pulumi.getter
-    def link(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def link(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         An optional for an external url associated with the account, e.g. https://prefect.io/
         """
         return pulumi.get(self, "link")
 
     @link.setter
-    def link(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def link(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "link", value)
 
     @_builtins.property
     @pulumi.getter
-    def location(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def location(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         An optional physical location for the account, e.g. Washington, D.C.
         """
         return pulumi.get(self, "location")
 
     @location.setter
-    def location(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def location(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "location", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the account
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def settings(self) -> Optional[pulumi.Input['AccountSettingsArgs']]:
+    def settings(self) -> pulumi.Input[Optional['AccountSettingsArgs']]:
         """
         Group of settings related to accounts
         """
         return pulumi.get(self, "settings")
 
     @settings.setter
-    def settings(self, value: Optional[pulumi.Input['AccountSettingsArgs']]):
+    def settings(self, value: pulumi.Input[Optional['AccountSettingsArgs']]):
         pulumi.set(self, "settings", value)
 
 
 @pulumi.input_type
 class _AccountState:
     def __init__(__self__, *,
-                 billing_email: Optional[pulumi.Input[_builtins.str]] = None,
-                 created: Optional[pulumi.Input[_builtins.str]] = None,
-                 domain_names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 handle: Optional[pulumi.Input[_builtins.str]] = None,
-                 link: Optional[pulumi.Input[_builtins.str]] = None,
-                 location: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 settings: Optional[pulumi.Input['AccountSettingsArgs']] = None,
-                 updated: Optional[pulumi.Input[_builtins.str]] = None):
+                 billing_email: pulumi.Input[Optional[_builtins.str]] = None,
+                 created: pulumi.Input[Optional[_builtins.str]] = None,
+                 domain_names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 handle: pulumi.Input[Optional[_builtins.str]] = None,
+                 link: pulumi.Input[Optional[_builtins.str]] = None,
+                 location: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 settings: pulumi.Input[Optional['AccountSettingsArgs']] = None,
+                 updated: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering Account resources.
+
         :param pulumi.Input[_builtins.str] billing_email: Billing email to apply to the account's Stripe customer
         :param pulumi.Input[_builtins.str] created: Timestamp of when the resource was created (RFC3339)
         :param pulumi.Input[Sequence[pulumi.Input[_builtins.str]]] domain_names: The list of domain names for enabling SSO in Prefect Cloud.
@@ -190,110 +192,110 @@ class _AccountState:
     @_builtins.property
     @pulumi.getter(name="billingEmail")
     @_utilities.deprecated("""Deprecated""")
-    def billing_email(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def billing_email(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Billing email to apply to the account's Stripe customer
         """
         return pulumi.get(self, "billing_email")
 
     @billing_email.setter
-    def billing_email(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def billing_email(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "billing_email", value)
 
     @_builtins.property
     @pulumi.getter
-    def created(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def created(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was created (RFC3339)
         """
         return pulumi.get(self, "created")
 
     @created.setter
-    def created(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def created(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "created", value)
 
     @_builtins.property
     @pulumi.getter(name="domainNames")
-    def domain_names(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def domain_names(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         The list of domain names for enabling SSO in Prefect Cloud.
         """
         return pulumi.get(self, "domain_names")
 
     @domain_names.setter
-    def domain_names(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def domain_names(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "domain_names", value)
 
     @_builtins.property
     @pulumi.getter
-    def handle(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def handle(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Unique handle of the account
         """
         return pulumi.get(self, "handle")
 
     @handle.setter
-    def handle(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def handle(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "handle", value)
 
     @_builtins.property
     @pulumi.getter
-    def link(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def link(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         An optional for an external url associated with the account, e.g. https://prefect.io/
         """
         return pulumi.get(self, "link")
 
     @link.setter
-    def link(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def link(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "link", value)
 
     @_builtins.property
     @pulumi.getter
-    def location(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def location(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         An optional physical location for the account, e.g. Washington, D.C.
         """
         return pulumi.get(self, "location")
 
     @location.setter
-    def location(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def location(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "location", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the account
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def settings(self) -> Optional[pulumi.Input['AccountSettingsArgs']]:
+    def settings(self) -> pulumi.Input[Optional['AccountSettingsArgs']]:
         """
         Group of settings related to accounts
         """
         return pulumi.get(self, "settings")
 
     @settings.setter
-    def settings(self, value: Optional[pulumi.Input['AccountSettingsArgs']]):
+    def settings(self, value: pulumi.Input[Optional['AccountSettingsArgs']]):
         pulumi.set(self, "settings", value)
 
     @_builtins.property
     @pulumi.getter
-    def updated(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def updated(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was updated (RFC3339)
         """
         return pulumi.get(self, "updated")
 
     @updated.setter
-    def updated(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def updated(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "updated", value)
 
 
@@ -303,16 +305,17 @@ class Account(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 billing_email: Optional[pulumi.Input[_builtins.str]] = None,
-                 domain_names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 handle: Optional[pulumi.Input[_builtins.str]] = None,
-                 link: Optional[pulumi.Input[_builtins.str]] = None,
-                 location: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 settings: Optional[pulumi.Input[Union['AccountSettingsArgs', 'AccountSettingsArgsDict']]] = None,
+                 billing_email: pulumi.Input[Optional[_builtins.str]] = None,
+                 domain_names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 handle: pulumi.Input[Optional[_builtins.str]] = None,
+                 link: pulumi.Input[Optional[_builtins.str]] = None,
+                 location: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 settings: pulumi.Input[Optional[Union['AccountSettingsArgs', 'AccountSettingsArgsDict']]] = None,
                  __props__=None):
         """
         Create a Account resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] billing_email: Billing email to apply to the account's Stripe customer
@@ -331,6 +334,7 @@ class Account(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a Account resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param AccountArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -346,13 +350,13 @@ class Account(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 billing_email: Optional[pulumi.Input[_builtins.str]] = None,
-                 domain_names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 handle: Optional[pulumi.Input[_builtins.str]] = None,
-                 link: Optional[pulumi.Input[_builtins.str]] = None,
-                 location: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 settings: Optional[pulumi.Input[Union['AccountSettingsArgs', 'AccountSettingsArgsDict']]] = None,
+                 billing_email: pulumi.Input[Optional[_builtins.str]] = None,
+                 domain_names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 handle: pulumi.Input[Optional[_builtins.str]] = None,
+                 link: pulumi.Input[Optional[_builtins.str]] = None,
+                 location: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 settings: pulumi.Input[Optional[Union['AccountSettingsArgs', 'AccountSettingsArgsDict']]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -384,15 +388,15 @@ class Account(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            billing_email: Optional[pulumi.Input[_builtins.str]] = None,
-            created: Optional[pulumi.Input[_builtins.str]] = None,
-            domain_names: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            handle: Optional[pulumi.Input[_builtins.str]] = None,
-            link: Optional[pulumi.Input[_builtins.str]] = None,
-            location: Optional[pulumi.Input[_builtins.str]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            settings: Optional[pulumi.Input[Union['AccountSettingsArgs', 'AccountSettingsArgsDict']]] = None,
-            updated: Optional[pulumi.Input[_builtins.str]] = None) -> 'Account':
+            billing_email: pulumi.Input[Optional[_builtins.str]] = None,
+            created: pulumi.Input[Optional[_builtins.str]] = None,
+            domain_names: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            handle: pulumi.Input[Optional[_builtins.str]] = None,
+            link: pulumi.Input[Optional[_builtins.str]] = None,
+            location: pulumi.Input[Optional[_builtins.str]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            settings: pulumi.Input[Optional[Union['AccountSettingsArgs', 'AccountSettingsArgsDict']]] = None,
+            updated: pulumi.Input[Optional[_builtins.str]] = None) -> 'Account':
         """
         Get an existing Account resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

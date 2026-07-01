@@ -106,9 +106,9 @@ def get_work_pools(account_id: Optional[_builtins.str] = None,
         id=pulumi.get(__ret__, 'id'),
         work_pools=pulumi.get(__ret__, 'work_pools'),
         workspace_id=pulumi.get(__ret__, 'workspace_id'))
-def get_work_pools_output(account_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                          filter_anies: Optional[pulumi.Input[Optional[Sequence[_builtins.str]]]] = None,
-                          workspace_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_work_pools_output(account_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                          filter_anies: pulumi.Input[Optional[Optional[Sequence[_builtins.str]]]] = None,
+                          workspace_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                           opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetWorkPoolsResult]:
     """
     Use this data source to access information about an existing resource.

@@ -1,0 +1,8 @@
+encryptionsalt: v1:8injJPeHg7Q=:v1:x33p0igf9AmP8G24:EzRpBKL/G/slUvlBj/CVDgI9ly0QoA==
+config:
+  en-banc:s3AccessKey: QG0WR0CTVJBE5VZNO6RA
+  en-banc:s3SecretKey:
+    secure: v1:F+1wmo9NfNe1jFtH:w916/75K9jaDYDfWwkrM1ib9EKShaNKm9Qb64nXRsz/w599pifrNQM4+qwmgXcyDYQz7xBB5EkadHA==
+  en-banc:prefectS3AccessKey: 7S5662G976OM0FF8756V5
+  en-banc:prefectS3SecretKey:
+    secure: v1:Dro0xXJS++ZbsS5R:O1EXvAvwG44RmgJf2uvZ6zCaK0n3UgTr5yxAmzoDjOgxLxk6c/bgf8G85DEa01ZBZ7PyLsCqmv2Qug==

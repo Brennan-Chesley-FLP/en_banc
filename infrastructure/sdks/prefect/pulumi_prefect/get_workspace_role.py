@@ -130,8 +130,8 @@ def get_workspace_role(account_id: Optional[_builtins.str] = None,
         name=pulumi.get(__ret__, 'name'),
         scopes=pulumi.get(__ret__, 'scopes'),
         updated=pulumi.get(__ret__, 'updated'))
-def get_workspace_role_output(account_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                              name: Optional[pulumi.Input[_builtins.str]] = None,
+def get_workspace_role_output(account_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                              name: pulumi.Input[Optional[_builtins.str]] = None,
                               opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetWorkspaceRoleResult]:
     """
     Use this data source to access information about an existing resource.

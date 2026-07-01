@@ -173,9 +173,9 @@ def get_automation(account_id: Optional[_builtins.str] = None,
         trigger=pulumi.get(__ret__, 'trigger'),
         updated=pulumi.get(__ret__, 'updated'),
         workspace_id=pulumi.get(__ret__, 'workspace_id'))
-def get_automation_output(account_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                          id: Optional[pulumi.Input[_builtins.str]] = None,
-                          workspace_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_automation_output(account_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                          id: pulumi.Input[Optional[_builtins.str]] = None,
+                          workspace_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                           opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetAutomationResult]:
     """
     Use this data source to access information about an existing resource.

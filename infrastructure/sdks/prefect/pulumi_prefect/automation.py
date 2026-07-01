@@ -22,16 +22,17 @@ __all__ = ['AutomationArgs', 'Automation']
 class AutomationArgs:
     def __init__(__self__, *,
                  trigger: pulumi.Input['AutomationTriggerArgs'],
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 actions: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionArgs']]]] = None,
-                 actions_on_resolves: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]] = None,
-                 actions_on_triggers: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 actions: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionArgs']]]] = None,
+                 actions_on_resolves: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]] = None,
+                 actions_on_triggers: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a Automation resource.
+
         :param pulumi.Input['AutomationTriggerArgs'] trigger: The criteria for which events this Automation covers and how it will respond
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
         :param pulumi.Input[Sequence[pulumi.Input['AutomationActionArgs']]] actions: List of actions to perform when the automation is triggered
@@ -74,117 +75,118 @@ class AutomationArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID), defaults to the account set in the provider
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def actions(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionArgs']]]]:
+    def actions(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionArgs']]]]:
         """
         List of actions to perform when the automation is triggered
         """
         return pulumi.get(self, "actions")
 
     @actions.setter
-    def actions(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionArgs']]]]):
+    def actions(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionArgs']]]]):
         pulumi.set(self, "actions", value)
 
     @_builtins.property
     @pulumi.getter(name="actionsOnResolves")
-    def actions_on_resolves(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]]:
+    def actions_on_resolves(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]]:
         """
         List of actions to perform when the automation is triggered
         """
         return pulumi.get(self, "actions_on_resolves")
 
     @actions_on_resolves.setter
-    def actions_on_resolves(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]]):
+    def actions_on_resolves(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]]):
         pulumi.set(self, "actions_on_resolves", value)
 
     @_builtins.property
     @pulumi.getter(name="actionsOnTriggers")
-    def actions_on_triggers(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]]:
+    def actions_on_triggers(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]]:
         """
         List of actions to perform when the automation is triggered
         """
         return pulumi.get(self, "actions_on_triggers")
 
     @actions_on_triggers.setter
-    def actions_on_triggers(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]]):
+    def actions_on_triggers(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]]):
         pulumi.set(self, "actions_on_triggers", value)
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Description of the automation
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the automation is enabled
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the automation
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID), defaults to the workspace set in the provider
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
 @pulumi.input_type
 class _AutomationState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 actions: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionArgs']]]] = None,
-                 actions_on_resolves: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]] = None,
-                 actions_on_triggers: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]] = None,
-                 created: Optional[pulumi.Input[_builtins.str]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 trigger: Optional[pulumi.Input['AutomationTriggerArgs']] = None,
-                 updated: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 actions: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionArgs']]]] = None,
+                 actions_on_resolves: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]] = None,
+                 actions_on_triggers: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]] = None,
+                 created: pulumi.Input[Optional[_builtins.str]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 trigger: pulumi.Input[Optional['AutomationTriggerArgs']] = None,
+                 updated: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering Automation resources.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
         :param pulumi.Input[Sequence[pulumi.Input['AutomationActionArgs']]] actions: List of actions to perform when the automation is triggered
         :param pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]] actions_on_resolves: List of actions to perform when the automation is triggered
@@ -222,134 +224,134 @@ class _AutomationState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID), defaults to the account set in the provider
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def actions(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionArgs']]]]:
+    def actions(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionArgs']]]]:
         """
         List of actions to perform when the automation is triggered
         """
         return pulumi.get(self, "actions")
 
     @actions.setter
-    def actions(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionArgs']]]]):
+    def actions(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionArgs']]]]):
         pulumi.set(self, "actions", value)
 
     @_builtins.property
     @pulumi.getter(name="actionsOnResolves")
-    def actions_on_resolves(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]]:
+    def actions_on_resolves(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]]:
         """
         List of actions to perform when the automation is triggered
         """
         return pulumi.get(self, "actions_on_resolves")
 
     @actions_on_resolves.setter
-    def actions_on_resolves(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]]):
+    def actions_on_resolves(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnResolfArgs']]]]):
         pulumi.set(self, "actions_on_resolves", value)
 
     @_builtins.property
     @pulumi.getter(name="actionsOnTriggers")
-    def actions_on_triggers(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]]:
+    def actions_on_triggers(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]]:
         """
         List of actions to perform when the automation is triggered
         """
         return pulumi.get(self, "actions_on_triggers")
 
     @actions_on_triggers.setter
-    def actions_on_triggers(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]]):
+    def actions_on_triggers(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['AutomationActionsOnTriggerArgs']]]]):
         pulumi.set(self, "actions_on_triggers", value)
 
     @_builtins.property
     @pulumi.getter
-    def created(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def created(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was created (RFC3339)
         """
         return pulumi.get(self, "created")
 
     @created.setter
-    def created(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def created(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "created", value)
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Description of the automation
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter
-    def enabled(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enabled(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the automation is enabled
         """
         return pulumi.get(self, "enabled")
 
     @enabled.setter
-    def enabled(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enabled(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enabled", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the automation
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def trigger(self) -> Optional[pulumi.Input['AutomationTriggerArgs']]:
+    def trigger(self) -> pulumi.Input[Optional['AutomationTriggerArgs']]:
         """
         The criteria for which events this Automation covers and how it will respond
         """
         return pulumi.get(self, "trigger")
 
     @trigger.setter
-    def trigger(self, value: Optional[pulumi.Input['AutomationTriggerArgs']]):
+    def trigger(self, value: pulumi.Input[Optional['AutomationTriggerArgs']]):
         pulumi.set(self, "trigger", value)
 
     @_builtins.property
     @pulumi.getter
-    def updated(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def updated(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was updated (RFC3339)
         """
         return pulumi.get(self, "updated")
 
     @updated.setter
-    def updated(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def updated(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "updated", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID), defaults to the workspace set in the provider
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
@@ -359,18 +361,19 @@ class Automation(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 actions: Optional[pulumi.Input[Sequence[pulumi.Input[Union['AutomationActionArgs', 'AutomationActionArgsDict']]]]] = None,
-                 actions_on_resolves: Optional[pulumi.Input[Sequence[pulumi.Input[Union['AutomationActionsOnResolfArgs', 'AutomationActionsOnResolfArgsDict']]]]] = None,
-                 actions_on_triggers: Optional[pulumi.Input[Sequence[pulumi.Input[Union['AutomationActionsOnTriggerArgs', 'AutomationActionsOnTriggerArgsDict']]]]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 trigger: Optional[pulumi.Input[Union['AutomationTriggerArgs', 'AutomationTriggerArgsDict']]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 actions: pulumi.Input[Optional[Sequence[pulumi.Input[Union['AutomationActionArgs', 'AutomationActionArgsDict']]]]] = None,
+                 actions_on_resolves: pulumi.Input[Optional[Sequence[pulumi.Input[Union['AutomationActionsOnResolfArgs', 'AutomationActionsOnResolfArgsDict']]]]] = None,
+                 actions_on_triggers: pulumi.Input[Optional[Sequence[pulumi.Input[Union['AutomationActionsOnTriggerArgs', 'AutomationActionsOnTriggerArgsDict']]]]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 trigger: pulumi.Input[Optional[Union['AutomationTriggerArgs', 'AutomationTriggerArgsDict']]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a Automation resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
@@ -391,6 +394,7 @@ class Automation(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a Automation resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param AutomationArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -406,15 +410,15 @@ class Automation(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 actions: Optional[pulumi.Input[Sequence[pulumi.Input[Union['AutomationActionArgs', 'AutomationActionArgsDict']]]]] = None,
-                 actions_on_resolves: Optional[pulumi.Input[Sequence[pulumi.Input[Union['AutomationActionsOnResolfArgs', 'AutomationActionsOnResolfArgsDict']]]]] = None,
-                 actions_on_triggers: Optional[pulumi.Input[Sequence[pulumi.Input[Union['AutomationActionsOnTriggerArgs', 'AutomationActionsOnTriggerArgsDict']]]]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 trigger: Optional[pulumi.Input[Union['AutomationTriggerArgs', 'AutomationTriggerArgsDict']]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 actions: pulumi.Input[Optional[Sequence[pulumi.Input[Union['AutomationActionArgs', 'AutomationActionArgsDict']]]]] = None,
+                 actions_on_resolves: pulumi.Input[Optional[Sequence[pulumi.Input[Union['AutomationActionsOnResolfArgs', 'AutomationActionsOnResolfArgsDict']]]]] = None,
+                 actions_on_triggers: pulumi.Input[Optional[Sequence[pulumi.Input[Union['AutomationActionsOnTriggerArgs', 'AutomationActionsOnTriggerArgsDict']]]]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 trigger: pulumi.Input[Optional[Union['AutomationTriggerArgs', 'AutomationTriggerArgsDict']]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -448,17 +452,17 @@ class Automation(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            actions: Optional[pulumi.Input[Sequence[pulumi.Input[Union['AutomationActionArgs', 'AutomationActionArgsDict']]]]] = None,
-            actions_on_resolves: Optional[pulumi.Input[Sequence[pulumi.Input[Union['AutomationActionsOnResolfArgs', 'AutomationActionsOnResolfArgsDict']]]]] = None,
-            actions_on_triggers: Optional[pulumi.Input[Sequence[pulumi.Input[Union['AutomationActionsOnTriggerArgs', 'AutomationActionsOnTriggerArgsDict']]]]] = None,
-            created: Optional[pulumi.Input[_builtins.str]] = None,
-            description: Optional[pulumi.Input[_builtins.str]] = None,
-            enabled: Optional[pulumi.Input[_builtins.bool]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            trigger: Optional[pulumi.Input[Union['AutomationTriggerArgs', 'AutomationTriggerArgsDict']]] = None,
-            updated: Optional[pulumi.Input[_builtins.str]] = None,
-            workspace_id: Optional[pulumi.Input[_builtins.str]] = None) -> 'Automation':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            actions: pulumi.Input[Optional[Sequence[pulumi.Input[Union['AutomationActionArgs', 'AutomationActionArgsDict']]]]] = None,
+            actions_on_resolves: pulumi.Input[Optional[Sequence[pulumi.Input[Union['AutomationActionsOnResolfArgs', 'AutomationActionsOnResolfArgsDict']]]]] = None,
+            actions_on_triggers: pulumi.Input[Optional[Sequence[pulumi.Input[Union['AutomationActionsOnTriggerArgs', 'AutomationActionsOnTriggerArgsDict']]]]] = None,
+            created: pulumi.Input[Optional[_builtins.str]] = None,
+            description: pulumi.Input[Optional[_builtins.str]] = None,
+            enabled: pulumi.Input[Optional[_builtins.bool]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            trigger: pulumi.Input[Optional[Union['AutomationTriggerArgs', 'AutomationTriggerArgsDict']]] = None,
+            updated: pulumi.Input[Optional[_builtins.str]] = None,
+            workspace_id: pulumi.Input[Optional[_builtins.str]] = None) -> 'Automation':
         """
         Get an existing Automation resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

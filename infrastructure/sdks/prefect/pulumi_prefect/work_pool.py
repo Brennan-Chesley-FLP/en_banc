@@ -19,16 +19,17 @@ __all__ = ['WorkPoolArgs', 'WorkPool']
 @pulumi.input_type
 class WorkPoolArgs:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 base_job_template: Optional[pulumi.Input[_builtins.str]] = None,
-                 concurrency_limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 paused: Optional[pulumi.Input[_builtins.bool]] = None,
-                 type: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 base_job_template: pulumi.Input[Optional[_builtins.str]] = None,
+                 concurrency_limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 paused: pulumi.Input[Optional[_builtins.bool]] = None,
+                 type: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a WorkPool resource.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
         :param pulumi.Input[_builtins.str] base_job_template: The base job template for the work pool, as a JSON string
         :param pulumi.Input[_builtins.float] concurrency_limit: The concurrency limit applied to this work pool
@@ -57,117 +58,118 @@ class WorkPoolArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID), defaults to the account set in the provider
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="baseJobTemplate")
-    def base_job_template(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def base_job_template(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The base job template for the work pool, as a JSON string
         """
         return pulumi.get(self, "base_job_template")
 
     @base_job_template.setter
-    def base_job_template(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def base_job_template(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "base_job_template", value)
 
     @_builtins.property
     @pulumi.getter(name="concurrencyLimit")
-    def concurrency_limit(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def concurrency_limit(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The concurrency limit applied to this work pool
         """
         return pulumi.get(self, "concurrency_limit")
 
     @concurrency_limit.setter
-    def concurrency_limit(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def concurrency_limit(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "concurrency_limit", value)
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Description of the work pool
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the work pool
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def paused(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def paused(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether this work pool is paused
         """
         return pulumi.get(self, "paused")
 
     @paused.setter
-    def paused(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def paused(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "paused", value)
 
     @_builtins.property
     @pulumi.getter
-    def type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Type of the work pool, eg. kubernetes, ecs, process, etc.
         """
         return pulumi.get(self, "type")
 
     @type.setter
-    def type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "type", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID), defaults to the workspace set in the provider. In Prefect Cloud, either the <span pulumi-lang-nodejs="`workPool`" pulumi-lang-dotnet="`WorkPool`" pulumi-lang-go="`workPool`" pulumi-lang-python="`work_pool`" pulumi-lang-yaml="`workPool`" pulumi-lang-java="`workPool`">`work_pool`</span> resource or the provider's <span pulumi-lang-nodejs="`workspaceId`" pulumi-lang-dotnet="`WorkspaceId`" pulumi-lang-go="`workspaceId`" pulumi-lang-python="`workspace_id`" pulumi-lang-yaml="`workspaceId`" pulumi-lang-java="`workspaceId`">`workspace_id`</span> must be set.
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
 @pulumi.input_type
 class _WorkPoolState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 base_job_template: Optional[pulumi.Input[_builtins.str]] = None,
-                 concurrency_limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 created: Optional[pulumi.Input[_builtins.str]] = None,
-                 default_queue_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 paused: Optional[pulumi.Input[_builtins.bool]] = None,
-                 type: Optional[pulumi.Input[_builtins.str]] = None,
-                 updated: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 base_job_template: pulumi.Input[Optional[_builtins.str]] = None,
+                 concurrency_limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 created: pulumi.Input[Optional[_builtins.str]] = None,
+                 default_queue_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 paused: pulumi.Input[Optional[_builtins.bool]] = None,
+                 type: pulumi.Input[Optional[_builtins.str]] = None,
+                 updated: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering WorkPool resources.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
         :param pulumi.Input[_builtins.str] base_job_template: The base job template for the work pool, as a JSON string
         :param pulumi.Input[_builtins.float] concurrency_limit: The concurrency limit applied to this work pool
@@ -205,134 +207,134 @@ class _WorkPoolState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID), defaults to the account set in the provider
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="baseJobTemplate")
-    def base_job_template(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def base_job_template(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The base job template for the work pool, as a JSON string
         """
         return pulumi.get(self, "base_job_template")
 
     @base_job_template.setter
-    def base_job_template(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def base_job_template(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "base_job_template", value)
 
     @_builtins.property
     @pulumi.getter(name="concurrencyLimit")
-    def concurrency_limit(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def concurrency_limit(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The concurrency limit applied to this work pool
         """
         return pulumi.get(self, "concurrency_limit")
 
     @concurrency_limit.setter
-    def concurrency_limit(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def concurrency_limit(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "concurrency_limit", value)
 
     @_builtins.property
     @pulumi.getter
-    def created(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def created(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was created (RFC3339)
         """
         return pulumi.get(self, "created")
 
     @created.setter
-    def created(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def created(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "created", value)
 
     @_builtins.property
     @pulumi.getter(name="defaultQueueId")
-    def default_queue_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def default_queue_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The ID (UUID) of the default queue associated with this work pool
         """
         return pulumi.get(self, "default_queue_id")
 
     @default_queue_id.setter
-    def default_queue_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def default_queue_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "default_queue_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Description of the work pool
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the work pool
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def paused(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def paused(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether this work pool is paused
         """
         return pulumi.get(self, "paused")
 
     @paused.setter
-    def paused(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def paused(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "paused", value)
 
     @_builtins.property
     @pulumi.getter
-    def type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Type of the work pool, eg. kubernetes, ecs, process, etc.
         """
         return pulumi.get(self, "type")
 
     @type.setter
-    def type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "type", value)
 
     @_builtins.property
     @pulumi.getter
-    def updated(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def updated(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was updated (RFC3339)
         """
         return pulumi.get(self, "updated")
 
     @updated.setter
-    def updated(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def updated(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "updated", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID), defaults to the workspace set in the provider. In Prefect Cloud, either the <span pulumi-lang-nodejs="`workPool`" pulumi-lang-dotnet="`WorkPool`" pulumi-lang-go="`workPool`" pulumi-lang-python="`work_pool`" pulumi-lang-yaml="`workPool`" pulumi-lang-java="`workPool`">`work_pool`</span> resource or the provider's <span pulumi-lang-nodejs="`workspaceId`" pulumi-lang-dotnet="`WorkspaceId`" pulumi-lang-go="`workspaceId`" pulumi-lang-python="`workspace_id`" pulumi-lang-yaml="`workspaceId`" pulumi-lang-java="`workspaceId`">`workspace_id`</span> must be set.
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
@@ -342,17 +344,18 @@ class WorkPool(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 base_job_template: Optional[pulumi.Input[_builtins.str]] = None,
-                 concurrency_limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 paused: Optional[pulumi.Input[_builtins.bool]] = None,
-                 type: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 base_job_template: pulumi.Input[Optional[_builtins.str]] = None,
+                 concurrency_limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 paused: pulumi.Input[Optional[_builtins.bool]] = None,
+                 type: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a WorkPool resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
@@ -372,6 +375,7 @@ class WorkPool(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a WorkPool resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param WorkPoolArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -387,14 +391,14 @@ class WorkPool(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 base_job_template: Optional[pulumi.Input[_builtins.str]] = None,
-                 concurrency_limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 paused: Optional[pulumi.Input[_builtins.bool]] = None,
-                 type: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 base_job_template: pulumi.Input[Optional[_builtins.str]] = None,
+                 concurrency_limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 paused: pulumi.Input[Optional[_builtins.bool]] = None,
+                 type: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -426,17 +430,17 @@ class WorkPool(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            base_job_template: Optional[pulumi.Input[_builtins.str]] = None,
-            concurrency_limit: Optional[pulumi.Input[_builtins.float]] = None,
-            created: Optional[pulumi.Input[_builtins.str]] = None,
-            default_queue_id: Optional[pulumi.Input[_builtins.str]] = None,
-            description: Optional[pulumi.Input[_builtins.str]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            paused: Optional[pulumi.Input[_builtins.bool]] = None,
-            type: Optional[pulumi.Input[_builtins.str]] = None,
-            updated: Optional[pulumi.Input[_builtins.str]] = None,
-            workspace_id: Optional[pulumi.Input[_builtins.str]] = None) -> 'WorkPool':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            base_job_template: pulumi.Input[Optional[_builtins.str]] = None,
+            concurrency_limit: pulumi.Input[Optional[_builtins.float]] = None,
+            created: pulumi.Input[Optional[_builtins.str]] = None,
+            default_queue_id: pulumi.Input[Optional[_builtins.str]] = None,
+            description: pulumi.Input[Optional[_builtins.str]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            paused: pulumi.Input[Optional[_builtins.bool]] = None,
+            type: pulumi.Input[Optional[_builtins.str]] = None,
+            updated: pulumi.Input[Optional[_builtins.str]] = None,
+            workspace_id: pulumi.Input[Optional[_builtins.str]] = None) -> 'WorkPool':
         """
         Get an existing WorkPool resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

@@ -19,14 +19,15 @@ __all__ = ['ServiceAccountArgs', 'ServiceAccount']
 @pulumi.input_type
 class ServiceAccountArgs:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_role_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key_expiration: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key_keepers: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 old_key_expires_in_seconds: Optional[pulumi.Input[_builtins.float]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_role_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key_expiration: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key_keepers: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 old_key_expires_in_seconds: pulumi.Input[Optional[_builtins.float]] = None):
         """
         The set of arguments for constructing a ServiceAccount resource.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
         :param pulumi.Input[_builtins.str] account_role_name: Account Role name of the service account (one of: Admin, Member, Owner)
         :param pulumi.Input[_builtins.str] api_key_expiration: Timestamp of the API Key expiration (RFC3339). If left as null, the API Key will not expire. Modify this attribute to force a key rotation.
@@ -49,95 +50,96 @@ class ServiceAccountArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID), defaults to the account set in the provider
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="accountRoleName")
-    def account_role_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_role_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account Role name of the service account (one of: Admin, Member, Owner)
         """
         return pulumi.get(self, "account_role_name")
 
     @account_role_name.setter
-    def account_role_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_role_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_role_name", value)
 
     @_builtins.property
     @pulumi.getter(name="apiKeyExpiration")
-    def api_key_expiration(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def api_key_expiration(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of the API Key expiration (RFC3339). If left as null, the API Key will not expire. Modify this attribute to force a key rotation.
         """
         return pulumi.get(self, "api_key_expiration")
 
     @api_key_expiration.setter
-    def api_key_expiration(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def api_key_expiration(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "api_key_expiration", value)
 
     @_builtins.property
     @pulumi.getter(name="apiKeyKeepers")
-    def api_key_keepers(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]:
+    def api_key_keepers(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
         """
         A map of values that, if changed, will trigger a key rotation (but not a re-creation of the Service Account)
         """
         return pulumi.get(self, "api_key_keepers")
 
     @api_key_keepers.setter
-    def api_key_keepers(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def api_key_keepers(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "api_key_keepers", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the service account
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="oldKeyExpiresInSeconds")
-    def old_key_expires_in_seconds(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def old_key_expires_in_seconds(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Provide this field to set an expiration for the currently active api key. If not provided or provided Null, the current key will be deleted. If provided, it cannot be more than 48 hours (172800 seconds) in the future.
         """
         return pulumi.get(self, "old_key_expires_in_seconds")
 
     @old_key_expires_in_seconds.setter
-    def old_key_expires_in_seconds(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def old_key_expires_in_seconds(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "old_key_expires_in_seconds", value)
 
 
 @pulumi.input_type
 class _ServiceAccountState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_role_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 actor_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key_created: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key_expiration: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key_keepers: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 api_key_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 created: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 old_key_expires_in_seconds: Optional[pulumi.Input[_builtins.float]] = None,
-                 updated: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_role_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 actor_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key_created: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key_expiration: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key_keepers: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 api_key_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 created: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 old_key_expires_in_seconds: pulumi.Input[Optional[_builtins.float]] = None,
+                 updated: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering ServiceAccount resources.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
         :param pulumi.Input[_builtins.str] account_role_name: Account Role name of the service account (one of: Admin, Member, Owner)
         :param pulumi.Input[_builtins.str] actor_id: Actor ID (UUID), used for granting access to resources like Blocks and Deployments
@@ -181,158 +183,158 @@ class _ServiceAccountState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID), defaults to the account set in the provider
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="accountRoleName")
-    def account_role_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_role_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account Role name of the service account (one of: Admin, Member, Owner)
         """
         return pulumi.get(self, "account_role_name")
 
     @account_role_name.setter
-    def account_role_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_role_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_role_name", value)
 
     @_builtins.property
     @pulumi.getter(name="actorId")
-    def actor_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def actor_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Actor ID (UUID), used for granting access to resources like Blocks and Deployments
         """
         return pulumi.get(self, "actor_id")
 
     @actor_id.setter
-    def actor_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def actor_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "actor_id", value)
 
     @_builtins.property
     @pulumi.getter(name="apiKey")
-    def api_key(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def api_key(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         API Key associated with the service account
         """
         return pulumi.get(self, "api_key")
 
     @api_key.setter
-    def api_key(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def api_key(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "api_key", value)
 
     @_builtins.property
     @pulumi.getter(name="apiKeyCreated")
-    def api_key_created(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def api_key_created(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of the API Key creation (RFC3339)
         """
         return pulumi.get(self, "api_key_created")
 
     @api_key_created.setter
-    def api_key_created(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def api_key_created(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "api_key_created", value)
 
     @_builtins.property
     @pulumi.getter(name="apiKeyExpiration")
-    def api_key_expiration(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def api_key_expiration(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of the API Key expiration (RFC3339). If left as null, the API Key will not expire. Modify this attribute to force a key rotation.
         """
         return pulumi.get(self, "api_key_expiration")
 
     @api_key_expiration.setter
-    def api_key_expiration(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def api_key_expiration(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "api_key_expiration", value)
 
     @_builtins.property
     @pulumi.getter(name="apiKeyId")
-    def api_key_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def api_key_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         API Key ID associated with the service account
         """
         return pulumi.get(self, "api_key_id")
 
     @api_key_id.setter
-    def api_key_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def api_key_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "api_key_id", value)
 
     @_builtins.property
     @pulumi.getter(name="apiKeyKeepers")
-    def api_key_keepers(self) -> Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]:
+    def api_key_keepers(self) -> pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]:
         """
         A map of values that, if changed, will trigger a key rotation (but not a re-creation of the Service Account)
         """
         return pulumi.get(self, "api_key_keepers")
 
     @api_key_keepers.setter
-    def api_key_keepers(self, value: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]]):
+    def api_key_keepers(self, value: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "api_key_keepers", value)
 
     @_builtins.property
     @pulumi.getter(name="apiKeyName")
-    def api_key_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def api_key_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         API Key Name associated with the service account
         """
         return pulumi.get(self, "api_key_name")
 
     @api_key_name.setter
-    def api_key_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def api_key_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "api_key_name", value)
 
     @_builtins.property
     @pulumi.getter
-    def created(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def created(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was created (RFC3339)
         """
         return pulumi.get(self, "created")
 
     @created.setter
-    def created(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def created(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "created", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the service account
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="oldKeyExpiresInSeconds")
-    def old_key_expires_in_seconds(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def old_key_expires_in_seconds(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         Provide this field to set an expiration for the currently active api key. If not provided or provided Null, the current key will be deleted. If provided, it cannot be more than 48 hours (172800 seconds) in the future.
         """
         return pulumi.get(self, "old_key_expires_in_seconds")
 
     @old_key_expires_in_seconds.setter
-    def old_key_expires_in_seconds(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def old_key_expires_in_seconds(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "old_key_expires_in_seconds", value)
 
     @_builtins.property
     @pulumi.getter
-    def updated(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def updated(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was updated (RFC3339)
         """
         return pulumi.get(self, "updated")
 
     @updated.setter
-    def updated(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def updated(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "updated", value)
 
 
@@ -342,15 +344,16 @@ class ServiceAccount(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_role_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key_expiration: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key_keepers: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 old_key_expires_in_seconds: Optional[pulumi.Input[_builtins.float]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_role_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key_expiration: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key_keepers: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 old_key_expires_in_seconds: pulumi.Input[Optional[_builtins.float]] = None,
                  __props__=None):
         """
         Create a ServiceAccount resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
@@ -368,6 +371,7 @@ class ServiceAccount(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a ServiceAccount resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param ServiceAccountArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -383,12 +387,12 @@ class ServiceAccount(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 account_role_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key_expiration: Optional[pulumi.Input[_builtins.str]] = None,
-                 api_key_keepers: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 old_key_expires_in_seconds: Optional[pulumi.Input[_builtins.float]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 account_role_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key_expiration: pulumi.Input[Optional[_builtins.str]] = None,
+                 api_key_keepers: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 old_key_expires_in_seconds: pulumi.Input[Optional[_builtins.float]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -424,19 +428,19 @@ class ServiceAccount(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            account_role_name: Optional[pulumi.Input[_builtins.str]] = None,
-            actor_id: Optional[pulumi.Input[_builtins.str]] = None,
-            api_key: Optional[pulumi.Input[_builtins.str]] = None,
-            api_key_created: Optional[pulumi.Input[_builtins.str]] = None,
-            api_key_expiration: Optional[pulumi.Input[_builtins.str]] = None,
-            api_key_id: Optional[pulumi.Input[_builtins.str]] = None,
-            api_key_keepers: Optional[pulumi.Input[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
-            api_key_name: Optional[pulumi.Input[_builtins.str]] = None,
-            created: Optional[pulumi.Input[_builtins.str]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            old_key_expires_in_seconds: Optional[pulumi.Input[_builtins.float]] = None,
-            updated: Optional[pulumi.Input[_builtins.str]] = None) -> 'ServiceAccount':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            account_role_name: pulumi.Input[Optional[_builtins.str]] = None,
+            actor_id: pulumi.Input[Optional[_builtins.str]] = None,
+            api_key: pulumi.Input[Optional[_builtins.str]] = None,
+            api_key_created: pulumi.Input[Optional[_builtins.str]] = None,
+            api_key_expiration: pulumi.Input[Optional[_builtins.str]] = None,
+            api_key_id: pulumi.Input[Optional[_builtins.str]] = None,
+            api_key_keepers: pulumi.Input[Optional[Mapping[str, pulumi.Input[_builtins.str]]]] = None,
+            api_key_name: pulumi.Input[Optional[_builtins.str]] = None,
+            created: pulumi.Input[Optional[_builtins.str]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            old_key_expires_in_seconds: pulumi.Input[Optional[_builtins.float]] = None,
+            updated: pulumi.Input[Optional[_builtins.str]] = None) -> 'ServiceAccount':
         """
         Get an existing ServiceAccount resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

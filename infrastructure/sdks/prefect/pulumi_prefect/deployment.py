@@ -22,29 +22,30 @@ __all__ = ['DeploymentArgs', 'Deployment']
 class DeploymentArgs:
     def __init__(__self__, *,
                  flow_id: pulumi.Input[_builtins.str],
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 concurrency_limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 concurrency_options: Optional[pulumi.Input['DeploymentConcurrencyOptionsArgs']] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 enforce_parameter_schema: Optional[pulumi.Input[_builtins.bool]] = None,
-                 entrypoint: Optional[pulumi.Input[_builtins.str]] = None,
-                 global_concurrency_limit_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 job_variables: Optional[pulumi.Input[_builtins.str]] = None,
-                 manifest_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 parameter_openapi_schema: Optional[pulumi.Input[_builtins.str]] = None,
-                 parameters: Optional[pulumi.Input[_builtins.str]] = None,
-                 path: Optional[pulumi.Input[_builtins.str]] = None,
-                 paused: Optional[pulumi.Input[_builtins.bool]] = None,
-                 pull_steps: Optional[pulumi.Input[Sequence[pulumi.Input['DeploymentPullStepArgs']]]] = None,
-                 storage_document_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 tags: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 version: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_pool_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_queue_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 concurrency_limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 concurrency_options: pulumi.Input[Optional['DeploymentConcurrencyOptionsArgs']] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 enforce_parameter_schema: pulumi.Input[Optional[_builtins.bool]] = None,
+                 entrypoint: pulumi.Input[Optional[_builtins.str]] = None,
+                 global_concurrency_limit_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 job_variables: pulumi.Input[Optional[_builtins.str]] = None,
+                 manifest_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 parameter_openapi_schema: pulumi.Input[Optional[_builtins.str]] = None,
+                 parameters: pulumi.Input[Optional[_builtins.str]] = None,
+                 path: pulumi.Input[Optional[_builtins.str]] = None,
+                 paused: pulumi.Input[Optional[_builtins.bool]] = None,
+                 pull_steps: pulumi.Input[Optional[Sequence[pulumi.Input['DeploymentPullStepArgs']]]] = None,
+                 storage_document_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 tags: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 version: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_pool_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_queue_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a Deployment resource.
+
         :param pulumi.Input[_builtins.str] flow_id: Flow ID (UUID) to associate deployment to
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
         :param pulumi.Input[_builtins.float] concurrency_limit: The deployment's concurrency limit.
@@ -129,287 +130,288 @@ class DeploymentArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID), defaults to the account set in the provider
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="concurrencyLimit")
-    def concurrency_limit(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def concurrency_limit(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The deployment's concurrency limit.
         """
         return pulumi.get(self, "concurrency_limit")
 
     @concurrency_limit.setter
-    def concurrency_limit(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def concurrency_limit(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "concurrency_limit", value)
 
     @_builtins.property
     @pulumi.getter(name="concurrencyOptions")
-    def concurrency_options(self) -> Optional[pulumi.Input['DeploymentConcurrencyOptionsArgs']]:
+    def concurrency_options(self) -> pulumi.Input[Optional['DeploymentConcurrencyOptionsArgs']]:
         """
         Concurrency options for the deployment.
         """
         return pulumi.get(self, "concurrency_options")
 
     @concurrency_options.setter
-    def concurrency_options(self, value: Optional[pulumi.Input['DeploymentConcurrencyOptionsArgs']]):
+    def concurrency_options(self, value: pulumi.Input[Optional['DeploymentConcurrencyOptionsArgs']]):
         pulumi.set(self, "concurrency_options", value)
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         A description for the deployment.
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter(name="enforceParameterSchema")
-    def enforce_parameter_schema(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enforce_parameter_schema(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether or not the deployment should enforce the parameter schema.
         """
         return pulumi.get(self, "enforce_parameter_schema")
 
     @enforce_parameter_schema.setter
-    def enforce_parameter_schema(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enforce_parameter_schema(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enforce_parameter_schema", value)
 
     @_builtins.property
     @pulumi.getter
-    def entrypoint(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def entrypoint(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The path to the entrypoint for the workflow, relative to the path.
         """
         return pulumi.get(self, "entrypoint")
 
     @entrypoint.setter
-    def entrypoint(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def entrypoint(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "entrypoint", value)
 
     @_builtins.property
     @pulumi.getter(name="globalConcurrencyLimitId")
-    def global_concurrency_limit_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def global_concurrency_limit_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The ID of a global concurrency limit to apply to this deployment. This is the recommended way to set concurrency limits. Mutually exclusive with concurrency_limit.
         """
         return pulumi.get(self, "global_concurrency_limit_id")
 
     @global_concurrency_limit_id.setter
-    def global_concurrency_limit_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def global_concurrency_limit_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "global_concurrency_limit_id", value)
 
     @_builtins.property
     @pulumi.getter(name="jobVariables")
-    def job_variables(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def job_variables(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Overrides for the flow's infrastructure configuration.
         """
         return pulumi.get(self, "job_variables")
 
     @job_variables.setter
-    def job_variables(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def job_variables(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "job_variables", value)
 
     @_builtins.property
     @pulumi.getter(name="manifestPath")
     @_utilities.deprecated("""Deprecated""")
-    def manifest_path(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def manifest_path(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The path to the flow's manifest file, relative to the chosen storage.
         """
         return pulumi.get(self, "manifest_path")
 
     @manifest_path.setter
-    def manifest_path(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def manifest_path(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "manifest_path", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the deployment
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="parameterOpenapiSchema")
-    def parameter_openapi_schema(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def parameter_openapi_schema(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The parameter schema of the flow, including defaults.
         """
         return pulumi.get(self, "parameter_openapi_schema")
 
     @parameter_openapi_schema.setter
-    def parameter_openapi_schema(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def parameter_openapi_schema(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "parameter_openapi_schema", value)
 
     @_builtins.property
     @pulumi.getter
-    def parameters(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def parameters(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Parameters for flow runs scheduled by the deployment.
         """
         return pulumi.get(self, "parameters")
 
     @parameters.setter
-    def parameters(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def parameters(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "parameters", value)
 
     @_builtins.property
     @pulumi.getter
-    def path(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def path(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The path to the working directory for the workflow, relative to remote storage or an absolute path.
         """
         return pulumi.get(self, "path")
 
     @path.setter
-    def path(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def path(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "path", value)
 
     @_builtins.property
     @pulumi.getter
-    def paused(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def paused(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether or not the deployment is paused.
         """
         return pulumi.get(self, "paused")
 
     @paused.setter
-    def paused(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def paused(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "paused", value)
 
     @_builtins.property
     @pulumi.getter(name="pullSteps")
-    def pull_steps(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['DeploymentPullStepArgs']]]]:
+    def pull_steps(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['DeploymentPullStepArgs']]]]:
         """
         Pull steps to prepare flows for a deployment run.
         """
         return pulumi.get(self, "pull_steps")
 
     @pull_steps.setter
-    def pull_steps(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['DeploymentPullStepArgs']]]]):
+    def pull_steps(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['DeploymentPullStepArgs']]]]):
         pulumi.set(self, "pull_steps", value)
 
     @_builtins.property
     @pulumi.getter(name="storageDocumentId")
-    def storage_document_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def storage_document_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         ID of the associated storage document (UUID)
         """
         return pulumi.get(self, "storage_document_id")
 
     @storage_document_id.setter
-    def storage_document_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def storage_document_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "storage_document_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def tags(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def tags(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Tags associated with the deployment
         """
         return pulumi.get(self, "tags")
 
     @tags.setter
-    def tags(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def tags(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "tags", value)
 
     @_builtins.property
     @pulumi.getter
-    def version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         An optional version for the deployment.
         """
         return pulumi.get(self, "version")
 
     @version.setter
-    def version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "version", value)
 
     @_builtins.property
     @pulumi.getter(name="workPoolName")
-    def work_pool_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def work_pool_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The name of the deployment's work pool.
         """
         return pulumi.get(self, "work_pool_name")
 
     @work_pool_name.setter
-    def work_pool_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def work_pool_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "work_pool_name", value)
 
     @_builtins.property
     @pulumi.getter(name="workQueueName")
-    def work_queue_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def work_queue_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The work queue for the deployment. If no work queue is set, work will not be scheduled.
         """
         return pulumi.get(self, "work_queue_name")
 
     @work_queue_name.setter
-    def work_queue_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def work_queue_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "work_queue_name", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID) to associate deployment to
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
 @pulumi.input_type
 class _DeploymentState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 concurrency_limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 concurrency_options: Optional[pulumi.Input['DeploymentConcurrencyOptionsArgs']] = None,
-                 created: Optional[pulumi.Input[_builtins.str]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 enforce_parameter_schema: Optional[pulumi.Input[_builtins.bool]] = None,
-                 entrypoint: Optional[pulumi.Input[_builtins.str]] = None,
-                 flow_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 global_concurrency_limit_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 job_variables: Optional[pulumi.Input[_builtins.str]] = None,
-                 manifest_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 parameter_openapi_schema: Optional[pulumi.Input[_builtins.str]] = None,
-                 parameters: Optional[pulumi.Input[_builtins.str]] = None,
-                 path: Optional[pulumi.Input[_builtins.str]] = None,
-                 paused: Optional[pulumi.Input[_builtins.bool]] = None,
-                 pull_steps: Optional[pulumi.Input[Sequence[pulumi.Input['DeploymentPullStepArgs']]]] = None,
-                 storage_document_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 tags: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 updated: Optional[pulumi.Input[_builtins.str]] = None,
-                 version: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_pool_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_queue_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 concurrency_limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 concurrency_options: pulumi.Input[Optional['DeploymentConcurrencyOptionsArgs']] = None,
+                 created: pulumi.Input[Optional[_builtins.str]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 enforce_parameter_schema: pulumi.Input[Optional[_builtins.bool]] = None,
+                 entrypoint: pulumi.Input[Optional[_builtins.str]] = None,
+                 flow_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 global_concurrency_limit_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 job_variables: pulumi.Input[Optional[_builtins.str]] = None,
+                 manifest_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 parameter_openapi_schema: pulumi.Input[Optional[_builtins.str]] = None,
+                 parameters: pulumi.Input[Optional[_builtins.str]] = None,
+                 path: pulumi.Input[Optional[_builtins.str]] = None,
+                 paused: pulumi.Input[Optional[_builtins.bool]] = None,
+                 pull_steps: pulumi.Input[Optional[Sequence[pulumi.Input['DeploymentPullStepArgs']]]] = None,
+                 storage_document_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 tags: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 updated: pulumi.Input[Optional[_builtins.str]] = None,
+                 version: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_pool_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_queue_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering Deployment resources.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
         :param pulumi.Input[_builtins.float] concurrency_limit: The deployment's concurrency limit.
         :param pulumi.Input['DeploymentConcurrencyOptionsArgs'] concurrency_options: Concurrency options for the deployment.
@@ -489,291 +491,291 @@ class _DeploymentState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID), defaults to the account set in the provider
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="concurrencyLimit")
-    def concurrency_limit(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def concurrency_limit(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The deployment's concurrency limit.
         """
         return pulumi.get(self, "concurrency_limit")
 
     @concurrency_limit.setter
-    def concurrency_limit(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def concurrency_limit(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "concurrency_limit", value)
 
     @_builtins.property
     @pulumi.getter(name="concurrencyOptions")
-    def concurrency_options(self) -> Optional[pulumi.Input['DeploymentConcurrencyOptionsArgs']]:
+    def concurrency_options(self) -> pulumi.Input[Optional['DeploymentConcurrencyOptionsArgs']]:
         """
         Concurrency options for the deployment.
         """
         return pulumi.get(self, "concurrency_options")
 
     @concurrency_options.setter
-    def concurrency_options(self, value: Optional[pulumi.Input['DeploymentConcurrencyOptionsArgs']]):
+    def concurrency_options(self, value: pulumi.Input[Optional['DeploymentConcurrencyOptionsArgs']]):
         pulumi.set(self, "concurrency_options", value)
 
     @_builtins.property
     @pulumi.getter
-    def created(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def created(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was created (RFC3339)
         """
         return pulumi.get(self, "created")
 
     @created.setter
-    def created(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def created(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "created", value)
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         A description for the deployment.
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter(name="enforceParameterSchema")
-    def enforce_parameter_schema(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def enforce_parameter_schema(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether or not the deployment should enforce the parameter schema.
         """
         return pulumi.get(self, "enforce_parameter_schema")
 
     @enforce_parameter_schema.setter
-    def enforce_parameter_schema(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def enforce_parameter_schema(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "enforce_parameter_schema", value)
 
     @_builtins.property
     @pulumi.getter
-    def entrypoint(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def entrypoint(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The path to the entrypoint for the workflow, relative to the path.
         """
         return pulumi.get(self, "entrypoint")
 
     @entrypoint.setter
-    def entrypoint(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def entrypoint(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "entrypoint", value)
 
     @_builtins.property
     @pulumi.getter(name="flowId")
-    def flow_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def flow_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Flow ID (UUID) to associate deployment to
         """
         return pulumi.get(self, "flow_id")
 
     @flow_id.setter
-    def flow_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def flow_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "flow_id", value)
 
     @_builtins.property
     @pulumi.getter(name="globalConcurrencyLimitId")
-    def global_concurrency_limit_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def global_concurrency_limit_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The ID of a global concurrency limit to apply to this deployment. This is the recommended way to set concurrency limits. Mutually exclusive with concurrency_limit.
         """
         return pulumi.get(self, "global_concurrency_limit_id")
 
     @global_concurrency_limit_id.setter
-    def global_concurrency_limit_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def global_concurrency_limit_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "global_concurrency_limit_id", value)
 
     @_builtins.property
     @pulumi.getter(name="jobVariables")
-    def job_variables(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def job_variables(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Overrides for the flow's infrastructure configuration.
         """
         return pulumi.get(self, "job_variables")
 
     @job_variables.setter
-    def job_variables(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def job_variables(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "job_variables", value)
 
     @_builtins.property
     @pulumi.getter(name="manifestPath")
     @_utilities.deprecated("""Deprecated""")
-    def manifest_path(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def manifest_path(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The path to the flow's manifest file, relative to the chosen storage.
         """
         return pulumi.get(self, "manifest_path")
 
     @manifest_path.setter
-    def manifest_path(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def manifest_path(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "manifest_path", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Name of the deployment
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="parameterOpenapiSchema")
-    def parameter_openapi_schema(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def parameter_openapi_schema(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The parameter schema of the flow, including defaults.
         """
         return pulumi.get(self, "parameter_openapi_schema")
 
     @parameter_openapi_schema.setter
-    def parameter_openapi_schema(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def parameter_openapi_schema(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "parameter_openapi_schema", value)
 
     @_builtins.property
     @pulumi.getter
-    def parameters(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def parameters(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Parameters for flow runs scheduled by the deployment.
         """
         return pulumi.get(self, "parameters")
 
     @parameters.setter
-    def parameters(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def parameters(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "parameters", value)
 
     @_builtins.property
     @pulumi.getter
-    def path(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def path(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The path to the working directory for the workflow, relative to remote storage or an absolute path.
         """
         return pulumi.get(self, "path")
 
     @path.setter
-    def path(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def path(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "path", value)
 
     @_builtins.property
     @pulumi.getter
-    def paused(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def paused(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether or not the deployment is paused.
         """
         return pulumi.get(self, "paused")
 
     @paused.setter
-    def paused(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def paused(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "paused", value)
 
     @_builtins.property
     @pulumi.getter(name="pullSteps")
-    def pull_steps(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['DeploymentPullStepArgs']]]]:
+    def pull_steps(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['DeploymentPullStepArgs']]]]:
         """
         Pull steps to prepare flows for a deployment run.
         """
         return pulumi.get(self, "pull_steps")
 
     @pull_steps.setter
-    def pull_steps(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['DeploymentPullStepArgs']]]]):
+    def pull_steps(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['DeploymentPullStepArgs']]]]):
         pulumi.set(self, "pull_steps", value)
 
     @_builtins.property
     @pulumi.getter(name="storageDocumentId")
-    def storage_document_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def storage_document_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         ID of the associated storage document (UUID)
         """
         return pulumi.get(self, "storage_document_id")
 
     @storage_document_id.setter
-    def storage_document_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def storage_document_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "storage_document_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def tags(self) -> Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]:
+    def tags(self) -> pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]:
         """
         Tags associated with the deployment
         """
         return pulumi.get(self, "tags")
 
     @tags.setter
-    def tags(self, value: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]]):
+    def tags(self, value: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]]):
         pulumi.set(self, "tags", value)
 
     @_builtins.property
     @pulumi.getter
-    def updated(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def updated(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was updated (RFC3339)
         """
         return pulumi.get(self, "updated")
 
     @updated.setter
-    def updated(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def updated(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "updated", value)
 
     @_builtins.property
     @pulumi.getter
-    def version(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def version(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         An optional version for the deployment.
         """
         return pulumi.get(self, "version")
 
     @version.setter
-    def version(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def version(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "version", value)
 
     @_builtins.property
     @pulumi.getter(name="workPoolName")
-    def work_pool_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def work_pool_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The name of the deployment's work pool.
         """
         return pulumi.get(self, "work_pool_name")
 
     @work_pool_name.setter
-    def work_pool_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def work_pool_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "work_pool_name", value)
 
     @_builtins.property
     @pulumi.getter(name="workQueueName")
-    def work_queue_name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def work_queue_name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The work queue for the deployment. If no work queue is set, work will not be scheduled.
         """
         return pulumi.get(self, "work_queue_name")
 
     @work_queue_name.setter
-    def work_queue_name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def work_queue_name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "work_queue_name", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID) to associate deployment to
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
@@ -783,31 +785,32 @@ class Deployment(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 concurrency_limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 concurrency_options: Optional[pulumi.Input[Union['DeploymentConcurrencyOptionsArgs', 'DeploymentConcurrencyOptionsArgsDict']]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 enforce_parameter_schema: Optional[pulumi.Input[_builtins.bool]] = None,
-                 entrypoint: Optional[pulumi.Input[_builtins.str]] = None,
-                 flow_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 global_concurrency_limit_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 job_variables: Optional[pulumi.Input[_builtins.str]] = None,
-                 manifest_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 parameter_openapi_schema: Optional[pulumi.Input[_builtins.str]] = None,
-                 parameters: Optional[pulumi.Input[_builtins.str]] = None,
-                 path: Optional[pulumi.Input[_builtins.str]] = None,
-                 paused: Optional[pulumi.Input[_builtins.bool]] = None,
-                 pull_steps: Optional[pulumi.Input[Sequence[pulumi.Input[Union['DeploymentPullStepArgs', 'DeploymentPullStepArgsDict']]]]] = None,
-                 storage_document_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 tags: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 version: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_pool_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_queue_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 concurrency_limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 concurrency_options: pulumi.Input[Optional[Union['DeploymentConcurrencyOptionsArgs', 'DeploymentConcurrencyOptionsArgsDict']]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 enforce_parameter_schema: pulumi.Input[Optional[_builtins.bool]] = None,
+                 entrypoint: pulumi.Input[Optional[_builtins.str]] = None,
+                 flow_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 global_concurrency_limit_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 job_variables: pulumi.Input[Optional[_builtins.str]] = None,
+                 manifest_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 parameter_openapi_schema: pulumi.Input[Optional[_builtins.str]] = None,
+                 parameters: pulumi.Input[Optional[_builtins.str]] = None,
+                 path: pulumi.Input[Optional[_builtins.str]] = None,
+                 paused: pulumi.Input[Optional[_builtins.bool]] = None,
+                 pull_steps: pulumi.Input[Optional[Sequence[pulumi.Input[Union['DeploymentPullStepArgs', 'DeploymentPullStepArgsDict']]]]] = None,
+                 storage_document_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 tags: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 version: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_pool_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_queue_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a Deployment resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
@@ -841,6 +844,7 @@ class Deployment(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a Deployment resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param DeploymentArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -856,28 +860,28 @@ class Deployment(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 concurrency_limit: Optional[pulumi.Input[_builtins.float]] = None,
-                 concurrency_options: Optional[pulumi.Input[Union['DeploymentConcurrencyOptionsArgs', 'DeploymentConcurrencyOptionsArgsDict']]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 enforce_parameter_schema: Optional[pulumi.Input[_builtins.bool]] = None,
-                 entrypoint: Optional[pulumi.Input[_builtins.str]] = None,
-                 flow_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 global_concurrency_limit_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 job_variables: Optional[pulumi.Input[_builtins.str]] = None,
-                 manifest_path: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 parameter_openapi_schema: Optional[pulumi.Input[_builtins.str]] = None,
-                 parameters: Optional[pulumi.Input[_builtins.str]] = None,
-                 path: Optional[pulumi.Input[_builtins.str]] = None,
-                 paused: Optional[pulumi.Input[_builtins.bool]] = None,
-                 pull_steps: Optional[pulumi.Input[Sequence[pulumi.Input[Union['DeploymentPullStepArgs', 'DeploymentPullStepArgsDict']]]]] = None,
-                 storage_document_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 tags: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-                 version: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_pool_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 work_queue_name: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 concurrency_limit: pulumi.Input[Optional[_builtins.float]] = None,
+                 concurrency_options: pulumi.Input[Optional[Union['DeploymentConcurrencyOptionsArgs', 'DeploymentConcurrencyOptionsArgsDict']]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 enforce_parameter_schema: pulumi.Input[Optional[_builtins.bool]] = None,
+                 entrypoint: pulumi.Input[Optional[_builtins.str]] = None,
+                 flow_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 global_concurrency_limit_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 job_variables: pulumi.Input[Optional[_builtins.str]] = None,
+                 manifest_path: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 parameter_openapi_schema: pulumi.Input[Optional[_builtins.str]] = None,
+                 parameters: pulumi.Input[Optional[_builtins.str]] = None,
+                 path: pulumi.Input[Optional[_builtins.str]] = None,
+                 paused: pulumi.Input[Optional[_builtins.bool]] = None,
+                 pull_steps: pulumi.Input[Optional[Sequence[pulumi.Input[Union['DeploymentPullStepArgs', 'DeploymentPullStepArgsDict']]]]] = None,
+                 storage_document_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 tags: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+                 version: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_pool_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 work_queue_name: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -924,30 +928,30 @@ class Deployment(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            concurrency_limit: Optional[pulumi.Input[_builtins.float]] = None,
-            concurrency_options: Optional[pulumi.Input[Union['DeploymentConcurrencyOptionsArgs', 'DeploymentConcurrencyOptionsArgsDict']]] = None,
-            created: Optional[pulumi.Input[_builtins.str]] = None,
-            description: Optional[pulumi.Input[_builtins.str]] = None,
-            enforce_parameter_schema: Optional[pulumi.Input[_builtins.bool]] = None,
-            entrypoint: Optional[pulumi.Input[_builtins.str]] = None,
-            flow_id: Optional[pulumi.Input[_builtins.str]] = None,
-            global_concurrency_limit_id: Optional[pulumi.Input[_builtins.str]] = None,
-            job_variables: Optional[pulumi.Input[_builtins.str]] = None,
-            manifest_path: Optional[pulumi.Input[_builtins.str]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            parameter_openapi_schema: Optional[pulumi.Input[_builtins.str]] = None,
-            parameters: Optional[pulumi.Input[_builtins.str]] = None,
-            path: Optional[pulumi.Input[_builtins.str]] = None,
-            paused: Optional[pulumi.Input[_builtins.bool]] = None,
-            pull_steps: Optional[pulumi.Input[Sequence[pulumi.Input[Union['DeploymentPullStepArgs', 'DeploymentPullStepArgsDict']]]]] = None,
-            storage_document_id: Optional[pulumi.Input[_builtins.str]] = None,
-            tags: Optional[pulumi.Input[Sequence[pulumi.Input[_builtins.str]]]] = None,
-            updated: Optional[pulumi.Input[_builtins.str]] = None,
-            version: Optional[pulumi.Input[_builtins.str]] = None,
-            work_pool_name: Optional[pulumi.Input[_builtins.str]] = None,
-            work_queue_name: Optional[pulumi.Input[_builtins.str]] = None,
-            workspace_id: Optional[pulumi.Input[_builtins.str]] = None) -> 'Deployment':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            concurrency_limit: pulumi.Input[Optional[_builtins.float]] = None,
+            concurrency_options: pulumi.Input[Optional[Union['DeploymentConcurrencyOptionsArgs', 'DeploymentConcurrencyOptionsArgsDict']]] = None,
+            created: pulumi.Input[Optional[_builtins.str]] = None,
+            description: pulumi.Input[Optional[_builtins.str]] = None,
+            enforce_parameter_schema: pulumi.Input[Optional[_builtins.bool]] = None,
+            entrypoint: pulumi.Input[Optional[_builtins.str]] = None,
+            flow_id: pulumi.Input[Optional[_builtins.str]] = None,
+            global_concurrency_limit_id: pulumi.Input[Optional[_builtins.str]] = None,
+            job_variables: pulumi.Input[Optional[_builtins.str]] = None,
+            manifest_path: pulumi.Input[Optional[_builtins.str]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            parameter_openapi_schema: pulumi.Input[Optional[_builtins.str]] = None,
+            parameters: pulumi.Input[Optional[_builtins.str]] = None,
+            path: pulumi.Input[Optional[_builtins.str]] = None,
+            paused: pulumi.Input[Optional[_builtins.bool]] = None,
+            pull_steps: pulumi.Input[Optional[Sequence[pulumi.Input[Union['DeploymentPullStepArgs', 'DeploymentPullStepArgsDict']]]]] = None,
+            storage_document_id: pulumi.Input[Optional[_builtins.str]] = None,
+            tags: pulumi.Input[Optional[Sequence[pulumi.Input[_builtins.str]]]] = None,
+            updated: pulumi.Input[Optional[_builtins.str]] = None,
+            version: pulumi.Input[Optional[_builtins.str]] = None,
+            work_pool_name: pulumi.Input[Optional[_builtins.str]] = None,
+            work_queue_name: pulumi.Input[Optional[_builtins.str]] = None,
+            workspace_id: pulumi.Input[Optional[_builtins.str]] = None) -> 'Deployment':
         """
         Get an existing Deployment resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

@@ -152,8 +152,8 @@ def get_account(id: Optional[_builtins.str] = None,
         name=pulumi.get(__ret__, 'name'),
         settings=pulumi.get(__ret__, 'settings'),
         updated=pulumi.get(__ret__, 'updated'))
-def get_account_output(id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                       settings: Optional[pulumi.Input[Optional[Union['GetAccountSettingsArgs', 'GetAccountSettingsArgsDict']]]] = None,
+def get_account_output(id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                       settings: pulumi.Input[Optional[Optional[Union['GetAccountSettingsArgs', 'GetAccountSettingsArgsDict']]]] = None,
                        opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetAccountResult]:
     """
     Use this data source to access information about an existing resource.

@@ -136,11 +136,11 @@ def get_block(account_id: Optional[_builtins.str] = None,
         type_slug=pulumi.get(__ret__, 'type_slug'),
         updated=pulumi.get(__ret__, 'updated'),
         workspace_id=pulumi.get(__ret__, 'workspace_id'))
-def get_block_output(account_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                     id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                     name: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                     type_slug: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                     workspace_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_block_output(account_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                     id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                     name: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                     type_slug: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                     workspace_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                      opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetBlockResult]:
     """
     Use this data source to access information about an existing resource.

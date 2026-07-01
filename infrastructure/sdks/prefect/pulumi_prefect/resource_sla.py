@@ -23,10 +23,11 @@ class ResourceSlaArgs:
     def __init__(__self__, *,
                  resource_id: pulumi.Input[_builtins.str],
                  slas: pulumi.Input[Sequence[pulumi.Input['ResourceSlaSlaArgs']]],
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a ResourceSla resource.
+
         :param pulumi.Input[_builtins.str] resource_id: The ID of the Prefect resource to set the SLA for, in the format of `prefect.<resource_type>.<resource_id>`.
         :param pulumi.Input[Sequence[pulumi.Input['ResourceSlaSlaArgs']]] slas: List of SLAs to set for the resource. Note that this is a declarative list, and any SLAs that are not defined in this list will be removed from the resource (if they existed previously). Existing SLAs will be updated to match the definitions in this list. See documentation on [Defining SLAs](https://docs.prefect.io/v3/automate/events/slas#defining-slas) for more information, as well as the [API specification](https://app.prefect.cloud/api/docs#tag/SLAs/operation/apply_slas_api_accounts__account_id__workspaces__workspace_id__slas_apply_resource_slas__resource_id__post) for the SLA payload structure.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
@@ -65,38 +66,39 @@ class ResourceSlaArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID), defaults to the account set in the provider
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID), defaults to the workspace set in the provider
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
 @pulumi.input_type
 class _ResourceSlaState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 resource_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 slas: Optional[pulumi.Input[Sequence[pulumi.Input['ResourceSlaSlaArgs']]]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 resource_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 slas: pulumi.Input[Optional[Sequence[pulumi.Input['ResourceSlaSlaArgs']]]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering ResourceSla resources.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
         :param pulumi.Input[_builtins.str] resource_id: The ID of the Prefect resource to set the SLA for, in the format of `prefect.<resource_type>.<resource_id>`.
         :param pulumi.Input[Sequence[pulumi.Input['ResourceSlaSlaArgs']]] slas: List of SLAs to set for the resource. Note that this is a declarative list, and any SLAs that are not defined in this list will be removed from the resource (if they existed previously). Existing SLAs will be updated to match the definitions in this list. See documentation on [Defining SLAs](https://docs.prefect.io/v3/automate/events/slas#defining-slas) for more information, as well as the [API specification](https://app.prefect.cloud/api/docs#tag/SLAs/operation/apply_slas_api_accounts__account_id__workspaces__workspace_id__slas_apply_resource_slas__resource_id__post) for the SLA payload structure.
@@ -113,50 +115,50 @@ class _ResourceSlaState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID), defaults to the account set in the provider
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="resourceId")
-    def resource_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def resource_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The ID of the Prefect resource to set the SLA for, in the format of `prefect.<resource_type>.<resource_id>`.
         """
         return pulumi.get(self, "resource_id")
 
     @resource_id.setter
-    def resource_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def resource_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "resource_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def slas(self) -> Optional[pulumi.Input[Sequence[pulumi.Input['ResourceSlaSlaArgs']]]]:
+    def slas(self) -> pulumi.Input[Optional[Sequence[pulumi.Input['ResourceSlaSlaArgs']]]]:
         """
         List of SLAs to set for the resource. Note that this is a declarative list, and any SLAs that are not defined in this list will be removed from the resource (if they existed previously). Existing SLAs will be updated to match the definitions in this list. See documentation on [Defining SLAs](https://docs.prefect.io/v3/automate/events/slas#defining-slas) for more information, as well as the [API specification](https://app.prefect.cloud/api/docs#tag/SLAs/operation/apply_slas_api_accounts__account_id__workspaces__workspace_id__slas_apply_resource_slas__resource_id__post) for the SLA payload structure.
         """
         return pulumi.get(self, "slas")
 
     @slas.setter
-    def slas(self, value: Optional[pulumi.Input[Sequence[pulumi.Input['ResourceSlaSlaArgs']]]]):
+    def slas(self, value: pulumi.Input[Optional[Sequence[pulumi.Input['ResourceSlaSlaArgs']]]]):
         pulumi.set(self, "slas", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID), defaults to the workspace set in the provider
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
@@ -166,13 +168,14 @@ class ResourceSla(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 resource_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 slas: Optional[pulumi.Input[Sequence[pulumi.Input[Union['ResourceSlaSlaArgs', 'ResourceSlaSlaArgsDict']]]]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 resource_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 slas: pulumi.Input[Optional[Sequence[pulumi.Input[Union['ResourceSlaSlaArgs', 'ResourceSlaSlaArgsDict']]]]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a ResourceSla resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID), defaults to the account set in the provider
@@ -188,6 +191,7 @@ class ResourceSla(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a ResourceSla resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param ResourceSlaArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -203,10 +207,10 @@ class ResourceSla(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 resource_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 slas: Optional[pulumi.Input[Sequence[pulumi.Input[Union['ResourceSlaSlaArgs', 'ResourceSlaSlaArgsDict']]]]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 resource_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 slas: pulumi.Input[Optional[Sequence[pulumi.Input[Union['ResourceSlaSlaArgs', 'ResourceSlaSlaArgsDict']]]]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -235,10 +239,10 @@ class ResourceSla(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            resource_id: Optional[pulumi.Input[_builtins.str]] = None,
-            slas: Optional[pulumi.Input[Sequence[pulumi.Input[Union['ResourceSlaSlaArgs', 'ResourceSlaSlaArgsDict']]]]] = None,
-            workspace_id: Optional[pulumi.Input[_builtins.str]] = None) -> 'ResourceSla':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            resource_id: pulumi.Input[Optional[_builtins.str]] = None,
+            slas: pulumi.Input[Optional[Sequence[pulumi.Input[Union['ResourceSlaSlaArgs', 'ResourceSlaSlaArgsDict']]]]] = None,
+            workspace_id: pulumi.Input[Optional[_builtins.str]] = None) -> 'ResourceSla':
         """
         Get an existing ResourceSla resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

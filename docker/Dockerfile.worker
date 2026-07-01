@@ -12,36 +12,65 @@
 #
 # (docker buildx uses the same --build-context flags.)
 #
+# Multi-stage: the `builder` stage compiles/installs everything into
+# /usr/local; the final stage copies only that prefix plus the app code. The
+# juriscraper/jkent *source* trees (heavy with test/example assets) and the
+# uv/build tooling stay in the builder and never reach the runtime image.
+#
 # Browser support (camoufox/Firefox, for FF_ALIKE scrapers) is off by default
 # to keep the image lean. Opt in with --build-arg INSTALL_BROWSERS=1:
 #
 #   mise run build-worker -- --build-arg INSTALL_BROWSERS=1
+
+# ---------------------------------------------------------------------------
+# Builder: install Python deps system-wide, then discard sources + tooling.
+# ---------------------------------------------------------------------------
+FROM prefecthq/prefect:3-python3.13 AS builder
+
+RUN pip install --no-cache-dir uv
+
+# JKent and juriscraper are installed (non-editable) from the sibling source
+# trees so juriscraper's unconstrained `jkent` dependency resolves to the local
+# source. Stage them under /src; only the installed packages survive into final.
+COPY --from=jkent . /src/jkent
+COPY --from=juriscraper . /src/juriscraper
+
+# jkent[operational] (DB engine + HTTP/browser transports), then juriscraper
+# (its `jkent` dep is satisfied by the package just installed), plus the
+# Prefect/S3 runtime deps the worker and flows need. psycopg2-binary bundles
+# its own libpq, so no libpq-dev is required to build or run it.
+#
+# --no-editable is REQUIRED: juriscraper's pyproject declares
+# `[tool.uv.sources] jkent = {path = "../jkent", editable = true}`, so without
+# this uv installs jkent editable pointing at /src/jkent. That source tree only
+# exists in this builder stage, so the editable `.pth` would dangle once the
+# final stage copies /usr/local but not /src — jkent would fail to import at
+# runtime. --no-editable bakes jkent's code into site-packages instead.
+RUN uv pip install --system --no-cache --no-editable \
+    "/src/jkent[operational]" \
+    /src/juriscraper \
+    prefect-aws \
+    boto3 \
+    psycopg2-binary \
+    && uv pip uninstall --system uv 2>/dev/null || true
+
+# ---------------------------------------------------------------------------
+# Final: clean base + the installed prefix + app code.
+# ---------------------------------------------------------------------------
 FROM prefecthq/prefect:3-python3.13
 
 # 0 = plain-HTTP scrapers only (lean); 1 = also install the Firefox-alike
 # browser engine for FF_ALIKE scrapers (heavy: pulls a full browser).
 ARG INSTALL_BROWSERS=0
 
+# curl is used by the entrypoint to poll the Prefect server health endpoint.
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl libpq-dev \
+    && apt-get install -y --no-install-recommends curl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir uv
-
-# JKent and juriscraper are editable siblings; copy both so juriscraper's
-# unconstrained `jkent` dependency resolves to the local source tree.
-COPY --from=jkent . /jkent
-COPY --from=juriscraper . /juriscraper
-
-# Install jkent[operational] (DB engine + HTTP/browser transports), then
-# juriscraper (its `jkent` dep is satisfied by the package just installed),
-# plus the Prefect/S3 runtime deps the worker and flows need.
-RUN uv pip install --system --no-cache \
-    "/jkent[operational]" \
-    /juriscraper \
-    prefect-aws \
-    boto3 \
-    psycopg2-binary
+# Bring over everything pip/uv installed in the builder (site-packages +
+# console scripts). Same base + same Python 3.13, so the prefix is compatible.
+COPY --from=builder /usr/local /usr/local
 
 # Browser engine for Firefox-alike (FF_ALIKE) scrapers. Skipped unless
 # INSTALL_BROWSERS=1 — it's a heavy layer (full browser download).

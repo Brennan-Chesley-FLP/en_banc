@@ -20,23 +20,24 @@ __all__ = ['DeploymentScheduleArgs', 'DeploymentSchedule']
 class DeploymentScheduleArgs:
     def __init__(__self__, *,
                  deployment_id: pulumi.Input[_builtins.str],
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 active: Optional[pulumi.Input[_builtins.bool]] = None,
-                 anchor_date: Optional[pulumi.Input[_builtins.str]] = None,
-                 catchup: Optional[pulumi.Input[_builtins.bool]] = None,
-                 cron: Optional[pulumi.Input[_builtins.str]] = None,
-                 day_or: Optional[pulumi.Input[_builtins.bool]] = None,
-                 deployment_schedule_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 interval: Optional[pulumi.Input[_builtins.float]] = None,
-                 max_active_runs: Optional[pulumi.Input[_builtins.float]] = None,
-                 max_scheduled_runs: Optional[pulumi.Input[_builtins.float]] = None,
-                 parameters: Optional[pulumi.Input[_builtins.str]] = None,
-                 rrule: Optional[pulumi.Input[_builtins.str]] = None,
-                 slug: Optional[pulumi.Input[_builtins.str]] = None,
-                 timezone: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 active: pulumi.Input[Optional[_builtins.bool]] = None,
+                 anchor_date: pulumi.Input[Optional[_builtins.str]] = None,
+                 catchup: pulumi.Input[Optional[_builtins.bool]] = None,
+                 cron: pulumi.Input[Optional[_builtins.str]] = None,
+                 day_or: pulumi.Input[Optional[_builtins.bool]] = None,
+                 deployment_schedule_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 interval: pulumi.Input[Optional[_builtins.float]] = None,
+                 max_active_runs: pulumi.Input[Optional[_builtins.float]] = None,
+                 max_scheduled_runs: pulumi.Input[Optional[_builtins.float]] = None,
+                 parameters: pulumi.Input[Optional[_builtins.str]] = None,
+                 rrule: pulumi.Input[Optional[_builtins.str]] = None,
+                 slug: pulumi.Input[Optional[_builtins.str]] = None,
+                 timezone: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a DeploymentSchedule resource.
+
         :param pulumi.Input[_builtins.str] deployment_id: Deployment ID (UUID)
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID)
         :param pulumi.Input[_builtins.bool] active: Whether or not the schedule is active.
@@ -106,210 +107,211 @@ class DeploymentScheduleArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID)
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def active(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def active(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether or not the schedule is active.
         """
         return pulumi.get(self, "active")
 
     @active.setter
-    def active(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def active(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "active", value)
 
     @_builtins.property
     @pulumi.getter(name="anchorDate")
-    def anchor_date(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def anchor_date(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The anchor date of the schedule.
         """
         return pulumi.get(self, "anchor_date")
 
     @anchor_date.setter
-    def anchor_date(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def anchor_date(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "anchor_date", value)
 
     @_builtins.property
     @pulumi.getter
     @_utilities.deprecated("""Deprecated""")
-    def catchup(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def catchup(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         (Cloud only) Whether or not a worker should catch up on Late runs for the schedule.
         """
         return pulumi.get(self, "catchup")
 
     @catchup.setter
-    def catchup(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def catchup(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "catchup", value)
 
     @_builtins.property
     @pulumi.getter
-    def cron(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def cron(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The cron expression of the schedule.
         """
         return pulumi.get(self, "cron")
 
     @cron.setter
-    def cron(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def cron(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "cron", value)
 
     @_builtins.property
     @pulumi.getter(name="dayOr")
-    def day_or(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def day_or(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Control croniter behavior for handling day and<span pulumi-lang-nodejs=" dayOfWeek " pulumi-lang-dotnet=" DayOfWeek " pulumi-lang-go=" dayOfWeek " pulumi-lang-python=" day_of_week " pulumi-lang-yaml=" dayOfWeek " pulumi-lang-java=" dayOfWeek "> day_of_week </span>entries.
         """
         return pulumi.get(self, "day_or")
 
     @day_or.setter
-    def day_or(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def day_or(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "day_or", value)
 
     @_builtins.property
     @pulumi.getter(name="deploymentScheduleId")
-    def deployment_schedule_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def deployment_schedule_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Deployment Schedule ID (UUID)
         """
         return pulumi.get(self, "deployment_schedule_id")
 
     @deployment_schedule_id.setter
-    def deployment_schedule_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def deployment_schedule_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "deployment_schedule_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def interval(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def interval(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The interval of the schedule.
         """
         return pulumi.get(self, "interval")
 
     @interval.setter
-    def interval(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def interval(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "interval", value)
 
     @_builtins.property
     @pulumi.getter(name="maxActiveRuns")
     @_utilities.deprecated("""Deprecated""")
-    def max_active_runs(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def max_active_runs(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         (Cloud only) The maximum number of active runs for the schedule.
         """
         return pulumi.get(self, "max_active_runs")
 
     @max_active_runs.setter
-    def max_active_runs(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def max_active_runs(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "max_active_runs", value)
 
     @_builtins.property
     @pulumi.getter(name="maxScheduledRuns")
-    def max_scheduled_runs(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def max_scheduled_runs(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The maximum number of scheduled runs for the schedule.
         """
         return pulumi.get(self, "max_scheduled_runs")
 
     @max_scheduled_runs.setter
-    def max_scheduled_runs(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def max_scheduled_runs(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "max_scheduled_runs", value)
 
     @_builtins.property
     @pulumi.getter
-    def parameters(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def parameters(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Parameters for flow runs scheduled by the deployment schedule.
         """
         return pulumi.get(self, "parameters")
 
     @parameters.setter
-    def parameters(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def parameters(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "parameters", value)
 
     @_builtins.property
     @pulumi.getter
-    def rrule(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def rrule(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The rrule expression of the schedule.
         """
         return pulumi.get(self, "rrule")
 
     @rrule.setter
-    def rrule(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def rrule(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "rrule", value)
 
     @_builtins.property
     @pulumi.getter
-    def slug(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def slug(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         An optional unique identifier for the schedule.
         """
         return pulumi.get(self, "slug")
 
     @slug.setter
-    def slug(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def slug(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "slug", value)
 
     @_builtins.property
     @pulumi.getter
-    def timezone(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def timezone(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The timezone of the schedule.
         """
         return pulumi.get(self, "timezone")
 
     @timezone.setter
-    def timezone(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def timezone(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "timezone", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID)
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
 @pulumi.input_type
 class _DeploymentScheduleState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 active: Optional[pulumi.Input[_builtins.bool]] = None,
-                 anchor_date: Optional[pulumi.Input[_builtins.str]] = None,
-                 catchup: Optional[pulumi.Input[_builtins.bool]] = None,
-                 created: Optional[pulumi.Input[_builtins.str]] = None,
-                 cron: Optional[pulumi.Input[_builtins.str]] = None,
-                 day_or: Optional[pulumi.Input[_builtins.bool]] = None,
-                 deployment_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 deployment_schedule_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 interval: Optional[pulumi.Input[_builtins.float]] = None,
-                 max_active_runs: Optional[pulumi.Input[_builtins.float]] = None,
-                 max_scheduled_runs: Optional[pulumi.Input[_builtins.float]] = None,
-                 parameters: Optional[pulumi.Input[_builtins.str]] = None,
-                 rrule: Optional[pulumi.Input[_builtins.str]] = None,
-                 slug: Optional[pulumi.Input[_builtins.str]] = None,
-                 timezone: Optional[pulumi.Input[_builtins.str]] = None,
-                 updated: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 active: pulumi.Input[Optional[_builtins.bool]] = None,
+                 anchor_date: pulumi.Input[Optional[_builtins.str]] = None,
+                 catchup: pulumi.Input[Optional[_builtins.bool]] = None,
+                 created: pulumi.Input[Optional[_builtins.str]] = None,
+                 cron: pulumi.Input[Optional[_builtins.str]] = None,
+                 day_or: pulumi.Input[Optional[_builtins.bool]] = None,
+                 deployment_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 deployment_schedule_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 interval: pulumi.Input[Optional[_builtins.float]] = None,
+                 max_active_runs: pulumi.Input[Optional[_builtins.float]] = None,
+                 max_scheduled_runs: pulumi.Input[Optional[_builtins.float]] = None,
+                 parameters: pulumi.Input[Optional[_builtins.str]] = None,
+                 rrule: pulumi.Input[Optional[_builtins.str]] = None,
+                 slug: pulumi.Input[Optional[_builtins.str]] = None,
+                 timezone: pulumi.Input[Optional[_builtins.str]] = None,
+                 updated: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering DeploymentSchedule resources.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID)
         :param pulumi.Input[_builtins.bool] active: Whether or not the schedule is active.
         :param pulumi.Input[_builtins.str] anchor_date: The anchor date of the schedule.
@@ -374,220 +376,220 @@ class _DeploymentScheduleState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID)
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def active(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def active(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether or not the schedule is active.
         """
         return pulumi.get(self, "active")
 
     @active.setter
-    def active(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def active(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "active", value)
 
     @_builtins.property
     @pulumi.getter(name="anchorDate")
-    def anchor_date(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def anchor_date(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The anchor date of the schedule.
         """
         return pulumi.get(self, "anchor_date")
 
     @anchor_date.setter
-    def anchor_date(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def anchor_date(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "anchor_date", value)
 
     @_builtins.property
     @pulumi.getter
     @_utilities.deprecated("""Deprecated""")
-    def catchup(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def catchup(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         (Cloud only) Whether or not a worker should catch up on Late runs for the schedule.
         """
         return pulumi.get(self, "catchup")
 
     @catchup.setter
-    def catchup(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def catchup(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "catchup", value)
 
     @_builtins.property
     @pulumi.getter
-    def created(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def created(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was created (RFC3339)
         """
         return pulumi.get(self, "created")
 
     @created.setter
-    def created(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def created(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "created", value)
 
     @_builtins.property
     @pulumi.getter
-    def cron(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def cron(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The cron expression of the schedule.
         """
         return pulumi.get(self, "cron")
 
     @cron.setter
-    def cron(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def cron(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "cron", value)
 
     @_builtins.property
     @pulumi.getter(name="dayOr")
-    def day_or(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def day_or(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Control croniter behavior for handling day and<span pulumi-lang-nodejs=" dayOfWeek " pulumi-lang-dotnet=" DayOfWeek " pulumi-lang-go=" dayOfWeek " pulumi-lang-python=" day_of_week " pulumi-lang-yaml=" dayOfWeek " pulumi-lang-java=" dayOfWeek "> day_of_week </span>entries.
         """
         return pulumi.get(self, "day_or")
 
     @day_or.setter
-    def day_or(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def day_or(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "day_or", value)
 
     @_builtins.property
     @pulumi.getter(name="deploymentId")
-    def deployment_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def deployment_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Deployment ID (UUID)
         """
         return pulumi.get(self, "deployment_id")
 
     @deployment_id.setter
-    def deployment_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def deployment_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "deployment_id", value)
 
     @_builtins.property
     @pulumi.getter(name="deploymentScheduleId")
-    def deployment_schedule_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def deployment_schedule_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Deployment Schedule ID (UUID)
         """
         return pulumi.get(self, "deployment_schedule_id")
 
     @deployment_schedule_id.setter
-    def deployment_schedule_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def deployment_schedule_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "deployment_schedule_id", value)
 
     @_builtins.property
     @pulumi.getter
-    def interval(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def interval(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The interval of the schedule.
         """
         return pulumi.get(self, "interval")
 
     @interval.setter
-    def interval(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def interval(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "interval", value)
 
     @_builtins.property
     @pulumi.getter(name="maxActiveRuns")
     @_utilities.deprecated("""Deprecated""")
-    def max_active_runs(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def max_active_runs(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         (Cloud only) The maximum number of active runs for the schedule.
         """
         return pulumi.get(self, "max_active_runs")
 
     @max_active_runs.setter
-    def max_active_runs(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def max_active_runs(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "max_active_runs", value)
 
     @_builtins.property
     @pulumi.getter(name="maxScheduledRuns")
-    def max_scheduled_runs(self) -> Optional[pulumi.Input[_builtins.float]]:
+    def max_scheduled_runs(self) -> pulumi.Input[Optional[_builtins.float]]:
         """
         The maximum number of scheduled runs for the schedule.
         """
         return pulumi.get(self, "max_scheduled_runs")
 
     @max_scheduled_runs.setter
-    def max_scheduled_runs(self, value: Optional[pulumi.Input[_builtins.float]]):
+    def max_scheduled_runs(self, value: pulumi.Input[Optional[_builtins.float]]):
         pulumi.set(self, "max_scheduled_runs", value)
 
     @_builtins.property
     @pulumi.getter
-    def parameters(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def parameters(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Parameters for flow runs scheduled by the deployment schedule.
         """
         return pulumi.get(self, "parameters")
 
     @parameters.setter
-    def parameters(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def parameters(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "parameters", value)
 
     @_builtins.property
     @pulumi.getter
-    def rrule(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def rrule(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The rrule expression of the schedule.
         """
         return pulumi.get(self, "rrule")
 
     @rrule.setter
-    def rrule(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def rrule(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "rrule", value)
 
     @_builtins.property
     @pulumi.getter
-    def slug(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def slug(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         An optional unique identifier for the schedule.
         """
         return pulumi.get(self, "slug")
 
     @slug.setter
-    def slug(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def slug(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "slug", value)
 
     @_builtins.property
     @pulumi.getter
-    def timezone(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def timezone(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The timezone of the schedule.
         """
         return pulumi.get(self, "timezone")
 
     @timezone.setter
-    def timezone(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def timezone(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "timezone", value)
 
     @_builtins.property
     @pulumi.getter
-    def updated(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def updated(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was updated (RFC3339)
         """
         return pulumi.get(self, "updated")
 
     @updated.setter
-    def updated(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def updated(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "updated", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID)
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
@@ -597,25 +599,26 @@ class DeploymentSchedule(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 active: Optional[pulumi.Input[_builtins.bool]] = None,
-                 anchor_date: Optional[pulumi.Input[_builtins.str]] = None,
-                 catchup: Optional[pulumi.Input[_builtins.bool]] = None,
-                 cron: Optional[pulumi.Input[_builtins.str]] = None,
-                 day_or: Optional[pulumi.Input[_builtins.bool]] = None,
-                 deployment_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 deployment_schedule_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 interval: Optional[pulumi.Input[_builtins.float]] = None,
-                 max_active_runs: Optional[pulumi.Input[_builtins.float]] = None,
-                 max_scheduled_runs: Optional[pulumi.Input[_builtins.float]] = None,
-                 parameters: Optional[pulumi.Input[_builtins.str]] = None,
-                 rrule: Optional[pulumi.Input[_builtins.str]] = None,
-                 slug: Optional[pulumi.Input[_builtins.str]] = None,
-                 timezone: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 active: pulumi.Input[Optional[_builtins.bool]] = None,
+                 anchor_date: pulumi.Input[Optional[_builtins.str]] = None,
+                 catchup: pulumi.Input[Optional[_builtins.bool]] = None,
+                 cron: pulumi.Input[Optional[_builtins.str]] = None,
+                 day_or: pulumi.Input[Optional[_builtins.bool]] = None,
+                 deployment_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 deployment_schedule_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 interval: pulumi.Input[Optional[_builtins.float]] = None,
+                 max_active_runs: pulumi.Input[Optional[_builtins.float]] = None,
+                 max_scheduled_runs: pulumi.Input[Optional[_builtins.float]] = None,
+                 parameters: pulumi.Input[Optional[_builtins.str]] = None,
+                 rrule: pulumi.Input[Optional[_builtins.str]] = None,
+                 slug: pulumi.Input[Optional[_builtins.str]] = None,
+                 timezone: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a DeploymentSchedule resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID)
@@ -643,6 +646,7 @@ class DeploymentSchedule(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a DeploymentSchedule resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param DeploymentScheduleArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -658,22 +662,22 @@ class DeploymentSchedule(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 active: Optional[pulumi.Input[_builtins.bool]] = None,
-                 anchor_date: Optional[pulumi.Input[_builtins.str]] = None,
-                 catchup: Optional[pulumi.Input[_builtins.bool]] = None,
-                 cron: Optional[pulumi.Input[_builtins.str]] = None,
-                 day_or: Optional[pulumi.Input[_builtins.bool]] = None,
-                 deployment_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 deployment_schedule_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 interval: Optional[pulumi.Input[_builtins.float]] = None,
-                 max_active_runs: Optional[pulumi.Input[_builtins.float]] = None,
-                 max_scheduled_runs: Optional[pulumi.Input[_builtins.float]] = None,
-                 parameters: Optional[pulumi.Input[_builtins.str]] = None,
-                 rrule: Optional[pulumi.Input[_builtins.str]] = None,
-                 slug: Optional[pulumi.Input[_builtins.str]] = None,
-                 timezone: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 active: pulumi.Input[Optional[_builtins.bool]] = None,
+                 anchor_date: pulumi.Input[Optional[_builtins.str]] = None,
+                 catchup: pulumi.Input[Optional[_builtins.bool]] = None,
+                 cron: pulumi.Input[Optional[_builtins.str]] = None,
+                 day_or: pulumi.Input[Optional[_builtins.bool]] = None,
+                 deployment_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 deployment_schedule_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 interval: pulumi.Input[Optional[_builtins.float]] = None,
+                 max_active_runs: pulumi.Input[Optional[_builtins.float]] = None,
+                 max_scheduled_runs: pulumi.Input[Optional[_builtins.float]] = None,
+                 parameters: pulumi.Input[Optional[_builtins.str]] = None,
+                 rrule: pulumi.Input[Optional[_builtins.str]] = None,
+                 slug: pulumi.Input[Optional[_builtins.str]] = None,
+                 timezone: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -714,24 +718,24 @@ class DeploymentSchedule(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            active: Optional[pulumi.Input[_builtins.bool]] = None,
-            anchor_date: Optional[pulumi.Input[_builtins.str]] = None,
-            catchup: Optional[pulumi.Input[_builtins.bool]] = None,
-            created: Optional[pulumi.Input[_builtins.str]] = None,
-            cron: Optional[pulumi.Input[_builtins.str]] = None,
-            day_or: Optional[pulumi.Input[_builtins.bool]] = None,
-            deployment_id: Optional[pulumi.Input[_builtins.str]] = None,
-            deployment_schedule_id: Optional[pulumi.Input[_builtins.str]] = None,
-            interval: Optional[pulumi.Input[_builtins.float]] = None,
-            max_active_runs: Optional[pulumi.Input[_builtins.float]] = None,
-            max_scheduled_runs: Optional[pulumi.Input[_builtins.float]] = None,
-            parameters: Optional[pulumi.Input[_builtins.str]] = None,
-            rrule: Optional[pulumi.Input[_builtins.str]] = None,
-            slug: Optional[pulumi.Input[_builtins.str]] = None,
-            timezone: Optional[pulumi.Input[_builtins.str]] = None,
-            updated: Optional[pulumi.Input[_builtins.str]] = None,
-            workspace_id: Optional[pulumi.Input[_builtins.str]] = None) -> 'DeploymentSchedule':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            active: pulumi.Input[Optional[_builtins.bool]] = None,
+            anchor_date: pulumi.Input[Optional[_builtins.str]] = None,
+            catchup: pulumi.Input[Optional[_builtins.bool]] = None,
+            created: pulumi.Input[Optional[_builtins.str]] = None,
+            cron: pulumi.Input[Optional[_builtins.str]] = None,
+            day_or: pulumi.Input[Optional[_builtins.bool]] = None,
+            deployment_id: pulumi.Input[Optional[_builtins.str]] = None,
+            deployment_schedule_id: pulumi.Input[Optional[_builtins.str]] = None,
+            interval: pulumi.Input[Optional[_builtins.float]] = None,
+            max_active_runs: pulumi.Input[Optional[_builtins.float]] = None,
+            max_scheduled_runs: pulumi.Input[Optional[_builtins.float]] = None,
+            parameters: pulumi.Input[Optional[_builtins.str]] = None,
+            rrule: pulumi.Input[Optional[_builtins.str]] = None,
+            slug: pulumi.Input[Optional[_builtins.str]] = None,
+            timezone: pulumi.Input[Optional[_builtins.str]] = None,
+            updated: pulumi.Input[Optional[_builtins.str]] = None,
+            workspace_id: pulumi.Input[Optional[_builtins.str]] = None) -> 'DeploymentSchedule':
         """
         Get an existing DeploymentSchedule resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

@@ -20,15 +20,16 @@ __all__ = ['BlockTypeArgs', 'BlockType']
 class BlockTypeArgs:
     def __init__(__self__, *,
                  slug: pulumi.Input[_builtins.str],
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 code_example: Optional[pulumi.Input[_builtins.str]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 documentation_url: Optional[pulumi.Input[_builtins.str]] = None,
-                 logo_url: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 code_example: pulumi.Input[Optional[_builtins.str]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 documentation_url: pulumi.Input[Optional[_builtins.str]] = None,
+                 logo_url: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a BlockType resource.
+
         :param pulumi.Input[_builtins.str] slug: The slug of the block type.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID) where the Block is located
         :param pulumi.Input[_builtins.str] code_example: A code snippet demonstrating use of the corresponding block.
@@ -68,105 +69,106 @@ class BlockTypeArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID) where the Block is located
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="codeExample")
-    def code_example(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def code_example(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         A code snippet demonstrating use of the corresponding block.
         """
         return pulumi.get(self, "code_example")
 
     @code_example.setter
-    def code_example(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def code_example(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "code_example", value)
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         A short blurb about the corresponding block's intended use.
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter(name="documentationUrl")
-    def documentation_url(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def documentation_url(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Web URL for the block type's documentation.
         """
         return pulumi.get(self, "documentation_url")
 
     @documentation_url.setter
-    def documentation_url(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def documentation_url(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "documentation_url", value)
 
     @_builtins.property
     @pulumi.getter(name="logoUrl")
-    def logo_url(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def logo_url(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Web URL for the block type's logo.
         """
         return pulumi.get(self, "logo_url")
 
     @logo_url.setter
-    def logo_url(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def logo_url(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "logo_url", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The name of the block type.
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID) where the Block is located. In Prefect Cloud, either the <span pulumi-lang-nodejs="`prefect.Block`" pulumi-lang-dotnet="`prefect.Block`" pulumi-lang-go="`Block`" pulumi-lang-python="`Block`" pulumi-lang-yaml="`prefect.Block`" pulumi-lang-java="`prefect.Block`">`prefect.Block`</span> resource or the provider's <span pulumi-lang-nodejs="`workspaceId`" pulumi-lang-dotnet="`WorkspaceId`" pulumi-lang-go="`workspaceId`" pulumi-lang-python="`workspace_id`" pulumi-lang-yaml="`workspaceId`" pulumi-lang-java="`workspaceId`">`workspace_id`</span> must be set.
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
 @pulumi.input_type
 class _BlockTypeState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 code_example: Optional[pulumi.Input[_builtins.str]] = None,
-                 created: Optional[pulumi.Input[_builtins.str]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 documentation_url: Optional[pulumi.Input[_builtins.str]] = None,
-                 is_protected: Optional[pulumi.Input[_builtins.bool]] = None,
-                 logo_url: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 slug: Optional[pulumi.Input[_builtins.str]] = None,
-                 updated: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 code_example: pulumi.Input[Optional[_builtins.str]] = None,
+                 created: pulumi.Input[Optional[_builtins.str]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 documentation_url: pulumi.Input[Optional[_builtins.str]] = None,
+                 is_protected: pulumi.Input[Optional[_builtins.bool]] = None,
+                 logo_url: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 slug: pulumi.Input[Optional[_builtins.str]] = None,
+                 updated: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering BlockType resources.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID) where the Block is located
         :param pulumi.Input[_builtins.str] code_example: A code snippet demonstrating use of the corresponding block.
         :param pulumi.Input[_builtins.str] created: Timestamp of when the resource was created (RFC3339)
@@ -204,134 +206,134 @@ class _BlockTypeState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID) where the Block is located
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="codeExample")
-    def code_example(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def code_example(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         A code snippet demonstrating use of the corresponding block.
         """
         return pulumi.get(self, "code_example")
 
     @code_example.setter
-    def code_example(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def code_example(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "code_example", value)
 
     @_builtins.property
     @pulumi.getter
-    def created(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def created(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was created (RFC3339)
         """
         return pulumi.get(self, "created")
 
     @created.setter
-    def created(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def created(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "created", value)
 
     @_builtins.property
     @pulumi.getter
-    def description(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def description(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         A short blurb about the corresponding block's intended use.
         """
         return pulumi.get(self, "description")
 
     @description.setter
-    def description(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def description(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "description", value)
 
     @_builtins.property
     @pulumi.getter(name="documentationUrl")
-    def documentation_url(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def documentation_url(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Web URL for the block type's documentation.
         """
         return pulumi.get(self, "documentation_url")
 
     @documentation_url.setter
-    def documentation_url(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def documentation_url(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "documentation_url", value)
 
     @_builtins.property
     @pulumi.getter(name="isProtected")
-    def is_protected(self) -> Optional[pulumi.Input[_builtins.bool]]:
+    def is_protected(self) -> pulumi.Input[Optional[_builtins.bool]]:
         """
         Whether the block type is protected. Protected block types cannot be modified via API.
         """
         return pulumi.get(self, "is_protected")
 
     @is_protected.setter
-    def is_protected(self, value: Optional[pulumi.Input[_builtins.bool]]):
+    def is_protected(self, value: pulumi.Input[Optional[_builtins.bool]]):
         pulumi.set(self, "is_protected", value)
 
     @_builtins.property
     @pulumi.getter(name="logoUrl")
-    def logo_url(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def logo_url(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Web URL for the block type's logo.
         """
         return pulumi.get(self, "logo_url")
 
     @logo_url.setter
-    def logo_url(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def logo_url(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "logo_url", value)
 
     @_builtins.property
     @pulumi.getter
-    def name(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def name(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The name of the block type.
         """
         return pulumi.get(self, "name")
 
     @name.setter
-    def name(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def name(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "name", value)
 
     @_builtins.property
     @pulumi.getter
-    def slug(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def slug(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         The slug of the block type.
         """
         return pulumi.get(self, "slug")
 
     @slug.setter
-    def slug(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def slug(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "slug", value)
 
     @_builtins.property
     @pulumi.getter
-    def updated(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def updated(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Timestamp of when the resource was updated (RFC3339)
         """
         return pulumi.get(self, "updated")
 
     @updated.setter
-    def updated(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def updated(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "updated", value)
 
     @_builtins.property
     @pulumi.getter(name="workspaceId")
-    def workspace_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def workspace_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Workspace ID (UUID) where the Block is located. In Prefect Cloud, either the <span pulumi-lang-nodejs="`prefect.Block`" pulumi-lang-dotnet="`prefect.Block`" pulumi-lang-go="`Block`" pulumi-lang-python="`Block`" pulumi-lang-yaml="`prefect.Block`" pulumi-lang-java="`prefect.Block`">`prefect.Block`</span> resource or the provider's <span pulumi-lang-nodejs="`workspaceId`" pulumi-lang-dotnet="`WorkspaceId`" pulumi-lang-go="`workspaceId`" pulumi-lang-python="`workspace_id`" pulumi-lang-yaml="`workspaceId`" pulumi-lang-java="`workspaceId`">`workspace_id`</span> must be set.
         """
         return pulumi.get(self, "workspace_id")
 
     @workspace_id.setter
-    def workspace_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def workspace_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "workspace_id", value)
 
 
@@ -341,17 +343,18 @@ class BlockType(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 code_example: Optional[pulumi.Input[_builtins.str]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 documentation_url: Optional[pulumi.Input[_builtins.str]] = None,
-                 logo_url: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 slug: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 code_example: pulumi.Input[Optional[_builtins.str]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 documentation_url: pulumi.Input[Optional[_builtins.str]] = None,
+                 logo_url: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 slug: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a BlockType resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID) where the Block is located
@@ -371,6 +374,7 @@ class BlockType(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a BlockType resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param BlockTypeArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -386,14 +390,14 @@ class BlockType(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 code_example: Optional[pulumi.Input[_builtins.str]] = None,
-                 description: Optional[pulumi.Input[_builtins.str]] = None,
-                 documentation_url: Optional[pulumi.Input[_builtins.str]] = None,
-                 logo_url: Optional[pulumi.Input[_builtins.str]] = None,
-                 name: Optional[pulumi.Input[_builtins.str]] = None,
-                 slug: Optional[pulumi.Input[_builtins.str]] = None,
-                 workspace_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 code_example: pulumi.Input[Optional[_builtins.str]] = None,
+                 description: pulumi.Input[Optional[_builtins.str]] = None,
+                 documentation_url: pulumi.Input[Optional[_builtins.str]] = None,
+                 logo_url: pulumi.Input[Optional[_builtins.str]] = None,
+                 name: pulumi.Input[Optional[_builtins.str]] = None,
+                 slug: pulumi.Input[Optional[_builtins.str]] = None,
+                 workspace_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -427,17 +431,17 @@ class BlockType(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            code_example: Optional[pulumi.Input[_builtins.str]] = None,
-            created: Optional[pulumi.Input[_builtins.str]] = None,
-            description: Optional[pulumi.Input[_builtins.str]] = None,
-            documentation_url: Optional[pulumi.Input[_builtins.str]] = None,
-            is_protected: Optional[pulumi.Input[_builtins.bool]] = None,
-            logo_url: Optional[pulumi.Input[_builtins.str]] = None,
-            name: Optional[pulumi.Input[_builtins.str]] = None,
-            slug: Optional[pulumi.Input[_builtins.str]] = None,
-            updated: Optional[pulumi.Input[_builtins.str]] = None,
-            workspace_id: Optional[pulumi.Input[_builtins.str]] = None) -> 'BlockType':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            code_example: pulumi.Input[Optional[_builtins.str]] = None,
+            created: pulumi.Input[Optional[_builtins.str]] = None,
+            description: pulumi.Input[Optional[_builtins.str]] = None,
+            documentation_url: pulumi.Input[Optional[_builtins.str]] = None,
+            is_protected: pulumi.Input[Optional[_builtins.bool]] = None,
+            logo_url: pulumi.Input[Optional[_builtins.str]] = None,
+            name: pulumi.Input[Optional[_builtins.str]] = None,
+            slug: pulumi.Input[Optional[_builtins.str]] = None,
+            updated: pulumi.Input[Optional[_builtins.str]] = None,
+            workspace_id: pulumi.Input[Optional[_builtins.str]] = None) -> 'BlockType':
         """
         Get an existing BlockType resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

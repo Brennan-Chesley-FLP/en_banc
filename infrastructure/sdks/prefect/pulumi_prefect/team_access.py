@@ -23,9 +23,10 @@ class TeamAccessArgs:
                  member_id: pulumi.Input[_builtins.str],
                  member_type: pulumi.Input[_builtins.str],
                  team_id: pulumi.Input[_builtins.str],
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         The set of arguments for constructing a TeamAccess resource.
+
         :param pulumi.Input[_builtins.str] member_actor_id: Member Actor ID (UUID)
         :param pulumi.Input[_builtins.str] member_id: Member ID (UUID)
         :param pulumi.Input[_builtins.str] member_type: Member Type (user | service_account)
@@ -89,27 +90,28 @@ class TeamAccessArgs:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID)
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
 
 @pulumi.input_type
 class _TeamAccessState:
     def __init__(__self__, *,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 member_actor_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 member_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 member_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 team_id: Optional[pulumi.Input[_builtins.str]] = None):
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 member_actor_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 member_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 member_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 team_id: pulumi.Input[Optional[_builtins.str]] = None):
         """
         Input properties used for looking up and filtering TeamAccess resources.
+
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID)
         :param pulumi.Input[_builtins.str] member_actor_id: Member Actor ID (UUID)
         :param pulumi.Input[_builtins.str] member_id: Member ID (UUID)
@@ -129,62 +131,62 @@ class _TeamAccessState:
 
     @_builtins.property
     @pulumi.getter(name="accountId")
-    def account_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def account_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Account ID (UUID)
         """
         return pulumi.get(self, "account_id")
 
     @account_id.setter
-    def account_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def account_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "account_id", value)
 
     @_builtins.property
     @pulumi.getter(name="memberActorId")
-    def member_actor_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def member_actor_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Member Actor ID (UUID)
         """
         return pulumi.get(self, "member_actor_id")
 
     @member_actor_id.setter
-    def member_actor_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def member_actor_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "member_actor_id", value)
 
     @_builtins.property
     @pulumi.getter(name="memberId")
-    def member_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def member_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Member ID (UUID)
         """
         return pulumi.get(self, "member_id")
 
     @member_id.setter
-    def member_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def member_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "member_id", value)
 
     @_builtins.property
     @pulumi.getter(name="memberType")
-    def member_type(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def member_type(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Member Type (user | service_account)
         """
         return pulumi.get(self, "member_type")
 
     @member_type.setter
-    def member_type(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def member_type(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "member_type", value)
 
     @_builtins.property
     @pulumi.getter(name="teamId")
-    def team_id(self) -> Optional[pulumi.Input[_builtins.str]]:
+    def team_id(self) -> pulumi.Input[Optional[_builtins.str]]:
         """
         Team ID (UUID)
         """
         return pulumi.get(self, "team_id")
 
     @team_id.setter
-    def team_id(self, value: Optional[pulumi.Input[_builtins.str]]):
+    def team_id(self, value: pulumi.Input[Optional[_builtins.str]]):
         pulumi.set(self, "team_id", value)
 
 
@@ -194,14 +196,15 @@ class TeamAccess(pulumi.CustomResource):
     def __init__(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 member_actor_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 member_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 member_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 team_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 member_actor_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 member_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 member_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 team_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         """
         Create a TeamAccess resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param pulumi.ResourceOptions opts: Options for the resource.
         :param pulumi.Input[_builtins.str] account_id: Account ID (UUID)
@@ -218,6 +221,7 @@ class TeamAccess(pulumi.CustomResource):
                  opts: Optional[pulumi.ResourceOptions] = None):
         """
         Create a TeamAccess resource with the given unique name, props, and options.
+
         :param str resource_name: The name of the resource.
         :param TeamAccessArgs args: The arguments to use to populate this resource's properties.
         :param pulumi.ResourceOptions opts: Options for the resource.
@@ -233,11 +237,11 @@ class TeamAccess(pulumi.CustomResource):
     def _internal_init(__self__,
                  resource_name: str,
                  opts: Optional[pulumi.ResourceOptions] = None,
-                 account_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 member_actor_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 member_id: Optional[pulumi.Input[_builtins.str]] = None,
-                 member_type: Optional[pulumi.Input[_builtins.str]] = None,
-                 team_id: Optional[pulumi.Input[_builtins.str]] = None,
+                 account_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 member_actor_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 member_id: pulumi.Input[Optional[_builtins.str]] = None,
+                 member_type: pulumi.Input[Optional[_builtins.str]] = None,
+                 team_id: pulumi.Input[Optional[_builtins.str]] = None,
                  __props__=None):
         opts = pulumi.ResourceOptions.merge(_utilities.get_resource_opts_defaults(), opts)
         if not isinstance(opts, pulumi.ResourceOptions):
@@ -271,11 +275,11 @@ class TeamAccess(pulumi.CustomResource):
     def get(resource_name: str,
             id: pulumi.Input[str],
             opts: Optional[pulumi.ResourceOptions] = None,
-            account_id: Optional[pulumi.Input[_builtins.str]] = None,
-            member_actor_id: Optional[pulumi.Input[_builtins.str]] = None,
-            member_id: Optional[pulumi.Input[_builtins.str]] = None,
-            member_type: Optional[pulumi.Input[_builtins.str]] = None,
-            team_id: Optional[pulumi.Input[_builtins.str]] = None) -> 'TeamAccess':
+            account_id: pulumi.Input[Optional[_builtins.str]] = None,
+            member_actor_id: pulumi.Input[Optional[_builtins.str]] = None,
+            member_id: pulumi.Input[Optional[_builtins.str]] = None,
+            member_type: pulumi.Input[Optional[_builtins.str]] = None,
+            team_id: pulumi.Input[Optional[_builtins.str]] = None) -> 'TeamAccess':
         """
         Get an existing TeamAccess resource's state with the given name, id, and optional extra
         properties used to qualify the lookup.

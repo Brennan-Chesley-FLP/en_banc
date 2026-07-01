@@ -82,7 +82,7 @@ def get_account_members(account_id: Optional[_builtins.str] = None,
         account_id=pulumi.get(__ret__, 'account_id'),
         id=pulumi.get(__ret__, 'id'),
         members=pulumi.get(__ret__, 'members'))
-def get_account_members_output(account_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_account_members_output(account_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                                opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetAccountMembersResult]:
     """
     Use this data source to access information about an existing resource.

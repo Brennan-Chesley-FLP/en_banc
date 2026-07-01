@@ -318,11 +318,11 @@ def get_deployment(account_id: Optional[_builtins.str] = None,
         work_pool_name=pulumi.get(__ret__, 'work_pool_name'),
         work_queue_name=pulumi.get(__ret__, 'work_queue_name'),
         workspace_id=pulumi.get(__ret__, 'workspace_id'))
-def get_deployment_output(account_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                          flow_name: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                          id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                          name: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                          workspace_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_deployment_output(account_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                          flow_name: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                          id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                          name: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                          workspace_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                           opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetDeploymentResult]:
     """
     Use this data source to access information about an existing resource.

@@ -170,13 +170,13 @@ def get_work_queue(account_id: Optional[_builtins.str] = None,
         updated=pulumi.get(__ret__, 'updated'),
         work_pool_name=pulumi.get(__ret__, 'work_pool_name'),
         workspace_id=pulumi.get(__ret__, 'workspace_id'))
-def get_work_queue_output(account_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                          concurrency_limit: Optional[pulumi.Input[Optional[_builtins.float]]] = None,
-                          description: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                          id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                          name: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
-                          work_pool_name: Optional[pulumi.Input[_builtins.str]] = None,
-                          workspace_id: Optional[pulumi.Input[Optional[_builtins.str]]] = None,
+def get_work_queue_output(account_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                          concurrency_limit: pulumi.Input[Optional[Optional[_builtins.float]]] = None,
+                          description: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                          id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                          name: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
+                          work_pool_name: pulumi.Input[Optional[_builtins.str]] = None,
+                          workspace_id: pulumi.Input[Optional[Optional[_builtins.str]]] = None,
                           opts: Optional[Union[pulumi.InvokeOptions, pulumi.InvokeOutputOptions]] = None) -> pulumi.Output[GetWorkQueueResult]:
     """
     Use this data source to access information about an existing resource.
