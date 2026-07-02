@@ -22,7 +22,7 @@ from prefect.cache_policies import INPUTS
 from prefect.states import Cancelled, State
 from prefect_aws.s3 import S3Bucket
 
-from flows.archive import make_archive_handler
+from flows.archive import is_local_backend, make_archive_handler, move_db_to_archive
 from flows.shutdown import get_shutdown_event
 from workers.telemetry import instrument_run_engine, run_baggage
 
@@ -319,20 +319,23 @@ async def run_scraper_task(
 
 @task(
     log_prints=True,
-    task_run_name="integrity-check-and-upload",
+    task_run_name="integrity-check-and-archive",
     persist_result=True,
     cache_policy=INPUTS,
 )
-async def integrity_check_and_upload(
+async def integrity_check_and_archive(
     db_path: Path,
     scraper_schema: str,
 ) -> str:
-    """Run ``PRAGMA integrity_check`` then upload the DB to the scrapes bucket.
+    """Run ``PRAGMA integrity_check`` then archive the DB.
 
-    The result is cached (INPUTS) so flow retries skip a re-upload.
+    With ``ARCHIVE_BACKEND=local`` the DB is moved to the local archive
+    (``{ARCHIVE_LOCAL_ROOT}/{scraper_schema}/scrapes/{db_name}.db``); otherwise
+    it is uploaded to the ``scrapes`` S3 bucket. The result is cached (INPUTS) so
+    flow retries skip re-archiving.
 
     Returns:
-        S3 URI of the uploaded database.
+        The archived DB's URI (``file://`` for local, ``s3://`` for S3).
 
     Raises:
         RuntimeError: If the SQLite integrity check fails.
@@ -351,6 +354,18 @@ async def integrity_check_and_upload(
         log.error("SQLite integrity check FAILED:\n%s", issues)
         raise RuntimeError(f"SQLite integrity check failed:\n{issues}")
     log.info("SQLite integrity check passed")
+
+    # Local backend: move the DB onto the archive drive, no S3 involved.
+    if is_local_backend():
+        local_size = db_path.stat().st_size
+        archive_uri = await asyncio.to_thread(
+            move_db_to_archive, db_path, scraper_schema
+        )
+        log.info(
+            "Moved run DB (%d bytes) to local archive: %s",
+            local_size, archive_uri,
+        )
+        return archive_uri
 
     run_id = prefect.runtime.flow_run.id
     s3_bucket = await S3Bucket.aload(SCRAPES_S3_BLOCK_NAME)
@@ -438,25 +453,26 @@ async def scraper_run_flow(
     else:
         log.info("Scrape recorded no errors")
 
-    s3_uri = await integrity_check_and_upload(db_path, scraper_schema)
+    archive_uri = await integrity_check_and_archive(db_path, scraper_schema)
 
     await create_markdown_artifact(
         key="scrape-summary",
-        markdown=_build_summary_markdown(scraper_path, scraper_schema, s3_uri, summary),
+        markdown=_build_summary_markdown(scraper_path, scraper_schema, archive_uri, summary),
     )
 
-    # The DB is verified in S3 now, so reclaim the worker's runs volume. This is
-    # the last step (the upload result is cached, so a retry wouldn't need the
-    # local file) and best-effort: a stray unlink failure must not fail an
-    # otherwise-successful run. Remove the WAL/SHM sidecars too — they linger if
-    # the DB was last touched in WAL mode.
+    # The DB is safely archived now (uploaded to S3, or moved to the local
+    # archive — in which case the source is already gone), so reclaim the
+    # worker's runs volume. This is the last step (the archive result is cached,
+    # so a retry wouldn't need the local file) and best-effort: a stray unlink
+    # failure must not fail an otherwise-successful run. Remove the WAL/SHM
+    # sidecars too — they linger if the DB was last touched in WAL mode.
     for path in (db_path, db_path.with_suffix(".db-wal"), db_path.with_suffix(".db-shm")):
         try:
             path.unlink(missing_ok=True)
         except OSError as exc:
             log.warning("Could not remove local scrape file %s: %s", path, exc)
 
-    return s3_uri
+    return archive_uri
 
 
 def _pivot_table(
