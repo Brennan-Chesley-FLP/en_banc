@@ -109,12 +109,33 @@ def init_telemetry() -> Optional[Callable[[], None]]:
     # Traces: head-sample low — per-request+phase spans are high volume at scrape
     # scale. Metrics are always aggregated, so drilling is the only thing sampling
     # costs.
-    tp = TracerProvider(
-        resource=resource,
-        sampler=ParentBased(TraceIdRatioBased(0.05)),
-    )
-    tp.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-    trace.set_tracer_provider(tp)
+    #
+    # ``set_tracer_provider`` is one-shot: if something (Prefect telemetry, an
+    # import side effect, a prior init) already installed an SDK provider, a second
+    # ``set`` is silently refused and our exporter/sampler never attach — jkent's
+    # spans then resolve to that other provider and never reach our collector, even
+    # though metrics (a separate, uncontested MeterProvider) keep flowing. So attach
+    # our exporter to the existing SDK provider instead of losing the race.
+    span_processor = BatchSpanProcessor(OTLPSpanExporter())
+    existing_tp = trace.get_tracer_provider()
+    if isinstance(existing_tp, TracerProvider):
+        existing_tp.add_span_processor(span_processor)
+        tp = existing_tp
+        owns_tp = False
+        logger.warning(
+            "A TracerProvider was already installed (%r); attached our OTLP span "
+            "exporter to it rather than overriding (our sampler is NOT applied).",
+            existing_tp,
+        )
+    else:
+        tp = TracerProvider(
+            resource=resource,
+            sampler=ParentBased(TraceIdRatioBased(0.05)),
+        )
+        tp.add_span_processor(span_processor)
+        trace.set_tracer_provider(tp)
+        owns_tp = True
+    logger.info("Tracer provider in effect: %r", trace.get_tracer_provider())
 
     mp = MeterProvider(
         resource=resource,
@@ -125,6 +146,19 @@ def init_telemetry() -> Optional[Callable[[], None]]:
     HTTPXClientInstrumentor().instrument()
     BotocoreInstrumentor().instrument()
 
+    # jkent resolves its tracer/meter through ``@lru_cache``d accessors. If either
+    # was called before the providers above were installed (an import-time probe,
+    # an early request), the cache pins the no-op proxy for the process's life.
+    # Clear both so the first real resolution binds to the providers set here.
+    try:
+        from jkent.observability import metrics as _jkent_metrics
+        from jkent.observability import tracing as _jkent_tracing
+
+        _jkent_tracing.tracer.cache_clear()
+        _jkent_metrics.instruments.cache_clear()
+    except Exception:  # noqa: BLE001 - telemetry must never break the scrape
+        logger.exception("Could not clear jkent observability caches; continuing.")
+
     logger.info(
         "OpenTelemetry initialized: exporting to %s (service=%s pool=%s)",
         os.environ.get("OTEL_EXPORTER_OTLP_ENDPOINT"),
@@ -133,11 +167,17 @@ def init_telemetry() -> Optional[Callable[[], None]]:
     )
 
     def flush() -> None:
-        # Flush the last batch of spans/metrics before the process exits.
+        # Flush the last batch of spans/metrics before the process exits. Always
+        # drain the span processor we added; only shut the whole TracerProvider
+        # down when we created it — if we merely attached to a provider someone
+        # else owns, shutting it down would tear out their tracing too.
         try:
-            tp.shutdown()
+            if owns_tp:
+                tp.shutdown()
+            else:
+                span_processor.force_flush()
         except Exception:  # noqa: BLE001 - shutdown must never mask real errors
-            logger.exception("Error shutting down TracerProvider")
+            logger.exception("Error draining TracerProvider")
         try:
             mp.shutdown()
         except Exception:  # noqa: BLE001
