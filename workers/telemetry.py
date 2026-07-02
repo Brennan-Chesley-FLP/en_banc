@@ -81,8 +81,16 @@ def init_telemetry() -> Optional[Callable[[], None]]:
     from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
     from opentelemetry.sdk.resources import Resource
     from opentelemetry.sdk.trace import TracerProvider
-    from opentelemetry.sdk.trace.export import BatchSpanProcessor
-    from opentelemetry.sdk.trace.sampling import ParentBased, TraceIdRatioBased
+    from opentelemetry.sdk.trace.export import (
+        BatchSpanProcessor,
+        ConsoleSpanExporter,
+        SimpleSpanProcessor,
+    )
+    from opentelemetry.sdk.trace.sampling import (
+        ALWAYS_ON,
+        ParentBased,
+        TraceIdRatioBased,
+    )
 
     resource = Resource.create(
         {
@@ -116,6 +124,18 @@ def init_telemetry() -> Optional[Callable[[], None]]:
     # spans then resolve to that other provider and never reach our collector, even
     # though metrics (a separate, uncontested MeterProvider) keep flowing. So attach
     # our exporter to the existing SDK provider instead of losing the race.
+    # Sampling is normally head-sampled low, but overridable for debugging without a
+    # rebuild: JKENT_OTEL_SAMPLE_RATIO=1 (or "always_on") keeps every trace so a
+    # single scrape's jkent.request tree is guaranteed to show up.
+    ratio_raw = os.environ.get("JKENT_OTEL_SAMPLE_RATIO", "0.05").strip().lower()
+    if ratio_raw in ("1", "1.0", "always_on", "on"):
+        sampler = ALWAYS_ON
+    else:
+        try:
+            sampler = ParentBased(TraceIdRatioBased(float(ratio_raw)))
+        except ValueError:
+            sampler = ParentBased(TraceIdRatioBased(0.05))
+
     span_processor = BatchSpanProcessor(OTLPSpanExporter())
     existing_tp = trace.get_tracer_provider()
     if isinstance(existing_tp, TracerProvider):
@@ -128,13 +148,25 @@ def init_telemetry() -> Optional[Callable[[], None]]:
             existing_tp,
         )
     else:
-        tp = TracerProvider(
-            resource=resource,
-            sampler=ParentBased(TraceIdRatioBased(0.05)),
-        )
+        tp = TracerProvider(resource=resource, sampler=sampler)
         tp.add_span_processor(span_processor)
         trace.set_tracer_provider(tp)
         owns_tp = True
+
+    # Debug switch: also print spans to stdout so we can see whether jkent.* spans
+    # are even being recorded in the scrape context (independent of the collector).
+    if os.environ.get("JKENT_OTEL_CONSOLE", "").strip().lower() in _TRUTHY:
+        tp.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+
+    # WARNING level so it survives the worker's default log threshold (INFO from
+    # this module is otherwise filtered) — confirms which provider/sampler is live.
+    logger.warning(
+        "OTel traces: provider=%r owns=%s sampler=%s console=%s",
+        trace.get_tracer_provider(),
+        owns_tp,
+        ratio_raw,
+        os.environ.get("JKENT_OTEL_CONSOLE", ""),
+    )
     logger.info("Tracer provider in effect: %r", trace.get_tracer_provider())
 
     mp = MeterProvider(
