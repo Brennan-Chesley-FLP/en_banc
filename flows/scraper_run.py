@@ -22,7 +22,7 @@ from prefect.cache_policies import INPUTS
 from prefect.states import Cancelled, State
 from prefect_aws.s3 import S3Bucket
 
-from flows.s3_archive import make_s3_archive_handler
+from flows.archive import make_archive_handler
 from flows.shutdown import get_shutdown_event
 from workers.telemetry import instrument_run_engine, run_baggage
 
@@ -254,7 +254,7 @@ async def run_scraper_task(
         log.info("Resuming existing run DB %s; ignoring seed_params", db_path)
         seed_params = None
 
-    archive_handler = await make_s3_archive_handler(
+    archive_handler = await make_archive_handler(
         prefix=f"{scraper_schema}/"
     )
 

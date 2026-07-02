@@ -1,0 +1,31 @@
+# Overlay: bypass SeaweedFS/S3 and archive file downloads to a local filesystem
+# (an external drive), to test whether S3 PutObject is the throughput ceiling.
+#
+# Usage (from the repo root):
+#   ARCHIVE_HOST_DIR=/path/to/external-drive/en_banc-archive \
+#     docker compose -f docker/docker-compose.yml \
+#                    -f docker/docker-compose.local-archive.yml up
+#
+# ARCHIVE_HOST_DIR is the archive root ON THE DOCKER HOST. It must be:
+#   1. writable by the container user, and
+#   2. visible to the container runtime — if Docker/podman runs in a VM
+#      (Colima, podman machine, Docker Desktop), the external drive has to be
+#      mounted into that VM first (see the notes with this change).
+#
+# The handler mirrors the S3 key layout under /archive, so objects land at
+#   $ARCHIVE_HOST_DIR/<scraper_schema>/<sha[:2]>/<sha[2:4]>/<sha><ext>
+
+services:
+  scraper-worker:
+    environment:
+      ARCHIVE_BACKEND: local
+      ARCHIVE_LOCAL_ROOT: /archive
+    volumes:
+      - ${ARCHIVE_HOST_DIR:?set ARCHIVE_HOST_DIR to the external-drive archive path}:/archive
+
+  browser-worker:
+    environment:
+      ARCHIVE_BACKEND: local
+      ARCHIVE_LOCAL_ROOT: /archive
+    volumes:
+      - ${ARCHIVE_HOST_DIR:?set ARCHIVE_HOST_DIR to the external-drive archive path}:/archive
