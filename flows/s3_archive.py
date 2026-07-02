@@ -22,6 +22,7 @@ from urllib.parse import urlparse
 
 from botocore.exceptions import ClientError
 from jkent.data_types import ArchiveDecision
+from jkent.observability import phase
 from prefect_aws.s3 import S3Bucket
 
 logger = logging.getLogger(__name__)
@@ -122,9 +123,14 @@ class S3AsyncStreamingArchiveHandler:
         hash_header_value: str | None,
     ) -> ArchiveDecision:
         if deduplication_key:
-            existing = await asyncio.to_thread(
-                self._lookup_dedup, deduplication_key
-            )
+            # Timed separately (phase="archive.lookup") — this dedup probe runs
+            # before the rate-limiter gate and transport.resolve, so it does not
+            # nest under them; a slow lookup is its own signal (a stalled S3 read
+            # on the pre-check path, distinct from the download/upload phases).
+            with phase("archive.lookup"):
+                existing = await asyncio.to_thread(
+                    self._lookup_dedup, deduplication_key
+                )
             if existing is not None:
                 logger.info("Skipping download, already archived: %s", url)
                 return ArchiveDecision(download=False, file_url=existing)
@@ -140,21 +146,27 @@ class S3AsyncStreamingArchiveHandler:
     ) -> str:
         # Buffer chunks to a temp file while hashing, then upload. boto3's
         # upload is sync and wants a seekable source, so we stage locally.
+        #
+        # The two regions are timed as separate phases nested under
+        # transport.resolve so we can tell origin-download time apart from
+        # S3-write time (phase="archive.download" vs "archive.upload"): a slow
+        # archive request is usually one or the other, not both.
         sha = hashlib.sha256()
         tmp = tempfile.NamedTemporaryFile(  # noqa: SIM115
             delete=False, prefix=".s3-stream-", suffix=".tmp"
         )
         try:
-            with tmp as f:
+            with tmp as f, phase("archive.download"):
                 async for chunk in chunks:
                     sha.update(chunk)
                     await asyncio.to_thread(f.write, chunk)
             content_key = self._content_key(
                 sha.hexdigest(), _extension(url, expected_type)
             )
-            file_url = await asyncio.to_thread(
-                self._upload, tmp.name, content_key, deduplication_key
-            )
+            with phase("archive.upload"):
+                file_url = await asyncio.to_thread(
+                    self._upload, tmp.name, content_key, deduplication_key
+                )
         finally:
             Path(tmp.name).unlink(missing_ok=True)
         logger.info("Archived %s -> %s", url, file_url)
