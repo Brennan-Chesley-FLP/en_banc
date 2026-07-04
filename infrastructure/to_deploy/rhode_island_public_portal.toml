@@ -1,0 +1,30 @@
+# rhode_island_public_portal: speculative dockets_by_number probing.
+# Cursors seeded from highest observed values (source: NONE — CC_NOTES.md marks
+# the portal unverified; all result/detail pages sit behind reCAPTCHA + DataDome
+# and could not be reached during recon, so no highest-observed value exists).
+description = "rhode_island_public_portal — speculative maintenance (advancing cursors)"
+
+[[schedules]]
+# Once a week; adjust as needed.
+cron = "0 6 * * 1"
+timezone = "UTC"
+active = true
+
+[parameters]
+# Single court: Rhode Island has one appellate court (ri, Supreme Court). The
+# entry takes only its SpeculativeRange (no court_ids arg) and the range has no
+# court field, so one cursor covers the sole court.
+# NOTE: RI docket numbers are NOT simple sequential integers — they look like
+# `2018-298-Appeal.` (CC_NOTES.md "Docket Number Formats"). A plain integer
+# cursor may not map cleanly; a human should confirm the seed format after the
+# first captcha-solving deploy verifies the result-page structure.
+seed_params = [
+  { dockets_by_number = { docket_number = "[rhode_island_public_portal_scraper]" } },
+]
+
+# Single cursor — covers the sole court, ri.
+[variables.rhode_island_public_portal_scraper]
+min = 1           # TODO: seed highest observed — portal unverified (reCAPTCHA + DataDome), no value in source
+soft_max = 1      # TODO: seed highest observed (keep min == soft_max advance-window cursor)
+gap = 10
+should_advance = true

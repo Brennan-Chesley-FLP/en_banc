@@ -1,0 +1,109 @@
+# massachusetts_appellate: speculative dockets_by_number probing.
+# Cursors seeded from highest observed values (source: CC_NOTES.md "Docket
+# Number Formats" table, "Approx. high seed (2026)" column; category->court
+# and format mapping from scraper.py _CATEGORY_CONFIG).
+#
+# GRANULARITY NOTE: MaCourtRange requires a single `case_category` per cursor,
+# and each of the 7 categories is its own independent docket-number sequence.
+# A single CL court id spans several of these spaces (mass -> fc/oe/ar/sj/bd,
+# massappct -> ac/aj), so a lone "one cursor per court" seed cannot cover them.
+# Per the scraper's own docstring seed example we therefore seed ONE cursor per
+# category (7 total), which together cover both courts (mass, massappct).
+#
+# Year handling: fc/oe/ar are continuous (no year) so `year` is omitted
+# (MaCourtRange.year defaults to None -> the JSON `null` in the manifest
+# example). sj/bd/ac/aj are year-partitioned -> year = 2026.
+#
+# Seed values are the source's *approximate* high-water marks ("~N"); a human
+# should confirm exact current highs before enabling.
+description = "massachusetts_appellate — speculative maintenance (advancing cursors)"
+
+[[schedules]]
+# Once a week; adjust as needed.
+cron = "0 6 * * 1"
+timezone = "UTC"
+active = true
+
+[parameters]
+seed_params = [
+  # court mass (SJC) — 5 categories
+  { dockets_by_number = { docket_number = "[massachusetts_appellate_scraper__mass__fc]" } },
+  { dockets_by_number = { docket_number = "[massachusetts_appellate_scraper__mass__oe]" } },
+  { dockets_by_number = { docket_number = "[massachusetts_appellate_scraper__mass__ar]" } },
+  { dockets_by_number = { docket_number = "[massachusetts_appellate_scraper__mass__sj]" } },
+  { dockets_by_number = { docket_number = "[massachusetts_appellate_scraper__mass__bd]" } },
+  # court massappct (Appeals Court) — 2 categories
+  { dockets_by_number = { docket_number = "[massachusetts_appellate_scraper__massappct__ac]" } },
+  { dockets_by_number = { docket_number = "[massachusetts_appellate_scraper__massappct__aj]" } },
+]
+
+# --- mass (SJC) ---------------------------------------------------------------
+
+# fc — SJC Full Court (SJC-NNNNN, continuous)
+[variables.massachusetts_appellate_scraper__mass__fc]
+court_id = "mass"
+case_category = "fc"
+min = 13950
+soft_max = 13950
+gap = 10
+should_advance = true
+
+# oe — SJC Original Entry (OE-NNNN, continuous)
+[variables.massachusetts_appellate_scraper__mass__oe]
+court_id = "mass"
+case_category = "oe"
+min = 160
+soft_max = 160
+gap = 10
+should_advance = true
+
+# ar — SJC DAR/FAR Applications (FAR-NNNNN, continuous)
+[variables.massachusetts_appellate_scraper__mass__ar]
+court_id = "mass"
+case_category = "ar"
+min = 30750
+soft_max = 30750
+gap = 10
+should_advance = true
+
+# sj — SJC Single Justice (SJ-YYYY-NNNN, year-partitioned)
+[variables.massachusetts_appellate_scraper__mass__sj]
+court_id = "mass"
+case_category = "sj"
+year = 2026
+min = 600
+soft_max = 600
+gap = 10
+should_advance = true
+
+# bd — SJC Bar Docket (BD-YYYY-NNN, year-partitioned)
+[variables.massachusetts_appellate_scraper__mass__bd]
+court_id = "mass"
+case_category = "bd"
+year = 2026
+min = 10
+soft_max = 10
+gap = 10
+should_advance = true
+
+# --- massappct (Appeals Court) ------------------------------------------------
+
+# ac — Appeals Court Panel (YYYY-P-NNNN, year-partitioned)
+[variables.massachusetts_appellate_scraper__massappct__ac]
+court_id = "massappct"
+case_category = "ac"
+year = 2026
+min = 1700
+soft_max = 1700
+gap = 10
+should_advance = true
+
+# aj — Appeals Court Single Justice (YYYY-J-NNNN, year-partitioned)
+[variables.massachusetts_appellate_scraper__massappct__aj]
+court_id = "massappct"
+case_category = "aj"
+year = 2026
+min = 1100
+soft_max = 1100
+gap = 10
+should_advance = true

@@ -1,0 +1,13 @@
+# arizona_appellate: weekly last-7-days maintenance (dockets_by_updated_date).
+description = "arizona_appellate — weekly last-7-days maintenance"
+
+[[schedules]]
+# Every Sunday at 8:00 PM Phoenix time (America/Phoenix has no DST).
+rrule = "FREQ=WEEKLY;BYDAY=SU;BYHOUR=20;BYMINUTE=0;BYSECOND=0"
+timezone = "America/Phoenix"
+active = true
+
+[parameters]
+seed_params = [
+  { dockets_by_updated_date = { court_ids = ["ariz", "arizctapp"], date_range = "-7d" } },
+]

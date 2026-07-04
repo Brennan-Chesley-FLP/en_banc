@@ -1,0 +1,13 @@
+# missouri_case_net: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "missouri_case_net — weekly last-7-days maintenance"
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+cron = "0 6 * * 1"
+timezone = "UTC"
+active = true
+
+[parameters]
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["mo", "moctapped", "moctappsd", "moctappwd"], date_range = "-7d" } },
+]

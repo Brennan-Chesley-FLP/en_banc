@@ -1,0 +1,33 @@
+# iowa_appellate: speculative dockets_by_number probing (YY-NNNN, YearlySpeculativeRange).
+# Cursors seeded from highest observed values (source: CC_NOTES.md — "Range
+# observed (2026, mid-year): 26-0001 to 26-0776 as of 2026-05-03"; recommended
+# seed gap=20).
+description = "iowa_appellate — speculative maintenance (advancing cursors)"
+
+[[schedules]]
+# Once a week; adjust as needed.
+cron = "0 6 * * 1"
+timezone = "UTC"
+active = true
+
+[parameters]
+# SHARED cursor: the YY-NNNN docket sequence is a SINGLE space shared across
+# both Iowa appellate courts (iowa Supreme + iowactapp Court of Appeals); the
+# court is derived per-docket from a TRANSFERRED TO COURT OF APPEALS event at
+# assemble time. The speculative entry takes only its YearlySpeculativeRange
+# (no court_ids), so one shared cursor covers both courts.
+seed_params = [
+  { dockets_by_number = { docket_number = "[iowa_appellate_scraper]" } },
+]
+
+# Shared cursor — covers iowa + iowactapp (one unified YY-NNNN space).
+[variables.iowa_appellate_scraper]
+year = 2026       # YearlySpeculativeRange: current partition year
+min = 776         # 2026 leading edge 26-0776 as of 2026-05-03 (CC_NOTES.md)
+soft_max = 776    # min == soft_max advance-window cursor (frontier maintenance)
+gap = 20          # source-recommended seed gap=20 (wider than the 10 default)
+should_advance = true
+# NOTE: the 26-0776 leading edge is dated 2026-05-03 (~2000-2400 filings/year);
+# a human should bump toward the current frontier before deploying. CC_NOTES
+# also recommends min=1, soft_max~=2400 for an initial FULL-year backfill walk;
+# this draft seeds the frontier per the advancing-cursor convention.

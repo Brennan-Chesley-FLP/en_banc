@@ -27,6 +27,7 @@ import pulumi_prefect as prefect
 # Make the en-banc repo root importable so we can reuse the same scraper
 # discovery / limit-naming the flow uses.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from flows.deployment_config import build_deployment_spec  # noqa: E402
 from flows.scrapers import (  # noqa: E402
     discover_scraper_paths,
     scraper_court_ids,
@@ -201,7 +202,19 @@ for scraper_path in scraper_paths:
     # engine and runs one scrape at a time) and the rest to the HTTP pool, so a
     # browser scraper can never be dispatched to a worker that can't run it.
     needs_browser = scraper_needs_browser(scraper_path)
-    work_pool = BROWSER_WORK_POOL if needs_browser else HTTP_WORK_POOL
+
+    # Build the deployment definition: a computed skeleton (routing, tags, base
+    # params) deep-merged with any infrastructure/deployments/{schema}.toml.
+    # The TOML adds seed_params, schedules, and speculative Variable seeds.
+    spec = build_deployment_spec(
+        scraper_path=scraper_path,
+        schema=schema,
+        needs_browser=needs_browser,
+        court_ids=scraper_court_ids(scraper_path),
+        default_concurrency=scraper_concurrency,
+        browser_pool=BROWSER_WORK_POOL,
+        http_pool=HTTP_WORK_POOL,
+    )
 
     # A work queue lives under its pool (``/work_pools/{pool}/queues/{name}``),
     # so moving a scraper between the HTTP and browser pools is a *new* queue,
@@ -210,33 +223,56 @@ for scraper_path in scraper_paths:
     # trips its priority-defaults-to-0 update bug (the API rejects priority 0).
     queue = prefect.WorkQueue(
         f"queue-{schema}",
-        name=schema,
-        work_pool_name=work_pool,
-        concurrency_limit=scraper_concurrency,
+        name=spec.work_queue_name,
+        work_pool_name=spec.work_pool_name,
+        concurrency_limit=spec.concurrency_limit,
         opts=pulumi.ResourceOptions(replace_on_changes=["work_pool_name"]),
     )
 
-    # Tag with the CourtListener courts this scraper covers (e.g. ``court:ark``)
-    # so deployments are filterable by court in the UI. ``browser`` /
-    # ``http`` tags make the transport split filterable too.
-    court_tags = [f"court:{c}" for c in scraper_court_ids(scraper_path)]
-    transport_tag = "browser" if needs_browser else "http"
-
-    prefect.Deployment(
+    deployment = prefect.Deployment(
         f"deploy-{schema}",
-        name=schema,
+        name=spec.name,
         flow_id=scraper_run_flow.id,
         entrypoint="flows/scraper_run.py:scraper_run_flow",
         path="/app",
-        work_pool_name=work_pool,
+        work_pool_name=spec.work_pool_name,
         work_queue_name=queue.name,
-        parameters=json.dumps(
-            {"scraper_path": scraper_path, "scraper_schema": schema}
-        ),
+        parameters=json.dumps(spec.parameters),
         parameter_openapi_schema=scraper_run_parameter_schema,
-        enforce_parameter_schema=True,
-        tags=["en-banc", "scraper", transport_tag, *court_tags],
+        enforce_parameter_schema=spec.enforce_parameter_schema,
+        paused=spec.paused,
+        description=spec.description,
+        version=spec.version,
+        job_variables=(
+            json.dumps(spec.job_variables)
+            if spec.job_variables is not None
+            else None
+        ),
+        tags=spec.tags,
     )
+
+    # Recurring maintenance schedules (one DeploymentSchedule per [[schedules]]).
+    for i, sched in enumerate(spec.schedules):
+        sched_kwargs = dict(sched)
+        # Per-schedule parameter overrides are JSON like the deployment's.
+        if "parameters" in sched_kwargs:
+            sched_kwargs["parameters"] = json.dumps(sched_kwargs["parameters"])
+        prefect.DeploymentSchedule(
+            f"schedule-{schema}-{i}",
+            deployment_id=deployment.id,
+            **sched_kwargs,
+        )
+
+    # Initial cursors for the speculative [key] references in seed_params. Each
+    # is created once, then owned by the runtime finalize step — ignore_changes
+    # on ``value`` keeps ``pulumi up`` from resetting an advanced cursor.
+    for var_name, var_value in spec.variables.items():
+        prefect.Variable(
+            f"var-{var_name}",
+            name=var_name,
+            value=var_value,
+            opts=pulumi.ResourceOptions(ignore_changes=["value"]),
+        )
 
 # ---------------------------------------------------------------------------
 # Exports

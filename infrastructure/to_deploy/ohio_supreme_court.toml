@@ -1,0 +1,31 @@
+# ohio_supreme_court: speculative dockets_by_number probing (YYYY-NNNN, YearlySpeculativeRange).
+# Cursors seeded from highest observed values (source: CC_NOTES.md "Docket
+# Number Format" examples — highest 2026 number cited is 2026-0561; scraper.py
+# dockets_by_number docstring seeds soft_max~=600, gap=25 for 2026).
+description = "ohio_supreme_court — speculative maintenance (advancing cursors)"
+
+[[schedules]]
+# Once a week; adjust as needed.
+cron = "0 6 * * 1"
+timezone = "UTC"
+active = true
+
+[parameters]
+# SINGLE court: ohio is the only court this scraper serves; the intermediate
+# districts are prior-jurisdiction metadata, not separate docket sources. The
+# YearlySpeculativeRange has no court_id field and the entry takes only its
+# speculative param (court "ohio" is a constant), so one cursor covers it.
+seed_params = [
+  { dockets_by_number = { docket_number = "[ohio_supreme_court_scraper]" } },
+]
+
+# Single cursor — covers ohio (one YYYY-NNNN sequence per year).
+[variables.ohio_supreme_court_scraper]
+year = 2026       # YearlySpeculativeRange: current partition year
+min = 561         # highest 2026 number documented (2026-0561, CC_NOTES.md examples)
+soft_max = 561    # min == soft_max advance-window cursor (frontier maintenance)
+gap = 25          # scraper.py seed-example gap=25 (wider than the 10 default)
+should_advance = true
+# NOTE: 2026-0561 comes from a CC_NOTES format-example, not an explicit
+# "highest observed as of <date>" note (the scraper docstring rounds soft_max
+# to ~600). A human should verify the current 2026 frontier before deploying.

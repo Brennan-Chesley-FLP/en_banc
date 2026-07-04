@@ -1,0 +1,39 @@
+# alaska: speculative dockets_by_number probing (5-digit case numbers).
+# Cursors seeded from highest observed values (source: NO explicit
+# highest-observed note exists in scraper.py or CC_NOTES.md; the only concrete
+# case numbers in the source are docstring EXAMPLES — `S19019` (ak) and
+# `A14988` (akctapp) in models.py / scraper.py. These are used as provisional
+# seeds and MUST be verified — see the # TODO comments on each cursor.
+description = "alaska — speculative maintenance (advancing cursors)"
+
+[[schedules]]
+# Once a week; adjust as needed.
+cron = "0 6 * * 1"
+timezone = "UTC"
+active = true
+
+[parameters]
+# PER-COURT cursors: case numbers are genuinely per-court — the CMS is searched
+# with a per-court letter prefix (`S#####` for ak, `A#####` for akctapp), so the
+# integer space is NOT shared. The `dockets_by_number` entry also takes a
+# separate `court_ids` arg (one probe emitted per court), so we make one cursor
+# per court and pass court_ids explicitly in each seed entry. SpeculativeRange
+# has no court field, so the range tables carry no court_id.
+seed_params = [
+  { dockets_by_number = { court_ids = ["ak"], docket_number = "[alaska_scraper__ak]" } },
+  { dockets_by_number = { court_ids = ["akctapp"], docket_number = "[alaska_scraper__akctapp]" } },
+]
+
+# Alaska Supreme Court (ak) — S##### case numbers.
+[variables.alaska_scraper__ak]
+min = 19019       # TODO: unconfirmed — from docstring example `S19019`, not a stated highest observed; verify the true leading edge
+soft_max = 19019  # min == soft_max advance-window cursor (frontier maintenance)
+gap = 10
+should_advance = true
+
+# Alaska Court of Appeals (akctapp) — A##### case numbers.
+[variables.alaska_scraper__akctapp]
+min = 14988       # TODO: unconfirmed — from docstring example `A14988`, not a stated highest observed; verify the true leading edge
+soft_max = 14988  # min == soft_max advance-window cursor (frontier maintenance)
+gap = 10
+should_advance = true

@@ -233,6 +233,11 @@ async def run_scraper_task(
         Path to the resulting SQLite database, or ``None`` if the scrape was
         drained for shutdown before completing (DB preserved for later resume).
     """
+    import contextlib as _contextlib
+
+    from juriscraper.state.common.params import anchor_date, spec_kv_store
+
+    from flows.speculative import load_seed_store, scheduled_anchor_date
     from jkent.driver.unified_driver import RunBootstrapper
 
     log = get_run_logger()
@@ -263,55 +268,69 @@ async def run_scraper_task(
         "Commencing scrape: %s (max_continuation_workers=%d)",
         scraper_path, max_workers,
     )
-    async with RunBootstrapper(
-        scraper,
-        db_path=db_path,
-        seed_params=seed_params,
-        archive_handler=archive_handler,
-        resume=True,
-        max_workers=max_workers,
-        setup_signal_handlers=False,
-    ) as run:
-        # Bind the SQLAlchemy instrumentor to this run's per-run engine so its DB
-        # spans nest under jkent's request spans (EN_BANC_OTEL.md §2). No-op when
-        # telemetry is disabled.
-        instrument_run_engine(run)
 
-        # Race the scrape against the shutdown signal. JKent's signal handlers
-        # no-op off the main thread (the worker runs flows off-main-thread), so
-        # we drive run.stop() ourselves when the process is asked to shut down.
-        shutdown = get_shutdown_event()
-        # Attach the flow-run identity as OTel baggage *before* scheduling the run
-        # so its context snapshot carries it; jkent stamps `flow_run_id` on its
-        # spans/metrics for cross-run correlation (§3). No-op when disabled.
-        with run_baggage(str(prefect.runtime.flow_run.id), scraper_schema):
-            scrape = asyncio.ensure_future(run.run())
-            drain_signal = asyncio.ensure_future(shutdown.wait())
-            # Report progress to the logs every few minutes while the scrape runs.
-            # Cancelled in the finally so it never outlives the scrape.
-            stats_logger = asyncio.ensure_future(_log_stats_periodically(run, log))
-            try:
-                await asyncio.wait(
-                    {scrape, drain_signal}, return_when=asyncio.FIRST_COMPLETED
-                )
+    # Resolve the seed's ``[key]`` speculative-cursor references against Prefect
+    # Variables, and anchor any date-range shorthands to the run's *scheduled*
+    # date. Both are read synchronously during RunBootstrapper's __aenter__
+    # (seeding), so the context vars must be active for the whole block; they're
+    # inert once seeding is done and are skipped entirely on resume (seed_params
+    # is None) or when the seed cites no ``[key]`` cursors.
+    seed_store = await load_seed_store(seed_params)
+    spec_ctx = (
+        spec_kv_store(seed_store)
+        if seed_store is not None
+        else _contextlib.nullcontext()
+    )
+    with anchor_date(scheduled_anchor_date()), spec_ctx:
+        async with RunBootstrapper(
+            scraper,
+            db_path=db_path,
+            seed_params=seed_params,
+            archive_handler=archive_handler,
+            resume=True,
+            max_workers=max_workers,
+            setup_signal_handlers=False,
+        ) as run:
+            # Bind the SQLAlchemy instrumentor to this run's per-run engine so its DB
+            # spans nest under jkent's request spans (EN_BANC_OTEL.md §2). No-op when
+            # telemetry is disabled.
+            instrument_run_engine(run)
 
-                if not scrape.done():
-                    # Shutdown won the race: drain cooperatively. run.stop() lets the
-                    # in-flight request finish, then run.run() returns normally with
-                    # the run finalized as "interrupted" and the DB left resumable.
-                    log.warning("Shutdown requested; draining scrape for resume: %s", db_path)
-                    run.stop()
+            # Race the scrape against the shutdown signal. JKent's signal handlers
+            # no-op off the main thread (the worker runs flows off-main-thread), so
+            # we drive run.stop() ourselves when the process is asked to shut down.
+            shutdown = get_shutdown_event()
+            # Attach the flow-run identity as OTel baggage *before* scheduling the run
+            # so its context snapshot carries it; jkent stamps `flow_run_id` on its
+            # spans/metrics for cross-run correlation (§3). No-op when disabled.
+            with run_baggage(str(prefect.runtime.flow_run.id), scraper_schema):
+                scrape = asyncio.ensure_future(run.run())
+                drain_signal = asyncio.ensure_future(shutdown.wait())
+                # Report progress to the logs every few minutes while the scrape runs.
+                # Cancelled in the finally so it never outlives the scrape.
+                stats_logger = asyncio.ensure_future(_log_stats_periodically(run, log))
+                try:
+                    await asyncio.wait(
+                        {scrape, drain_signal}, return_when=asyncio.FIRST_COMPLETED
+                    )
+
+                    if not scrape.done():
+                        # Shutdown won the race: drain cooperatively. run.stop() lets the
+                        # in-flight request finish, then run.run() returns normally with
+                        # the run finalized as "interrupted" and the DB left resumable.
+                        log.warning("Shutdown requested; draining scrape for resume: %s", db_path)
+                        run.stop()
+                        await scrape
+                        log.warning("Scrape drained (interrupted); DB preserved: %s", db_path)
+                        return None
+
+                    drain_signal.cancel()
+                    # Surface any scrape error (or confirm clean completion).
                     await scrape
-                    log.warning("Scrape drained (interrupted); DB preserved: %s", db_path)
-                    return None
-
-                drain_signal.cancel()
-                # Surface any scrape error (or confirm clean completion).
-                await scrape
-            finally:
-                stats_logger.cancel()
-                with contextlib.suppress(asyncio.CancelledError):
-                    await stats_logger
+                finally:
+                    stats_logger.cancel()
+                    with contextlib.suppress(asyncio.CancelledError):
+                        await stats_logger
 
     log.info("Scraper run completed: %s", db_path)
     return db_path
@@ -410,6 +429,27 @@ async def integrity_check_and_archive(
     return s3_uri
 
 
+@task(log_prints=True, task_run_name="advance-speculative-cursors")
+async def advance_cursors_task(
+    scraper_path: str,
+    db_path: Path,
+) -> dict[str, dict[str, Any]]:
+    """Advance persisted speculative cursors after a clean scrape.
+
+    For each ``[key]`` reference the run's seed_params consumed, bump the backing
+    Prefect Variable to the next start position so the next scheduled run resumes
+    just past this run's highest successful ID (see
+    :func:`flows.speculative.advance_speculative_cursors`). Uses a fresh scraper
+    instance because the probe re-seed populates ``_speculation_templates``.
+    Best-effort: failures are logged, never fatal to the run.
+    """
+    from flows.speculative import advance_speculative_cursors
+
+    log = get_run_logger()
+    scraper = _import_scraper(scraper_path)()
+    return await advance_speculative_cursors(scraper, db_path, log)
+
+
 @flow(name="scraper-run", log_prints=True)
 async def scraper_run_flow(
     scraper_path: str,
@@ -452,6 +492,11 @@ async def scraper_run_flow(
             log.warning("  [%s] %s: %s (%s)", error_type, error_class, message, request_url)
     else:
         log.info("Scrape recorded no errors")
+
+    # Before archiving, advance any speculative cursors this run consumed so the
+    # next scheduled run starts past this one's highest successful ID. Only
+    # reached on clean completion — drained/interrupted runs returned above.
+    await advance_cursors_task(scraper_path, db_path)
 
     archive_uri = await integrity_check_and_archive(db_path, scraper_schema)
 

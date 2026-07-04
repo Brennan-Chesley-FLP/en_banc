@@ -1,0 +1,30 @@
+# tennessee_public_case_history: speculative dockets_by_number probing (5-digit sequence).
+# Cursors seeded from highest observed values (source: scraper.py docstring and
+# CC_NOTES.md — "Sequences in the wild run 1 -> ~5000"; recommended seed gap=50).
+description = "tennessee_public_case_history — speculative maintenance (advancing cursors)"
+
+[[schedules]]
+# Once a week; adjust as needed.
+cron = "0 6 * * 1"
+timezone = "UTC"
+active = true
+
+[parameters]
+# SHARED cursor: a single sequence-number search hits all three Tennessee
+# appellate courts (tenn + tennctapp + tenncrimapp) and all years at once; the
+# court is derived from the docket-number suffix (SC/COA/CCA) at parse time.
+# Multi-court speculative entry takes only its SpeculativeRange (no court_ids),
+# so one shared cursor covers all three courts.
+seed_params = [
+  { dockets_by_number = { docket_number = "[tennessee_public_case_history_scraper]" } },
+]
+
+# Shared cursor — covers tenn, tennctapp, and tenncrimapp (one sequence space).
+[variables.tennessee_public_case_history_scraper]
+min = 5000        # highest observed sequence ~5000 (scraper.py / CC_NOTES.md, approximate)
+soft_max = 5000   # min == soft_max advance-window cursor (frontier maintenance)
+gap = 50          # source-recommended seed gap=50 (wider than the 10 default)
+should_advance = true
+# NOTE: source recommends min=1, gap=50 for an initial FULL backfill walk of the
+# 1..~5000 space. This draft seeds the frontier (~5000) for advancing maintenance
+# per the cursor convention; switch min=1 if a backfill run is wanted first.

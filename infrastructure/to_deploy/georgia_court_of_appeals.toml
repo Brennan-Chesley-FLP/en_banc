@@ -1,0 +1,79 @@
+# georgia_court_of_appeals: speculative dockets_by_number probing.
+# Cursors seeded from highest observed values (source: CC_NOTES.md "Docket
+# Number Formats" table — approx max/yr for 2024-2026).
+#
+# The Georgia case number A{YY}{LETTER}{NNNN} partitions the docket space by
+# BOTH year and case-type letter (A/D/E/I/O). Kent speculates along a single
+# integer axis per seed, so we seed ONE cursor per (year, letter) bucket — five
+# cursors here, all year=2026, one for each letter in CASE_TYPE_LETTERS.
+# GaCoaCaseNumberRange (YearlySpeculativeRange + `letter`) carries year+letter;
+# there is no court_id field (single court, gactapp, is hardcoded in the
+# scraper), so the variable tables omit it.
+#
+# NOTE: the seeded highs are the documented *approximate full-year* maxima, not
+# a mid-2026 observed high — a human should lower these to the actual highest
+# observed 2026 sequence before deploy so real cases between the true high and
+# these ceilings aren't skipped.
+description = "georgia_court_of_appeals — speculative maintenance (advancing cursors)"
+
+[[schedules]]
+# Once a week; adjust as needed.
+cron = "0 6 * * 1"
+timezone = "UTC"
+active = true
+
+[parameters]
+seed_params = [
+  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__A]" } },
+  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__D]" } },
+  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__E]" } },
+  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__I]" } },
+  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__O]" } },
+]
+
+# gap = 15 follows the scraper docstring's seed example (dense annual sequences).
+
+# A = Direct appeal (~2,200/yr)
+[variables.georgia_court_of_appeals_scraper__gactapp__A]
+min = 2200
+soft_max = 2200
+gap = 15
+should_advance = true
+year = 2026
+letter = "A"
+
+# D = Discretionary application (~600/yr)
+[variables.georgia_court_of_appeals_scraper__gactapp__D]
+min = 600
+soft_max = 600
+gap = 15
+should_advance = true
+year = 2026
+letter = "D"
+
+# E = Emergency motion (~250/yr)
+[variables.georgia_court_of_appeals_scraper__gactapp__E]
+min = 250
+soft_max = 250
+gap = 15
+should_advance = true
+year = 2026
+letter = "E"
+
+# I = Interlocutory application (~300/yr)
+[variables.georgia_court_of_appeals_scraper__gactapp__I]
+min = 300
+soft_max = 300
+gap = 15
+should_advance = true
+year = 2026
+letter = "I"
+
+# O = Original proceeding, rare (~30/yr)
+[variables.georgia_court_of_appeals_scraper__gactapp__O]
+min = 30
+soft_max = 30
+gap = 15
+should_advance = true
+year = 2026
+letter = "O"
