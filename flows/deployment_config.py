@@ -1,13 +1,12 @@
-"""Per-scraper deployment customization via TOML files.
+"""Per-scraper deployment definitions loaded from explicit TOML files.
 
-Each JKent scraper gets a Prefect deployment. By default the Pulumi program
-builds that deployment from a computed *skeleton* — name, work-pool routing,
-court/transport tags, and the base ``{scraper_path, scraper_schema}``
-parameters. A scraper may override and extend that skeleton by dropping a TOML
-file at ``infrastructure/deployments/{scraper_schema}.toml``; when present it is
-deep-merged over the skeleton (the TOML wins per key), and it may additionally
-declare recurring ``[[schedules]]`` and the initial cursors for any speculative
-``[key]`` references its ``seed_params`` use (``[variables.<key>]`` tables).
+Each TOML in ``infrastructure/deployments/`` is the *complete* definition of one
+Prefect deployment — nothing is inferred from the scraper class. The Pulumi
+program (``infrastructure/__main__.py``) enumerates them with
+:func:`deployment_paths` and turns each into resources via
+:func:`load_deployment_spec`: one deployment, one concurrency-limited work
+queue, plus any ``[[schedules]]`` and speculative-cursor ``[variables.<key>]``
+the file declares. No file, no deployment.
 
 The TOML mirrors the subset of Prefect's deployment schema that the
 ``pulumi_prefect`` provider can set, plus two conveniences:
@@ -16,9 +15,14 @@ The TOML mirrors the subset of Prefect's deployment schema that the
 * ``[variables.<key>]`` — each becomes a Prefect ``Variable`` (created once by
   Pulumi with ``ignore_changes=["value"]``; the scrape's finalize step advances
   it at runtime). Every ``[key]`` referenced from ``seed_params`` must have a
-  matching table here, or :func:`build_deployment_spec` raises — this fails a
+  matching table here, or :func:`load_deployment_spec` raises — this fails a
   ``pulumi up`` fast instead of letting a scheduled run blow up at seed time
   with "no value for key".
+
+Structural fields (``flow_id``, ``entrypoint``, ``path``) are always
+Pulumi-controlled and cannot be set here, so a TOML can't repoint a deployment
+at different code; ``parameters.scraper_schema`` must equal the filename stem so
+a copied file can't deploy under the wrong identity.
 
 This module is pure (no Pulumi imports) so it can be unit-tested and reused; the
 Pulumi program turns the returned :class:`DeploymentSpec` into resources.
@@ -54,6 +58,16 @@ _ALLOWED_TOP_LEVEL = frozenset(
         "schedules",
         "variables",
     }
+)
+
+#: Keys every deployment TOML must set — routing, tags, and identity are all
+#: spelled out explicitly (nothing is inferred from the scraper class).
+_REQUIRED_TOP_LEVEL = (
+    "work_pool_name",
+    "work_queue_name",
+    "concurrency_limit",
+    "tags",
+    "parameters",
 )
 
 #: Keys a single ``[[schedules]]`` entry may set — the subset of
@@ -109,21 +123,29 @@ class DeploymentSpec:
     variables: dict[str, dict[str, Any]] = field(default_factory=dict)
 
 
-def config_path(schema: str) -> Path:
-    """Return the TOML path for a scraper schema (may not exist)."""
-    return DEPLOYMENTS_DIR / f"{schema}.toml"
+def deployment_paths() -> list[Path]:
+    """Return every deployment TOML in ``DEPLOYMENTS_DIR``, sorted by name.
+
+    Each file is one deployment; the caller loads each with
+    :func:`load_deployment_spec`. Sorted so the Pulumi program creates
+    resources in a stable order across runs.
+    """
+    return sorted(DEPLOYMENTS_DIR.glob("*.toml"))
 
 
-def load_toml(schema: str) -> dict[str, Any]:
-    """Load and validate a scraper's deployment TOML, or ``{}`` if absent.
+def load_deployment_spec(path: Path) -> DeploymentSpec:
+    """Load and validate one deployment TOML into a :class:`DeploymentSpec`.
+
+    The file must set every key in ``_REQUIRED_TOP_LEVEL`` and its
+    ``[parameters]`` must carry ``scraper_path`` and a ``scraper_schema`` equal
+    to the filename stem. Validation is total so a malformed file fails the
+    ``pulumi up`` instead of a scheduled run at seed time.
 
     Raises:
-        ValueError: If the file has unknown top-level keys or malformed
-            schedules — surfaced at ``pulumi up`` rather than at run time.
+        ValueError: On unknown/missing top-level keys, a mismatched
+            ``scraper_schema``, a malformed ``[[schedules]]`` entry, or a
+            ``[key]`` reference with no matching ``[variables.<key>]`` table.
     """
-    path = config_path(schema)
-    if not path.exists():
-        return {}
     with path.open("rb") as fh:
         data = tomllib.load(fh)
 
@@ -133,9 +155,46 @@ def load_toml(schema: str) -> dict[str, Any]:
             f"{path.name}: unknown deployment key(s) {sorted(unknown)}; "
             f"allowed: {sorted(_ALLOWED_TOP_LEVEL)}"
         )
+    missing = [k for k in _REQUIRED_TOP_LEVEL if k not in data]
+    if missing:
+        raise ValueError(
+            f"{path.name}: missing required key(s) {missing}; "
+            f"required: {list(_REQUIRED_TOP_LEVEL)}"
+        )
+
+    schema = path.stem
+    parameters = data["parameters"]
+    for key in ("scraper_path", "scraper_schema"):
+        if not parameters.get(key):
+            raise ValueError(f"{path.name}: [parameters] must set {key!r}")
+    if parameters["scraper_schema"] != schema:
+        raise ValueError(
+            f"{path.name}: parameters.scraper_schema "
+            f"{parameters['scraper_schema']!r} must equal the filename stem "
+            f"{schema!r}"
+        )
+
     for i, sched in enumerate(data.get("schedules", [])):
         _validate_schedule(sched, path.name, i)
-    return data
+
+    variables = data.get("variables", {})
+    _check_key_refs_declared(parameters, variables, schema)
+
+    return DeploymentSpec(
+        name=schema,
+        work_pool_name=data["work_pool_name"],
+        work_queue_name=data["work_queue_name"],
+        concurrency_limit=int(data["concurrency_limit"]),
+        tags=list(data["tags"]),
+        parameters=parameters,
+        enforce_parameter_schema=bool(data.get("enforce_parameter_schema", True)),
+        paused=bool(data.get("paused", False)),
+        description=data.get("description"),
+        version=data.get("version"),
+        job_variables=data.get("job_variables"),
+        schedules=list(data.get("schedules", [])),
+        variables=variables,
+    )
 
 
 def _validate_schedule(sched: Any, filename: str, index: int) -> None:
@@ -172,75 +231,6 @@ def _iter_key_refs(value: Any) -> set[str]:
     return refs
 
 
-def build_deployment_spec(
-    *,
-    scraper_path: str,
-    schema: str,
-    needs_browser: bool,
-    court_ids: list[str],
-    default_concurrency: int,
-    browser_pool: str,
-    http_pool: str,
-) -> DeploymentSpec:
-    """Build the deployment spec for a scraper: skeleton merged with TOML.
-
-    The skeleton reproduces what the Pulumi program built before TOML support:
-    the deployment is named after the schema, routed to the browser or HTTP work
-    pool by ``needs_browser``, tagged with its transport and CourtListener
-    courts, and seeded with the base ``{scraper_path, scraper_schema}``
-    parameters. Any ``{schema}.toml`` deep-merges over that: scalar fields the
-    TOML sets win, ``parameters`` merge key-wise (``scraper_path`` /
-    ``scraper_schema`` are always re-forced so a TOML can't repoint the run),
-    and ``tags`` are unioned. ``schedules`` and ``variables`` come straight from
-    the TOML.
-
-    Raises:
-        ValueError: If the TOML is malformed, or a ``[key]`` referenced by the
-            merged ``parameters`` has no matching ``[variables.<key>]`` table.
-    """
-    toml = load_toml(schema)
-
-    work_pool = toml.get("work_pool_name") or (
-        browser_pool if needs_browser else http_pool
-    )
-    # The queue lives under the (resolved) pool and is named after the schema;
-    # a TOML may point the deployment at a differently-named queue in that pool.
-    work_queue = toml.get("work_queue_name") or schema
-
-    transport_tag = "browser" if needs_browser else "http"
-    tags = _union(
-        ["en-banc", "scraper", transport_tag, *(f"court:{c}" for c in court_ids)],
-        toml.get("tags", []),
-    )
-
-    # Base params are always present; TOML params extend/override them, but the
-    # two identity params are re-forced so a deployment can't run a different
-    # scraper than the one it's named for.
-    parameters = {"scraper_path": scraper_path, "scraper_schema": schema}
-    parameters.update(toml.get("parameters", {}))
-    parameters["scraper_path"] = scraper_path
-    parameters["scraper_schema"] = schema
-
-    variables = toml.get("variables", {})
-    _check_key_refs_declared(parameters, variables, schema)
-
-    return DeploymentSpec(
-        name=schema,
-        work_pool_name=work_pool,
-        work_queue_name=work_queue,
-        concurrency_limit=int(toml.get("concurrency_limit", default_concurrency)),
-        tags=tags,
-        parameters=parameters,
-        enforce_parameter_schema=bool(toml.get("enforce_parameter_schema", True)),
-        paused=bool(toml.get("paused", False)),
-        description=toml.get("description"),
-        version=toml.get("version"),
-        job_variables=toml.get("job_variables"),
-        schedules=list(toml.get("schedules", [])),
-        variables=variables,
-    )
-
-
 def _check_key_refs_declared(
     parameters: dict[str, Any],
     variables: dict[str, dict[str, Any]],
@@ -262,9 +252,3 @@ def _check_key_refs_declared(
             f"declare an initial cursor for each so Pulumi can create the "
             f"Prefect Variable."
         )
-
-
-def _union(base: list[str], extra: list[str]) -> list[str]:
-    """Return ``base`` followed by any items of ``extra`` not already present."""
-    seen = set(base)
-    return base + [x for x in extra if not (x in seen or seen.add(x))]
