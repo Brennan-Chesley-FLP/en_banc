@@ -8,6 +8,12 @@ work_queue_name = "ny_court_pass"
 concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:ny"]
 
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+timezone = "America/New_York"
+active = true
+
 [parameters]
 scraper_path = "juriscraper.state.new_york.nycourts_gov.scraper:NYCourtPassScraper"
 scraper_schema = "ny_court_pass"
