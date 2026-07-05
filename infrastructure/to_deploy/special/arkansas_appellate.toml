@@ -8,7 +8,17 @@ work_queue_name = "arkansas_appellate"
 concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:ark", "court:arkctapp"]
 
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=TH;BYHOUR=10;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+
 [parameters]
 scraper_path = "juriscraper.state.arkansas.caseinfo_arcourts_gov.scraper:ArkansasAppellateScraper"
 scraper_schema = "arkansas_appellate"
-# seed_params = [ ]  # TODO: define the ongoing-maintenance seed.
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["ark","arkctapp"], date_range = "-8d" } },
+]
