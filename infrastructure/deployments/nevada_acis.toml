@@ -7,7 +7,7 @@ tags = ["en-banc", "scraper", "http", "court:nev", "court:nevapp"]
 
 [[schedules]]
 # Once a week; adjust day/time/timezone as needed.
-rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+rrule = "FREQ=WEEKLY;BYDAY=WE;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
 timezone = "UTC"
 active = true
 
@@ -15,5 +15,5 @@ active = true
 scraper_path = "juriscraper.state.nevada.acis_nvcourts_gov.scraper:NevadaAcisScraper"
 scraper_schema = "nevada_acis"
 seed_params = [
-  { dockets_by_filing_date = { court_ids = ["nev", "nevapp"], date_range = "-7d" } },
+  { dockets_by_filing_date = { court_ids = ["nev", "nevapp"], date_range = "-8d" } },
 ]

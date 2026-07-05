@@ -7,7 +7,7 @@ tags = ["en-banc", "scraper", "http", "court:sc", "court:scctapp"]
 
 [[schedules]]
 # Once a week; adjust day/time/timezone as needed.
-rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=8;BYMINUTE=0;BYSECOND=0"
 timezone = "UTC"
 active = true
 
@@ -15,5 +15,5 @@ active = true
 scraper_path = "juriscraper.state.south_carolina.ctrack_sccourts_org.scraper:SouthCarolinaAppellateScraper"
 scraper_schema = "south_carolina_appellate"
 seed_params = [
-  { dockets_by_filing_date = { court_ids = ["sc", "scctapp"], date_range = "-7d" } },
+  { dockets_by_filing_date = { court_ids = ["sc", "scctapp"], date_range = "-8d" } },
 ]

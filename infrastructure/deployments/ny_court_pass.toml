@@ -11,4 +11,4 @@ tags = ["en-banc", "scraper", "browser", "court:ny"]
 [parameters]
 scraper_path = "juriscraper.state.new_york.nycourts_gov.scraper:NYCourtPassScraper"
 scraper_schema = "ny_court_pass"
-# seed_params = [ ]  # TODO: define the ongoing-maintenance seed.
+seed_params = [{"dockets_by_bulk" = {"court_ids" = ["ny"],"argument_date" = "-1m","decision_date" = "-1m"}}]

@@ -1,13 +1,15 @@
 """JKent scraper discovery and schema-name derivation.
 
-``scraper_schema_name`` is a pure function used by the Pulumi program to name
-each scraper's deployment and work queue, and bound as the ``scraper_schema``
-parameter the scrape flow receives (where it becomes the S3 key prefix).
-Keeping it in one place guarantees those uses agree.
+Authoring aids for the per-scraper deployment TOMLs in
+``infrastructure/deployments/`` (see the README there): the deployment files
+declare everything explicitly, and these helpers compute the conventional
+values to fill in — ``scraper_schema_name`` the schema slug (filename,
+``scraper_schema`` parameter, S3 key prefix), ``scraper_needs_browser`` the
+work-pool choice, and ``scraper_court_ids`` the ``court:*`` tags.
 
 ``discover_scraper_paths`` walks the ``juriscraper`` package for JKent
-``BaseScraper`` subclasses; only the Pulumi program calls it, so its heavy
-imports (juriscraper, jkent) are deferred into the function body.
+``BaseScraper`` subclasses; its heavy imports (juriscraper, jkent) are
+deferred into the function body.
 """
 
 from __future__ import annotations
@@ -21,7 +23,8 @@ def scraper_schema_name(scraper_path: str) -> str:
     Derived from the class name with any trailing ``Scraper`` removed and the
     remainder converted to ``snake_case`` (e.g. ``ArkansasAppellateScraper`` ->
     ``arkansas_appellate``). Used as the S3 key prefix, the deployment name, and
-    the work-queue name, so all three always agree.
+    the work-queue name, so all three always agree — a deployment TOML's
+    filename and ``scraper_schema`` parameter must both be this slug.
 
     Args:
         scraper_path: ``"module.path:ClassName"`` import path (the same value
@@ -39,9 +42,9 @@ def scraper_court_ids(scraper_path: str) -> list[str]:
     """Return the CourtListener court ids a scraper covers, sorted.
 
     Reads the scraper class's ``court_ids`` attribute (a set; empty if the
-    scraper doesn't declare any). Used by the Pulumi program to tag each
-    scraper's deployment with the courts it covers. Imports the scraper module,
-    so (like ``discover_scraper_paths``) it pulls in juriscraper/jkent.
+    scraper doesn't declare any). These become the ``court:*`` tags in the
+    scraper's deployment TOML. Imports the scraper module, so (like
+    ``discover_scraper_paths``) it pulls in juriscraper/jkent.
 
     Args:
         scraper_path: ``"module.path:ClassName"`` import path.
@@ -60,10 +63,11 @@ def scraper_needs_browser(scraper_path: str) -> bool:
 
     Reuses jkent's transport-selection predicate (``needs_browser`` reads the
     class's ``driver_requirements`` against ``BROWSER_REQUIREMENTS``) so worker
-    routing agrees with what the driver actually does at run time. The Pulumi
-    program uses this to send browser scrapers to the ``browser-pool`` (whose
-    worker has a browser engine installed and runs one scrape at a time) and
-    everything else to the lean HTTP ``scraper-pool``.
+    routing agrees with what the driver actually does at run time. Browser
+    scrapers belong on the ``browser-pool`` (whose worker has a browser engine
+    installed and runs one scrape at a time) and everything else on the lean
+    HTTP ``scraper-pool`` — set ``work_pool_name`` in the deployment TOML
+    accordingly.
 
     The predicate reads a ClassVar, so the scraper is never instantiated.
 
