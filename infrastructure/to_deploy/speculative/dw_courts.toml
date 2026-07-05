@@ -1,0 +1,55 @@
+# dw_courts: speculative dockets_by_number probing.
+# Cursors seeded from highest observed case numbers per court (source: the
+# dockets_by_number entry docstring seed example in scraper.py). gap = 5 per
+# that same source example. NOTE: the source only documents seeds for `wash`
+# and `washctappdiv1`; `washctappdiv2` and `washctappdiv3` have no observed
+# value in the source and are left as TODO placeholders (min = 1).
+description = "dw_courts — speculative maintenance (advancing cursors)"
+work_pool_name = "browser-pool"
+work_queue_name = "dw_courts"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "browser", "court:wash", "court:washctappdiv1", "court:washctappdiv2", "court:washctappdiv3"]
+
+[[schedules]]
+# Once a week; adjust as needed.
+rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.washington.dw_courts_wa_gov.scraper:DWCourtsScraper"
+scraper_schema = "dw_courts"
+seed_params = [
+  { dockets_by_number = { docket_number = "[dw_courts_scraper__wash]" } },
+  { dockets_by_number = { docket_number = "[dw_courts_scraper__washctappdiv1]" } },
+  { dockets_by_number = { docket_number = "[dw_courts_scraper__washctappdiv2]" } },
+  { dockets_by_number = { docket_number = "[dw_courts_scraper__washctappdiv3]" } },
+]
+
+[variables.dw_courts_scraper__wash]
+court_id = "wash"
+min = 1048343
+soft_max = 1048343
+gap = 5
+should_advance = true
+
+[variables.dw_courts_scraper__washctappdiv1]
+court_id = "washctappdiv1"
+min = 871463
+soft_max = 871463
+gap = 5
+should_advance = true
+
+[variables.dw_courts_scraper__washctappdiv2]
+court_id = "washctappdiv2"
+min = 1  # TODO: seed highest observed (not documented in source)
+soft_max = 1  # TODO: seed highest observed (not documented in source)
+gap = 5
+should_advance = true
+
+[variables.dw_courts_scraper__washctappdiv3]
+court_id = "washctappdiv3"
+min = 1  # TODO: seed highest observed (not documented in source)
+soft_max = 1  # TODO: seed highest observed (not documented in source)
+gap = 5
+should_advance = true

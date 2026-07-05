@@ -1,8 +1,0 @@
-# Special ongoing config needed.
-# No dockets_by_filing_date / dockets_by_updated_date and no speculative entry
-# was found for this scraper, so its ongoing-maintenance strategy needs to be
-# designed by hand. Available entries: get_dockets_by_date.
-description = "arkansas_appellate — special ongoing config needed"
-
-# [parameters]
-# seed_params = [ ]  # TODO: define the ongoing-maintenance seed.

@@ -1,0 +1,14 @@
+# Special ongoing config needed.
+# No dockets_by_filing_date / dockets_by_updated_date and no speculative entry
+# was found for this scraper, so its ongoing-maintenance strategy needs to be
+# designed by hand. Available entries: get_dockets_by_date.
+description = "arkansas_appellate — special ongoing config needed"
+work_pool_name = "scraper-pool"
+work_queue_name = "arkansas_appellate"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:ark", "court:arkctapp"]
+
+[parameters]
+scraper_path = "juriscraper.state.arkansas.caseinfo_arcourts_gov.scraper:ArkansasAppellateScraper"
+scraper_schema = "arkansas_appellate"
+# seed_params = [ ]  # TODO: define the ongoing-maintenance seed.

@@ -1,0 +1,19 @@
+# missouri_case_net: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "missouri_case_net — weekly last-7-days maintenance"
+work_pool_name = "browser-pool"
+work_queue_name = "missouri_case_net"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "browser", "court:mo", "court:moctapped", "court:moctappsd", "court:moctappwd"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.missouri.courts_mo_gov_casenet.scraper:MissouriCaseNetScraper"
+scraper_schema = "missouri_case_net"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["mo", "moctapped", "moctappsd", "moctappwd"], date_range = "-7d" } },
+]

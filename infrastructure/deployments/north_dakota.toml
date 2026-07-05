@@ -1,0 +1,19 @@
+# north_dakota: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "north_dakota — weekly last-7-days maintenance"
+work_pool_name = "scraper-pool"
+work_queue_name = "north_dakota"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:nd"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=FR;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.north_dakota.portal_ctrack_ndcourts_gov.scraper:NorthDakotaScraper"
+scraper_schema = "north_dakota"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["nd"], date_range = "-8d" } },
+]

@@ -1,0 +1,19 @@
+# dc_court_of_appeals: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "dc_court_of_appeals — weekly last-8-days maintenance"
+work_pool_name = "scraper-pool"
+work_queue_name = "dc_court_of_appeals"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:dc"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=FR;BYHOUR=21;BYMINUTE=0;BYSECOND=0"
+timezone = "America/New_York"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.district_of_columbia.efile_dcappeals_gov.scraper:DCCourtOfAppealsScraper"
+scraper_schema = "dc_court_of_appeals"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["dc"], date_range = "-8d" } },
+]

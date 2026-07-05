@@ -1,0 +1,19 @@
+# oklahoma: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "oklahoma — weekly last-7-days maintenance"
+work_pool_name = "scraper-pool"
+work_queue_name = "oklahoma"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:okla", "court:oklacivapp", "court:oklacoj", "court:oklacrimapp", "court:oklajeap"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=SA;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.oklahoma.oscn_net.scraper:OklahomaScraper"
+scraper_schema = "oklahoma"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["okla", "oklacivapp", "oklacoj", "oklacrimapp", "oklajeap"], date_range = "-8d" } },
+]

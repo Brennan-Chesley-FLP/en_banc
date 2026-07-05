@@ -1,0 +1,14 @@
+# Special ongoing config needed.
+# No dockets_by_filing_date / dockets_by_updated_date and no speculative entry
+# was found for this scraper, so its ongoing-maintenance strategy needs to be
+# designed by hand. Available entries: dockets_by_argument_date, dockets_by_bulk, dockets_by_posted_date.
+description = "nj_courts — special ongoing config needed"
+work_pool_name = "scraper-pool"
+work_queue_name = "nj_courts"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:nj", "court:njsuperctappdiv"]
+
+[parameters]
+scraper_path = "juriscraper.state.new_jersey.njcourts_gov.scraper:NJCourtsScraper"
+scraper_schema = "nj_courts"
+# seed_params = [ ]  # TODO: define the ongoing-maintenance seed.

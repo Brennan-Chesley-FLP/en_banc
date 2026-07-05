@@ -1,41 +1,48 @@
-# Per-scraper deployment customization
+# Per-scraper deployment definitions
 
-Each JKent scraper gets a Prefect deployment. By default the Pulumi program
-(`infrastructure/__main__.py`) builds it from a computed **skeleton**: the
-deployment is named after the scraper's schema, routed to the `browser-pool` or
-`scraper-pool` by whether it needs a browser, tagged with its transport and
-CourtListener courts, and seeded with the base `scraper_path` / `scraper_schema`
-parameters.
+Each TOML file in this directory is the **complete, explicit definition** of
+one Prefect deployment: the Pulumi program (`infrastructure/__main__.py`)
+creates one deployment, one concurrency-limited work queue, plus any schedules
+and speculative-cursor Variables per file — and nothing else. No file, no
+deployment. Nothing is inferred from the scraper class; routing, tags, and the
+identity parameters are all spelled out in the file.
 
-To customize a deployment, drop a TOML file here named after the scraper's
-**schema** (the same slug used for the deployment name, work queue, and S3
-prefix — e.g. `ca_app.toml`). When present it is **deep-merged over the
-skeleton**: scalar keys the TOML sets win, `parameters` merge key-wise, and
-`tags` are unioned. If no file exists the skeleton is used unchanged.
+To add a scraper, copy
+[`../to_deploy/scraper_deployment_template.toml`](../to_deploy/scraper_deployment_template.toml),
+name it after the scraper's **schema** slug (the same slug used for the
+deployment name, work queue, and S3 prefix — e.g. `ca_app.toml`), and fill it
+out. Drafts wait under `infrastructure/to_deploy/<category>/`; moving a file
+into this directory deploys it on the next `pulumi up`.
 
 The loader lives in [`flows/deployment_config.py`](../../flows/deployment_config.py)
-and is pure/importable; it validates the TOML at `pulumi up` time.
+and is pure/importable; it validates every TOML at `pulumi up` time.
 
 ## Fields
 
-All fields are optional. Structural fields (`flow_id`, `entrypoint`, `path`) are
-always Pulumi-controlled and cannot be set here — a TOML can't repoint a
-deployment at different code. `scraper_path` / `scraper_schema` are always
-re-injected into `parameters`, so a TOML can't run a different scraper than the
-one it's named for.
+Structural fields (`flow_id`, `entrypoint`, `path`) are always
+Pulumi-controlled and cannot be set here — a TOML can't repoint a deployment at
+different code. `parameters.scraper_schema` must equal the filename stem, so a
+copied file can't deploy under the wrong identity.
+
+### Required
+
+| Key | Type | Notes |
+| --- | --- | --- |
+| `work_pool_name` | string | `"browser-pool"` if the scraper needs a live browser (jkent's `needs_browser` predicate), else `"scraper-pool"`. Pulumi rejects anything else. |
+| `work_queue_name` | string | Queue under the pool; by convention the schema slug. |
+| `concurrency_limit` | int | Per-scraper work-queue concurrency. **Keep at 1** if you rely on the finalize step advancing speculative cursors without a monotonic guard. |
+| `tags` | array[string] | By convention `"en-banc"`, `"scraper"`, the transport (`"http"`/`"browser"`), and one `"court:<id>"` per CourtListener court covered. |
+| `[parameters]` | table | Must set `scraper_path` (module:Class import path) and `scraper_schema` (= filename stem). `seed_params` (with `[key]` refs) and other default flow-run parameters go here too. |
+
+### Optional
 
 | Key | Type | Notes |
 | --- | --- | --- |
 | `description` | string | Deployment description (markdown ok). |
 | `version` | string | Deployment version label. |
-| `work_pool_name` | string | Overrides the `needs_browser` routing default. |
-| `work_queue_name` | string | Defaults to the schema; queue lives under the resolved pool. |
-| `concurrency_limit` | int | Per-scraper work-queue concurrency. Defaults to the `scraperConcurrency` Pulumi config. **Keep at 1** if you rely on the finalize step advancing speculative cursors without a monotonic guard. |
 | `enforce_parameter_schema` | bool | Default `true`. |
 | `paused` | bool | Default `false`. |
 | `job_variables` | table | Infrastructure overrides (JSON-encoded for the API). |
-| `tags` | array[string] | Unioned onto the computed `en-banc` / transport / `court:*` tags. |
-| `[parameters]` | table | Default flow-run parameters. This is where `seed_params` (with `[key]` refs) go. |
 | `[[schedules]]` | array of tables | Each becomes one `DeploymentSchedule`. |
 | `[variables.<key>]` | table | Initial cursor for a speculative `[key]` reference (see below). |
 
@@ -69,17 +76,21 @@ makes it a pure advance-window cursor.
 ```toml
 # infrastructure/deployments/ca_app.toml
 description = "CA appellate — daily maintenance scrape"
-tags = ["maintenance"]
+work_pool_name = "browser-pool"
+work_queue_name = "ca_app"
 concurrency_limit = 1
+tags = ["en-banc", "scraper", "browser", "court:calctapp_1st", "court:calctapp_2nd"]
 
 [parameters]
+scraper_path = "juriscraper.state.california.appellatecases_courtinfo_ca_gov.scraper:CaAppScraper"
+scraper_schema = "ca_app"
 seed_params = [
   { dockets_by_number = { docket_number = "[ca_app_scraper__calctapp_1st]" } },
   { dockets_by_number = { docket_number = "[ca_app_scraper__calctapp_2nd]" } },
 ]
 
 [[schedules]]
-cron = "0 6 * * *"
+rrule = "FREQ=DAILY;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
 timezone = "America/Los_Angeles"
 active = true
 

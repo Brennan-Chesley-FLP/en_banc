@@ -1,0 +1,19 @@
+# kentucky_appellate: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "kentucky_appellate — weekly last-7-days maintenance"
+work_pool_name = "scraper-pool"
+work_queue_name = "kentucky_appellate"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:ky", "court:kyctapp"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=TU;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.kentucky.appellatepublic_kycourts_net.scraper:KentuckyAppellateScraper"
+scraper_schema = "kentucky_appellate"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["ky", "kyctapp"], date_range = "-8d" } },
+]

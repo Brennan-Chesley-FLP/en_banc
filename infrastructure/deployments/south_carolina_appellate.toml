@@ -1,0 +1,19 @@
+# south_carolina_appellate: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "south_carolina_appellate — weekly last-7-days maintenance"
+work_pool_name = "scraper-pool"
+work_queue_name = "south_carolina_appellate"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:sc", "court:scctapp"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.south_carolina.ctrack_sccourts_org.scraper:SouthCarolinaAppellateScraper"
+scraper_schema = "south_carolina_appellate"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["sc", "scctapp"], date_range = "-7d" } },
+]

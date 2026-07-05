@@ -1,0 +1,37 @@
+# washington_acdoc_portal: speculative dockets_by_number probing.
+# Cursors seeded from highest observed case numbers per court (source: the
+# dockets_by_number entry docstring seed example in scraper.py; CC_NOTES.md has
+# no highest-observed table). gap = 5 per that same source example.
+description = "washington_acdoc_portal — speculative maintenance (advancing cursors)"
+work_pool_name = "scraper-pool"
+work_queue_name = "washington_acdoc_portal"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:wash", "court:washctapp"]
+
+[[schedules]]
+# Once a week; adjust as needed.
+rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.washington.acdocportal_courts_wa_gov.scraper:WashingtonAcdocPortalScraper"
+scraper_schema = "washington_acdoc_portal"
+seed_params = [
+  { dockets_by_number = { docket_number = "[washington_acdoc_portal_scraper__wash]" } },
+  { dockets_by_number = { docket_number = "[washington_acdoc_portal_scraper__washctapp]" } },
+]
+
+[variables.washington_acdoc_portal_scraper__wash]
+court_id = "wash"
+min = 1048343
+soft_max = 1048343
+gap = 5
+should_advance = true
+
+[variables.washington_acdoc_portal_scraper__washctapp]
+court_id = "washctapp"
+min = 871463
+soft_max = 871463
+gap = 5
+should_advance = true

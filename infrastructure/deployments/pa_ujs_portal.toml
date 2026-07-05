@@ -1,0 +1,19 @@
+# pa_ujs_portal: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "pa_ujs_portal — weekly last-7-days maintenance"
+work_pool_name = "scraper-pool"
+work_queue_name = "pa_ujs_portal"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:pa", "court:pacommwct", "court:pasuperct"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=WE;BYHOUR=20;BYMINUTE=0;BYSECOND=0"
+timezone = "America/New_York"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.pennsylvania.ujsportal_pacourts_us.scraper:PAUjsPortalScraper"
+scraper_schema = "pa_ujs_portal"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["pa", "pacommwct", "pasuperct"], date_range = "-8d" } },
+]

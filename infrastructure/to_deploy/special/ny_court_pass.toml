@@ -1,0 +1,14 @@
+# Special ongoing config needed.
+# No dockets_by_filing_date / dockets_by_updated_date and no speculative entry
+# was found for this scraper, so its ongoing-maintenance strategy needs to be
+# designed by hand. Available entries: docket_by_number, dockets_by_bulk.
+description = "ny_court_pass — special ongoing config needed"
+work_pool_name = "browser-pool"
+work_queue_name = "ny_court_pass"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "browser", "court:ny"]
+
+[parameters]
+scraper_path = "juriscraper.state.new_york.nycourts_gov.scraper:NYCourtPassScraper"
+scraper_schema = "ny_court_pass"
+# seed_params = [ ]  # TODO: define the ongoing-maintenance seed.

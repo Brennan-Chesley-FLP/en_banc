@@ -1,0 +1,19 @@
+# minnesota: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "minnesota — weekly last-7-days maintenance"
+work_pool_name = "browser-pool"
+work_queue_name = "minnesota"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "browser", "court:minn", "court:minnctapp"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.minnesota.macsnc_courts_state_mn_us.scraper:MinnesotaScraper"
+scraper_schema = "minnesota"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["minn", "minnctapp"], date_range = "-8d" } },
+]

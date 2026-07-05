@@ -7,13 +7,13 @@ Provisions:
 * Prefect blocks — an ``aws-credentials`` block pointed at the SeaweedFS
   endpoint, plus an ``s3-bucket`` block per bucket.
 * The ``scraper-run`` flow, plus one deployment and one concurrency-limited
-  work queue per JKent scraper, on one of two in-process work pools:
-  ``browser-pool`` for scrapers that need a live browser (FF_ALIKE /
-  CHROME_ALIKE / JS_EVAL / captcha handlers — see ``scraper_needs_browser``)
-  and ``scraper-pool`` for plain-HTTP scrapers. The per-queue concurrency limit
-  serializes each scraper at the scheduling layer; the browser worker further
-  caps itself to one scrape at a time. The pools themselves are created by the
-  worker containers' entrypoints.
+  work queue per TOML file in ``infrastructure/deployments/`` — each file is
+  the complete definition of one scraper's deployment (see the README there).
+  Deployments run on one of two in-process work pools: ``browser-pool`` for
+  scrapers that need a live browser and ``scraper-pool`` for plain-HTTP
+  scrapers. The per-queue concurrency limit serializes each scraper at the
+  scheduling layer; the browser worker further caps itself to one scrape at a
+  time. The pools themselves are created by the worker containers' entrypoints.
 """
 
 import json
@@ -24,15 +24,12 @@ import pulumi
 import pulumi_aws as aws
 import pulumi_prefect as prefect
 
-# Make the en-banc repo root importable so we can reuse the same scraper
-# discovery / limit-naming the flow uses.
+# Make the en-banc repo root importable so we can reuse the flow's own
+# deployment-definition loader.
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from flows.deployment_config import build_deployment_spec  # noqa: E402
-from flows.scrapers import (  # noqa: E402
-    discover_scraper_paths,
-    scraper_court_ids,
-    scraper_needs_browser,
-    scraper_schema_name,
+from flows.deployment_config import (  # noqa: E402
+    deployment_paths,
+    load_deployment_spec,
 )
 
 # Work pools served by the two worker types. Browser scrapers run on the pool
@@ -48,10 +45,6 @@ HTTP_WORK_POOL = "scraper-pool"
 
 config = pulumi.Config()
 s3_endpoint = config.get("s3Endpoint") or "http://mini.bopp-justice.ts.net:8333"
-# Max simultaneous runs allowed per JKent scraper. Enforced at the scheduling
-# layer via a per-scraper work queue concurrency limit (the server won't
-# dispatch more than this many runs of a given scraper to a worker).
-scraper_concurrency = config.get_int("scraperConcurrency") or 1
 # Provider credentials: used by the AWS provider to create the buckets, so
 # they need an admin-capable SeaweedFS identity (CreateBucket).
 s3_access_key = config.get("s3AccessKey") or "en-banc"
@@ -186,35 +179,27 @@ scraper_run_parameter_schema = json.dumps(
 # Per-scraper deployments + work queues (scheduling-level concurrency)
 # ---------------------------------------------------------------------------
 
-# Each JKent scraper gets its own work queue (concurrency-limited) and a
-# deployment bound to that queue, with scraper_path/scraper_schema baked in as
-# default parameters. Concurrency is enforced when a worker polls for work:
-# the server only hands out runs up to a queue's open slots, so excess runs of
-# a given scraper stay Scheduled instead of occupying a worker job slot — and
-# never head-of-line-block other scrapers whose queues have capacity.
-scraper_paths = discover_scraper_paths()
-pulumi.log.info(f"Discovered {len(scraper_paths)} JKent scraper(s)")
+# Every TOML in infrastructure/deployments/ is one scraper deployment: its own
+# work queue (concurrency-limited) and a deployment bound to that queue, with
+# scraper_path/scraper_schema declared in the file. Concurrency is enforced
+# when a worker polls for work: the server only hands out runs up to a queue's
+# open slots, so excess runs of a given scraper stay Scheduled instead of
+# occupying a worker job slot — and never head-of-line-block other scrapers
+# whose queues have capacity.
+spec_paths = deployment_paths()
+pulumi.log.info(f"Loaded {len(spec_paths)} deployment definition(s)")
 
-for scraper_path in scraper_paths:
-    schema = scraper_schema_name(scraper_path)
+for spec_path in spec_paths:
+    spec = load_deployment_spec(spec_path)
+    schema = spec.name
 
-    # Route browser scrapers to the browser pool (whose worker has a browser
-    # engine and runs one scrape at a time) and the rest to the HTTP pool, so a
-    # browser scraper can never be dispatched to a worker that can't run it.
-    needs_browser = scraper_needs_browser(scraper_path)
-
-    # Build the deployment definition: a computed skeleton (routing, tags, base
-    # params) deep-merged with any infrastructure/deployments/{schema}.toml.
-    # The TOML adds seed_params, schedules, and speculative Variable seeds.
-    spec = build_deployment_spec(
-        scraper_path=scraper_path,
-        schema=schema,
-        needs_browser=needs_browser,
-        court_ids=scraper_court_ids(scraper_path),
-        default_concurrency=scraper_concurrency,
-        browser_pool=BROWSER_WORK_POOL,
-        http_pool=HTTP_WORK_POOL,
-    )
+    # The two pools are the only ones the workers serve; anything else is a
+    # typo that would strand the deployment's runs.
+    if spec.work_pool_name not in (BROWSER_WORK_POOL, HTTP_WORK_POOL):
+        raise ValueError(
+            f"{spec_path.name}: work_pool_name {spec.work_pool_name!r} must be "
+            f"{BROWSER_WORK_POOL!r} or {HTTP_WORK_POOL!r}"
+        )
 
     # A work queue lives under its pool (``/work_pools/{pool}/queues/{name}``),
     # so moving a scraper between the HTTP and browser pools is a *new* queue,

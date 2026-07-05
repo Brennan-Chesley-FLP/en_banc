@@ -1,0 +1,19 @@
+# north_carolina_appellate: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "north_carolina_appellate — weekly last-7-days maintenance"
+work_pool_name = "scraper-pool"
+work_queue_name = "north_carolina_appellate"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:nc", "court:ncctapp"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=TH;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.north_carolina.ncappellatecourts_org.scraper:NorthCarolinaAppellateScraper"
+scraper_schema = "north_carolina_appellate"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["nc", "ncctapp"], date_range = "-8d" } },
+]

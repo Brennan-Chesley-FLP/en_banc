@@ -1,0 +1,65 @@
+# Template for a new scraper deployment. Copy it, name the copy after the
+# scraper's schema slug (e.g. ca_app.toml — the slug names the deployment, the
+# work queue, and the S3 prefix), and fill in every <angle-bracket> value.
+# Draft under infrastructure/to_deploy/<category>/; move the file into
+# infrastructure/deployments/ to deploy it (each file there becomes one Prefect
+# deployment on the next `pulumi up`).
+
+description = "<schema> — <what this deployment does>"
+
+# "browser-pool" if the scraper needs a live browser (FF_ALIKE / CHROME_ALIKE /
+# JS_EVAL / captcha handlers — jkent's needs_browser predicate on the scraper
+# class), else "scraper-pool". Must be one of those two.
+work_pool_name = "scraper-pool"
+
+# The scraper's work queue under that pool; by convention the schema slug.
+work_queue_name = "<schema>"
+
+# Per-scraper scheduling-layer concurrency. Keep at 1 if the deployment
+# advances speculative cursors — the finalize step has no monotonic cross-run
+# guard and relies on runs being serialized.
+concurrency_limit = 1
+
+# By convention: "en-banc", "scraper", the transport ("http" or "browser",
+# matching work_pool_name), and one "court:<id>" per CourtListener court the
+# scraper covers (the class's court_ids attribute).
+tags = ["en-banc", "scraper", "http", "court:<court_id>"]
+
+# --- optional scalars ---------------------------------------------------------
+# version = "<label>"
+# paused = false                    # default
+# enforce_parameter_schema = true   # default
+# [job_variables]                   # worker infrastructure overrides
+
+[parameters]
+# The scraper this deployment runs. scraper_schema must equal the filename stem.
+scraper_path = "<module.path.to.scraper>:<ClassName>"
+scraper_schema = "<schema>"
+# seed_params: list of { entry_point = { kwargs } } tables. A whole-string
+# "[key]" value resolves against the Prefect Variable of that name at seed
+# time; declare each key's initial cursor under [variables.<key>] below.
+# seed_params = [
+#   { dockets_by_filing_date = { court_ids = ["<court_id>"], date_range = "-8d" } },
+#   { dockets_by_number = { docket_number = "[<schema>_scraper__<court_id>]" } },
+# ]
+
+# Each [[schedules]] becomes one DeploymentSchedule. Set exactly one of
+# cron / interval (seconds) / rrule; other allowed keys: timezone, active,
+# slug, anchor_date, day_or, catchup, max_active_runs, max_scheduled_runs,
+# and a per-schedule parameters table.
+# [[schedules]]
+# rrule = "FREQ=WEEKLY;BYDAY=SA;BYHOUR=20;BYMINUTE=0;BYSECOND=0"
+# timezone = "America/Chicago"
+# active = true
+
+# Initial cursor for every "[key]" referenced from seed_params (required —
+# `pulumi up` fails on an undeclared key). Pulumi creates the Variable once
+# (ignore_changes on value); the scrape's finalize step advances it at runtime.
+# Contents are the JSON the speculative range validates from; min == soft_max
+# is the pure advance-window (frontier maintenance) convention.
+# [variables.<schema>_scraper__<court_id>]
+# court_id = "<court_id>"
+# min = 1
+# soft_max = 1
+# gap = 10
+# should_advance = true

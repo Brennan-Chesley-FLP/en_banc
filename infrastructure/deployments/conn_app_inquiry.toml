@@ -1,0 +1,37 @@
+# conn_app_inquiry: speculative dockets_by_internal_id probing (CRN).
+# Cursors seeded from highest observed values (source: scraper.py entry-point
+# docstring and CC_NOTES.md seed example
+# `{"internal_id": {"min": 1, "soft_max": 105336, "gap": 500}}`).
+description = "conn_app_inquiry — speculative maintenance (advancing cursors)"
+work_pool_name = "scraper-pool"
+work_queue_name = "conn_app_inquiry"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:conn", "court:connappct", "court:connsuperct"]
+
+[[schedules]]
+# Once a week; adjust as needed.
+rrule = "FREQ=WEEKLY;BYDAY=FR;BYHOUR=20;BYMINUTE=0;BYSECOND=0"
+timezone = "America/New_York"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.connecticut.appellateinquiry_jud_ct_gov.scraper:ConnAppInquiryScraper"
+scraper_schema = "conn_app_inquiry"
+# SHARED cursor: CaseDetail.aspx?CRN={n} probes an opaque internal CRN that is a
+# SINGLE space shared across both appellate courts (conn + connappct); the court
+# is read from the docket-number prefix (SC -> conn / AC -> connappct) at parse
+# time. connsuperct (trial court) is not addressed by the speculation — it is
+# reached by following the trial-court link off a civil appellate case. The
+# entry takes only its SpeculativeRange (no court_ids), so one shared cursor
+# covers everything.
+seed_params = [
+  { dockets_by_internal_id = { internal_id = "[conn_app_inquiry_scraper]" } },
+]
+
+# Shared cursor — covers conn + connappct (one CRN space; connsuperct reached via
+# trial-court links off civil cases).
+[variables.conn_app_inquiry_scraper]
+min = 107000
+soft_max = 107010 # min == soft_max advance-window cursor (frontier maintenance)
+gap = 500
+should_advance = true

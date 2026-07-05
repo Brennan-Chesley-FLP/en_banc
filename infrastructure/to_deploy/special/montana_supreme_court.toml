@@ -1,0 +1,14 @@
+# Special ongoing config needed.
+# No dockets_by_filing_date / dockets_by_updated_date and no speculative entry
+# was found for this scraper, so its ongoing-maintenance strategy needs to be
+# designed by hand. Available entries: active_dockets_by_filing_date, archived_dockets_by_filing_date, closed_dockets_by_filing_date, docket_by_number.
+description = "montana_supreme_court — special ongoing config needed"
+work_pool_name = "scraper-pool"
+work_queue_name = "montana_supreme_court"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:mont"]
+
+[parameters]
+scraper_path = "juriscraper.state.montana.supremecourtdocket_mt_gov.scraper:MontanaSupremeCourtScraper"
+scraper_schema = "montana_supreme_court"
+# seed_params = [ ]  # TODO: define the ongoing-maintenance seed.

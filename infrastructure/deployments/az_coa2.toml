@@ -1,0 +1,19 @@
+# az_coa2: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "az_coa2 — weekly last-7-days maintenance"
+work_pool_name = "scraper-pool"
+work_queue_name = "az_coa2"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:arizctapp"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=SU;BYHOUR=22;BYMINUTE=0;BYSECOND=0"
+timezone = "America/Phoenix"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.arizona.appeals2_az_gov.scraper:AzCoa2Scraper"
+scraper_schema = "az_coa2"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["arizctapp"], date_range = "-8d" } },
+]

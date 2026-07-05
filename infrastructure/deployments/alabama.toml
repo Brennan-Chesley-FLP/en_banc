@@ -1,0 +1,19 @@
+# alabama: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "alabama — weekly last-8-days maintenance"
+work_pool_name = "scraper-pool"
+work_queue_name = "alabama"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:ala", "court:alacrimapp", "court:alactapp"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=SA;BYHOUR=20;BYMINUTE=0;BYSECOND=0"
+timezone = "America/Chicago"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.alabama.publicportal_alappeals_gov.scraper:AlabamaScraper"
+scraper_schema = "alabama"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["ala", "alacrimapp", "alactapp"], date_range = "-8d" } },
+]

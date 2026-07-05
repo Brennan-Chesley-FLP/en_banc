@@ -1,0 +1,19 @@
+# wyoming: weekly last-7-days maintenance (dockets_by_filing_date).
+description = "wyoming — weekly last-7-days maintenance"
+work_pool_name = "scraper-pool"
+work_queue_name = "wyoming"
+concurrency_limit = 1
+tags = ["en-banc", "scraper", "http", "court:wyo"]
+
+[[schedules]]
+# Once a week; adjust day/time/timezone as needed.
+rrule = "FREQ=WEEKLY;BYDAY=TU;BYHOUR=8;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.wyoming.ctefiling_wyocourts_gov.scraper:WyomingScraper"
+scraper_schema = "wyoming"
+seed_params = [
+  { dockets_by_filing_date = { court_ids = ["wyo"], date_range = "-8d" } },
+]
