@@ -1244,7 +1244,7 @@ wheels = [
 
 [[package]]
 name = "juriscraper"
-version = "3.0.28"
+version = "3.0.26"
 source = { editable = "../juriscraper" }
 dependencies = [
     { name = "certifi" },
@@ -1256,6 +1256,7 @@ dependencies = [
     { name = "geonamescache" },
     { name = "html5lib" },
     { name = "httpx", extra = ["http2"] },
+    { name = "jkent" },
     { name = "lxml" },
     { name = "nh3" },
     { name = "pydantic" },
@@ -1276,6 +1277,7 @@ requires-dist = [
     { name = "geonamescache", specifier = ">=2.0.0" },
     { name = "html5lib" },
     { name = "httpx", extras = ["http2"], specifier = ">=0.28.1" },
+    { name = "jkent", editable = "../jkent" },
     { name = "lxml", specifier = ">=6.1" },
     { name = "nh3" },
     { name = "pydantic", specifier = ">=2.12.5" },
@@ -1287,11 +1289,16 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "courts-db", specifier = ">=0.10.26" },
     { name = "jinja2" },
     { name = "jsondate3-aware" },
     { name = "mypy", specifier = ">=1.19.0" },
     { name = "pytest" },
     { name = "responses", specifier = ">=0.25.8" },
+    { name = "sphinx", specifier = ">=7.4.7" },
+    { name = "sphinx-autobuild", specifier = ">=2024.10.3" },
+    { name = "sphinx-immaterial", specifier = ">=0.13.9" },
+    { name = "sphinxcontrib-mermaid", specifier = ">=2.0.0" },
     { name = "types-lxml", specifier = ">=2025.11.25" },
     { name = "types-python-dateutil", specifier = ">=2.9.0.20251115" },
     { name = "types-requests", specifier = ">=2.32.4.20250913" },

@@ -10,6 +10,7 @@ from __future__ import annotations
 import asyncio
 import contextlib
 import importlib
+import logging
 import os
 import sqlite3
 from pathlib import Path
@@ -23,8 +24,14 @@ from prefect.states import Cancelled, State
 from prefect_aws.s3 import S3Bucket
 
 from flows.archive import is_local_backend, make_archive_handler, move_db_to_archive
-from flows.shutdown import get_shutdown_event
-from workers.telemetry import instrument_run_engine, run_baggage
+from flows.shutdown import get_shutdown_event, install_shutdown_signal_handler
+from workers.telemetry import (
+    init_telemetry,
+    instrument_run_engine,
+    run_baggage,
+    start_loop_monitor,
+    stop_loop_monitor,
+)
 
 # Name of the Prefect S3Bucket block holding scrape DB artifacts.
 SCRAPES_S3_BLOCK_NAME = "scrapes"
@@ -112,6 +119,25 @@ async def _log_stats_periodically(
             e.total,
             stats.throughput.requests_per_minute,
         )
+
+
+def _silence_seaweedfs_header_warnings() -> None:
+    """Drop urllib3's benign "Failed to parse headers" warnings.
+
+    SeaweedFS's S3 gateway formats zero-body responses (PUT acks, empty
+    objects) in a way Python's stricter header parser flags as a
+    ``MissingHeaderBodySeparatorDefect``. urllib3 catches the resulting
+    ``HeaderParsingError`` and logs it as a WARNING, but the request itself
+    succeeds (200 OK) — so the boto3 calls in ``flows.s3_archive`` work
+    correctly. We filter only this specific message rather than raising the
+    logger level, so genuine connection problems still surface.
+    """
+
+    class _HeaderParseFilter(logging.Filter):
+        def filter(self, record: logging.LogRecord) -> bool:
+            return "Failed to parse headers" not in record.getMessage()
+
+    logging.getLogger("urllib3.connection").addFilter(_HeaderParseFilter())
 
 
 def _import_scraper(scraper_path: str) -> type:
@@ -218,10 +244,10 @@ async def run_scraper_task(
     dispatches more than that many runs of a given scraper to a worker. By the
     time this task runs the slot is already held, so it just does the scrape.
 
-    Honors cooperative shutdown: if the process-global shutdown event fires
-    mid-scrape (worker received SIGTERM/SIGINT), the scrape is drained — the
-    in-flight request finishes, JKent finalizes the run as ``interrupted``, and
-    the DB is left consistent and resumable.
+    Honors cooperative shutdown: if the process-local shutdown event fires
+    mid-scrape (the worker entrypoint broadcast SIGUSR1 on container stop),
+    the scrape is drained — the in-flight request finishes, JKent finalizes
+    the run as ``interrupted``, and the DB is left consistent and resumable.
 
     Args:
         scraper_path: Import path, e.g. ``"module.path:ClassName"``.
@@ -296,9 +322,10 @@ async def run_scraper_task(
             # telemetry is disabled.
             instrument_run_engine(run)
 
-            # Race the scrape against the shutdown signal. JKent's signal handlers
-            # no-op off the main thread (the worker runs flows off-main-thread), so
-            # we drive run.stop() ourselves when the process is asked to shut down.
+            # Race the scrape against the shutdown signal (SIGUSR1 from the
+            # worker entrypoint — SIGTERM belongs to prefect.engine's own
+            # termination bridge, so jkent's SIGTERM/SIGINT handlers stay off
+            # and we drive run.stop() ourselves).
             shutdown = get_shutdown_event()
             # Attach the flow-run identity as OTel baggage *before* scheduling the run
             # so its context snapshot carries it; jkent stamps `flow_run_id` on its
@@ -471,6 +498,32 @@ async def scraper_run_flow(
     """
     if not scraper_schema:
         raise ValueError("scraper_schema is required and must be non-empty")
+
+    # This flow runs as its own process (Prefect's process worker spawns one
+    # subprocess per flow run), so per-process setup happens here: install the
+    # OTel providers jkent's API-only instrumentation records against, start
+    # the loop-lag monitor on this loop (the one the scrape actually runs on),
+    # and route SIGUSR1 — broadcast by the worker entrypoint on container
+    # stop — to the cooperative drain. All are no-ops when telemetry is
+    # disabled / the signal can't be installed.
+    flush = init_telemetry()
+    monitor = start_loop_monitor()
+    install_shutdown_signal_handler()
+    _silence_seaweedfs_header_warnings()
+    try:
+        return await _scraper_run(scraper_path, scraper_schema, seed_params)
+    finally:
+        await stop_loop_monitor(monitor)
+        if flush is not None:
+            flush()
+
+
+async def _scraper_run(
+    scraper_path: str,
+    scraper_schema: str,
+    seed_params: list[dict[str, dict[str, Any]]] | None,
+) -> str | State:
+    """The flow body proper — see :func:`scraper_run_flow`."""
     log = get_run_logger()
     db_path = await run_scraper_task(scraper_path, seed_params, scraper_schema)
 

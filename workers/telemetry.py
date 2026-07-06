@@ -8,8 +8,9 @@ lives here — see ``EN_BANC_OTEL.md`` for the full contract.
 Three entry points, all safe to call whether or not OTel is configured:
 
 - :func:`init_telemetry` — build and install the SDK providers + instrumentors at
-  worker (or subprocess) startup; returns a ``flush`` callable for shutdown, or
-  ``None`` when telemetry is disabled.
+  flow start (each flow run is its own ``python -m prefect.engine`` subprocess);
+  returns a ``flush`` callable for teardown, or ``None`` when telemetry is
+  disabled.
 - :func:`start_loop_monitor` / :func:`stop_loop_monitor` — start (and later stop)
   jkent's event-loop lag sampler on the loop that runs scrapes. jkent ships the
   monitor but never starts it; the host must, once per scrape-running loop.
@@ -109,7 +110,6 @@ def init_telemetry() -> Optional[Callable[[], None]]:
             "worker.max_continuation_workers": os.environ.get(
                 "MAX_CONTINUATION_WORKERS", ""
             ),
-            "worker.run_pool": os.environ.get("RUN_POOL", "runloop"),
             "worker.host": socket.gethostname(),
         }
     )

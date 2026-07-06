@@ -9,11 +9,14 @@ Provisions:
 * The ``scraper-run`` flow, plus one deployment and one concurrency-limited
   work queue per TOML file in ``infrastructure/deployments/`` — each file is
   the complete definition of one scraper's deployment (see the README there).
-  Deployments run on one of two in-process work pools: ``browser-pool`` for
+  Deployments run on one of two process-type work pools: ``browser-pool`` for
   scrapers that need a live browser and ``scraper-pool`` for plain-HTTP
-  scrapers. The per-queue concurrency limit serializes each scraper at the
-  scheduling layer; the browser worker further caps itself to one scrape at a
-  time. The pools themselves are created by the worker containers' entrypoints.
+  scrapers. Each flow run executes as its own subprocess in the worker
+  container; a ``set_working_directory`` pull step chdirs it to ``/app`` (the
+  mounted app checkout) so it loads the current flow code. The per-queue
+  concurrency limit serializes each scraper at the scheduling layer; the
+  browser worker further caps itself to one scrape at a time (--limit 1). The
+  pools themselves are created by the worker containers' entrypoints.
 """
 
 import json
@@ -204,13 +207,18 @@ for spec_path in spec_paths:
     # A work queue lives under its pool (``/work_pools/{pool}/queues/{name}``),
     # so moving a scraper between the HTTP and browser pools is a *new* queue,
     # not an in-place edit. Force replacement on a pool change: the provider
-    # otherwise PATCHes the existing queue, which both can't change pools and
-    # trips its priority-defaults-to-0 update bug (the API rejects priority 0).
+    # otherwise PATCHes the existing queue, which can't change pools.
+    #
+    # ``priority`` is set explicitly (any value > 0): on an update the provider
+    # omits an unset priority, and the server coerces the missing field to 0,
+    # which the API then rejects ("priority must be > 0"). Every per-scraper
+    # queue shares priority 1 — they're isolated by concurrency, not ranked.
     queue = prefect.WorkQueue(
         f"queue-{schema}",
         name=spec.work_queue_name,
         work_pool_name=spec.work_pool_name,
         concurrency_limit=spec.concurrency_limit,
+        priority=3,
         opts=pulumi.ResourceOptions(replace_on_changes=["work_pool_name"]),
     )
 
@@ -220,6 +228,17 @@ for spec_path in spec_paths:
         flow_id=scraper_run_flow.id,
         entrypoint="flows/scraper_run.py:scraper_run_flow",
         path="/app",
+        # The flow-run subprocess chdirs to /app (the app checkout mounted
+        # into the worker container) and loads the entrypoint from there.
+        # Without a pull step, prefect.engine would instead *copy* the
+        # deployment path into a per-run temp dir — including the runs volume
+        # living under /app/runs.
+        pull_steps=[
+            prefect.DeploymentPullStepArgs(
+                type="set_working_directory",
+                directory="/app",
+            )
+        ],
         work_pool_name=spec.work_pool_name,
         work_queue_name=queue.name,
         parameters=json.dumps(spec.parameters),

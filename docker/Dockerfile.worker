@@ -1,4 +1,4 @@
-# Worker image: runs JKent scrapes via the in-process Prefect worker.
+# Worker image: runs JKent scrapes via Prefect's stock process worker.
 #
 # Build context is the en_banc repo root (.); juriscraper and jkent are pulled
 # in as named build contexts (they live as sibling repos). docker-compose.yml
@@ -12,46 +12,51 @@
 #
 # (docker buildx uses the same --build-context flags.)
 #
-# Multi-stage: the `builder` stage compiles/installs everything into
-# /usr/local; the final stage copies only that prefix plus the app code. The
-# juriscraper/jkent *source* trees (heavy with test/example assets) and the
-# uv/build tooling stay in the builder and never reach the runtime image.
+# jkent and juriscraper are installed *editable* against /src/jkent and
+# /src/juriscraper, and the app code lives at /app. docker-compose.yml mounts
+# the host checkouts over all three paths, and every flow run is a fresh
+# subprocess (`python -m prefect.engine`) that imports from scratch — so code
+# changes in any of the three repos apply on the *next flow run*, no image
+# rebuild or container restart needed. The baked-in copies only serve runs when
+# the mounts are absent.
+#
+# A rebuild is still required when *dependencies* change (a pyproject gains or
+# bumps a package) or to refresh the browser engine — mounts carry code only.
 #
 # Browser support (camoufox/Firefox, for FF_ALIKE scrapers) is off by default
 # to keep the image lean. Opt in with --build-arg INSTALL_BROWSERS=1:
 #
 #   mise run build-worker -- --build-arg INSTALL_BROWSERS=1
 
-# ---------------------------------------------------------------------------
-# Builder: install Python deps system-wide, then discard sources + tooling.
-# ---------------------------------------------------------------------------
-FROM prefecthq/prefect:3-python3.13 AS builder
+FROM prefecthq/prefect:3-python3.13
 
-RUN pip install --no-cache-dir uv
+# 0 = plain-HTTP scrapers only (lean); 1 = also install the Firefox-alike
+# browser engine for FF_ALIKE scrapers (heavy: pulls a full browser).
+ARG INSTALL_BROWSERS=0
 
-# JKent and juriscraper are installed (non-editable) from the sibling source
-# trees so juriscraper's unconstrained `jkent` dependency resolves to the local
-# source. Stage them under /src; only the installed packages survive into final.
+# curl: the entrypoint polls the Prefect server health endpoint.
+# procps: the entrypoint uses pkill to signal flow-run subprocesses to drain.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends curl procps \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Sibling source trees at the exact paths the compose mounts shadow. jkent goes
+# first so juriscraper's unconstrained `jkent` dependency resolves to it.
 COPY --from=jkent . /src/jkent
 COPY --from=juriscraper . /src/juriscraper
 
-# jkent[operational] (DB engine + HTTP/browser transports), then juriscraper
-# (its `jkent` dep is satisfied by the package just installed), plus the
-# Prefect/S3 runtime deps the worker and flows need. psycopg2-binary bundles
-# its own libpq, so no libpq-dev is required to build or run it.
-#
-# --no-editable is REQUIRED: juriscraper's pyproject declares
-# `[tool.uv.sources] jkent = {path = "../jkent", editable = true}`, so without
-# this uv installs jkent editable pointing at /src/jkent. That source tree only
-# exists in this builder stage, so the editable `.pth` would dangle once the
-# final stage copies /usr/local but not /src — jkent would fail to import at
-# runtime. --no-editable bakes jkent's code into site-packages instead.
-# OpenTelemetry SDK + exporter + instrumentors ship in the image too: jkent
-# depends only on the OTel API and stays no-op until this SDK is present (see
-# EN_BANC_OTEL.md). Kept in sync with pyproject.toml's dependency list.
-RUN uv pip install --system --no-cache --no-editable \
-    "/src/jkent[operational]" \
-    /src/juriscraper \
+# jkent[operational] (DB engine + HTTP/browser transports) and juriscraper,
+# both editable so site-packages points at /src — where the compose mounts put
+# the live host checkouts. (juriscraper's own `[tool.uv.sources]` already pins
+# jkent to `../jkent` editable, which is exactly /src/jkent here.) Plus the
+# Prefect/S3 runtime deps the flows need. psycopg2-binary bundles its own
+# libpq. The OpenTelemetry SDK + exporter + instrumentors ship in the image:
+# jkent depends only on the OTel API and stays no-op until an SDK is installed
+# by the flow process (see EN_BANC_OTEL.md). Kept in sync with pyproject.toml.
+RUN pip install --no-cache-dir uv \
+    && uv pip install --system --no-cache \
+    --editable "/src/jkent[operational]" \
+    --editable /src/juriscraper \
     prefect-aws \
     boto3 \
     psycopg2-binary \
@@ -60,26 +65,7 @@ RUN uv pip install --system --no-cache --no-editable \
     opentelemetry-instrumentation-httpx \
     opentelemetry-instrumentation-sqlalchemy \
     opentelemetry-instrumentation-botocore \
-    opentelemetry-instrumentation-asyncio \
-    && uv pip uninstall --system uv 2>/dev/null || true
-
-# ---------------------------------------------------------------------------
-# Final: clean base + the installed prefix + app code.
-# ---------------------------------------------------------------------------
-FROM prefecthq/prefect:3-python3.13
-
-# 0 = plain-HTTP scrapers only (lean); 1 = also install the Firefox-alike
-# browser engine for FF_ALIKE scrapers (heavy: pulls a full browser).
-ARG INSTALL_BROWSERS=0
-
-# curl is used by the entrypoint to poll the Prefect server health endpoint.
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Bring over everything pip/uv installed in the builder (site-packages +
-# console scripts). Same base + same Python 3.13, so the prefix is compatible.
-COPY --from=builder /usr/local /usr/local
+    opentelemetry-instrumentation-asyncio
 
 # Browser engine for Firefox-alike (FF_ALIKE) scrapers. Skipped unless
 # INSTALL_BROWSERS=1 — it's a heavy layer (full browser download).
@@ -89,9 +75,9 @@ RUN if [ "$INSTALL_BROWSERS" = "1" ]; then \
         echo "Skipping browser install (INSTALL_BROWSERS=$INSTALL_BROWSERS)"; \
     fi
 
-# Application code (flows + the in-process worker) ships in the image; the
-# worker loads flows with ignore_storage=True. Build context is the en_banc
-# repo root, so copy its contents directly (see .dockerignore for exclusions).
+# Application code (the flows). Deployments carry a set_working_directory
+# pull step targeting /app, so each flow-run subprocess chdirs here and loads
+# the entrypoint from this tree (or the compose mount shadowing it).
 COPY . /app
 WORKDIR /app
 RUN chmod +x /app/docker/worker-entrypoint.sh \

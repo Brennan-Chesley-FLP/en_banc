@@ -67,13 +67,13 @@ _ALLOWED_TOP_LEVEL = _REQUIRED_TOP_LEVEL | frozenset(
 
 #: Keys every deployment TOML must set — routing, tags, and identity are all
 #: spelled out explicitly (nothing is inferred from the scraper class).
-_REQUIRED_TOP_LEVEL = (
+_REQUIRED_TOP_LEVEL =set([
     "work_pool_name",
     "work_queue_name",
     "concurrency_limit",
     "tags",
     "parameters",
-)
+])
 
 #: Keys a single ``[[schedules]]`` entry may set — the subset of
 #: ``DeploymentSchedule`` inputs that make sense to declare statically.

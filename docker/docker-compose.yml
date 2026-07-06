@@ -29,7 +29,11 @@ services:
       postgres:
         condition: service_healthy
 
-  # HTTP scraper worker: serves the lean `scraper-pool` (no browser engine).
+  # HTTP scraper worker: serves the lean `scraper-pool` (no browser engine)
+  # with Prefect's stock process worker — one subprocess per flow run. The
+  # host checkouts of the app + jkent + juriscraper are mounted over the paths
+  # their editable installs point at, so code changes apply on the next flow
+  # run without a rebuild (deps changes still need `mise run build-worker`).
   # Built out-of-band — this image needs juriscraper/jkent as additional
   # build contexts, which compose builders (esp. podman -> classic
   # docker-compose) don't reliably support. Build it first with
@@ -37,20 +41,17 @@ services:
   scraper-worker:
     image: en-banc-worker
     restart: unless-stopped
-    # Give in-flight scrapes time to drain gracefully on stop before SIGKILL.
-    # Must exceed WORKER_SHUTDOWN_GRACE_SECONDS (default 110s) in the worker.
+    # Give in-flight scrapes time to drain gracefully on stop before SIGKILL
+    # (the entrypoint SIGUSR1s the flow-run subprocesses, which finish their
+    # in-flight request and finalize their DBs for resume).
     stop_grace_period: 120s
     environment:
       PREFECT_API_URL: http://prefect-server:4200/api
       SCRAPER_RUNS_DIR: /app/runs
       WORKER_POOL_NAME: scraper-pool
-      # Max JKent runs this worker executes at once; start another worker for
-      # more capacity. Override on the host: WORKER_CONCURRENCY=8 docker compose up
+      # Max flow runs this worker executes at once (one subprocess per run).
+      # Override on the host: WORKER_CONCURRENCY=8 docker compose up
       WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-4}
-      # How scrapes are dispatched for concurrency isolation: runloop (default,
-      # shared event loop), thread (own thread+loop each), or process (own
-      # subprocess each). See workers.in_process.resolve_run_pool.
-      RUN_POOL: ${RUN_POOL:-runloop}
       # OpenTelemetry: off by default (jkent's spans/metrics stay no-ops). Enable
       # by pointing at an OTLP collector and clearing the disable flag, e.g.
       # OTEL_SDK_DISABLED=false OTEL_EXPORTER_OTLP_ENDPOINT=http://otel:4317
@@ -62,6 +63,12 @@ services:
       JKENT_OTEL_CONSOLE: ${JKENT_OTEL_CONSOLE:-1}
       MAX_CONTINUATION_WORKERS: ${MAX_CONTINUATION_WORKERS:-10}
     volumes:
+      # Live code: shadow the baked-in copies with the host checkouts. Each
+      # flow run is a fresh subprocess, so it imports whatever is here now.
+      - ..:/app
+      - ../../jkent:/src/jkent
+      - ../../juriscraper:/src/juriscraper
+      # Run DBs stay on a named volume (shadows /app/runs inside the bind).
       - worker_runs:/app/runs
     depends_on:
       - prefect-server
@@ -82,8 +89,7 @@ services:
       # One browser scrape at a time. Not host-overridable: the single-scrape
       # constraint is the whole point of this worker.
       WORKER_CONCURRENCY: 1
-      # Isolation regime + telemetry, same knobs as the HTTP worker.
-      RUN_POOL: ${RUN_POOL:-runloop}
+      # Telemetry, same knobs as the HTTP worker.
       OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-true}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
       OTEL_EXPORTER_OTLP_INSECURE: ${OTEL_EXPORTER_OTLP_INSECURE:-true}
@@ -92,6 +98,9 @@ services:
       JKENT_OTEL_CONSOLE: ${JKENT_OTEL_CONSOLE:-1}
       MAX_CONTINUATION_WORKERS: ${MAX_CONTINUATION_WORKERS:-10}
     volumes:
+      - ..:/app
+      - ../../jkent:/src/jkent
+      - ../../juriscraper:/src/juriscraper
       - browser_worker_runs:/app/runs
     depends_on:
       - prefect-server
