@@ -20,7 +20,7 @@ import prefect.runtime
 from prefect import flow, get_run_logger, task
 from prefect.artifacts import create_markdown_artifact
 from prefect.cache_policies import INPUTS
-from prefect.states import Cancelled, State
+from prefect.states import Cancelled, Failed, State
 from prefect_aws.s3 import S3Bucket
 
 from flows.archive import is_local_backend, make_archive_handler, move_db_to_archive
@@ -177,6 +177,9 @@ def _read_run_summary(db_path: Path) -> dict[str, Any]:
         ``total``: total error count (for log broadcasting)
         ``by_type``: ``{error_type: count}`` (for log broadcasting)
         ``rows``: first 50 error detail rows (for log broadcasting / detail table)
+        ``requests_total``: total request count (failure classification)
+        ``errored_requests``: distinct requests with >=1 error (failure classification)
+        ``archive_error_total``: error rows on archive requests (failure classification)
     Missing tables yield empty aggregates rather than raising.
     """
     conn = sqlite3.connect(str(db_path))
@@ -219,6 +222,28 @@ def _read_run_summary(db_path: Path) -> dict[str, Any]:
                 "GROUP BY r.continuation, e.error_type "
                 "ORDER BY r.continuation, e.error_type"
             ).fetchall()
+
+        # Failure-classification inputs (see _classify_run_failure): how many
+        # requests the run held, how many distinct requests recorded an error,
+        # and how many error rows land on archive (file-download) requests.
+        # ``request_type == 'archive'`` is how the queue stores a
+        # Request(archive=True); all other types are ordinary page requests.
+        requests_total = 0
+        errored_requests = 0
+        archive_error_total = 0
+        if _table_exists(conn, "requests") and _table_exists(conn, "errors"):
+            requests_total = conn.execute(
+                "SELECT COUNT(*) FROM requests"
+            ).fetchone()[0]
+            errored_requests = conn.execute(
+                "SELECT COUNT(DISTINCT request_id) FROM errors "
+                "WHERE request_id IS NOT NULL"
+            ).fetchone()[0]
+            archive_error_total = conn.execute(
+                "SELECT COUNT(*) FROM errors e "
+                "JOIN requests r ON e.request_id = r.id "
+                "WHERE r.request_type = 'archive'"
+            ).fetchone()[0]
     finally:
         conn.close()
     return {
@@ -228,7 +253,63 @@ def _read_run_summary(db_path: Path) -> dict[str, Any]:
         "total": total,
         "by_type": by_type,
         "rows": rows,
+        "requests_total": requests_total,
+        "errored_requests": errored_requests,
+        "archive_error_total": archive_error_total,
     }
+
+
+# Prefect state names for the three run-failure classifications. Each is its own
+# named FAILED state so the failure modes are distinguishable at a glance in the
+# Prefect UI and to any automation keying on the state name.
+FAILURE_ALL_ERRORS = "AllErrors"
+FAILURE_PARTIAL_ERRORS = "PartialErrors"
+FAILURE_ARCHIVE_ERRORS = "ArchiveErrors"
+
+
+def _classify_run_failure(summary: dict[str, Any]) -> tuple[str, str] | None:
+    """Classify a completed run's per-request errors into a failure mode.
+
+    JKent completes a run even when individual requests fail (errors are
+    recorded as ``errors`` rows, not raised), so a "successful" scrape can still
+    have failed work. This turns that into a verdict: ``None`` when the run
+    recorded no errors (a clean success), otherwise ``(state_name, message)`` for
+    the matching failure. The modes, in precedence order:
+
+    - :data:`FAILURE_ARCHIVE_ERRORS`: errors exist, but *every* error is on an
+      ``archive=True`` file-download request (``request_type == 'archive'``) —
+      the scraped pages themselves all succeeded, only file archiving failed.
+    - :data:`FAILURE_ALL_ERRORS`: every request in the run recorded an error.
+    - :data:`FAILURE_PARTIAL_ERRORS`: some (but not all) requests recorded errors.
+    """
+    total_errors = summary["total"]
+    if not total_errors:
+        return None
+
+    requests_total = summary["requests_total"]
+    errored_requests = summary["errored_requests"]
+    archive_error_total = summary["archive_error_total"]
+
+    # Archive-only first: if no error escapes an archive request, the scrape
+    # proper succeeded and only downloads failed — the narrowest, least severe
+    # verdict, so it takes precedence over the all/partial counts.
+    if archive_error_total == total_errors:
+        return (
+            FAILURE_ARCHIVE_ERRORS,
+            f"All {total_errors} error(s) are on archive (file-download) "
+            "requests; scraped pages completed cleanly.",
+        )
+    if requests_total and errored_requests >= requests_total:
+        return (
+            FAILURE_ALL_ERRORS,
+            f"Every request failed: {errored_requests}/{requests_total} "
+            f"request(s) recorded errors ({total_errors} error(s) total).",
+        )
+    return (
+        FAILURE_PARTIAL_ERRORS,
+        f"{errored_requests}/{requests_total} request(s) recorded errors "
+        f"({total_errors} error(s) total).",
+    )
 
 
 @task(log_prints=True, task_run_name="run-scraper-{scraper_schema}")
@@ -492,9 +573,13 @@ async def scraper_run_flow(
         seed_params: JKent ``seed_params``; ``None`` uses default entries.
 
     Returns:
-        S3 URI of the uploaded scrape database, or a ``Cancelled`` state if the
-        scrape was drained for a cooperative shutdown (the DB is preserved on
-        the worker; retry this same flow run to resume it).
+        S3 URI of the uploaded scrape database on a clean run; a ``Cancelled``
+        state if the scrape was drained for a cooperative shutdown (the DB is
+        preserved on the worker; retry this same flow run to resume it); or a
+        named ``Failed`` state (``ArchiveErrors`` / ``AllErrors`` /
+        ``PartialErrors``) when the run recorded per-request errors. The DB is
+        always integrity-checked and archived before a ``Failed`` state is
+        returned (see :func:`_classify_run_failure`).
     """
     if not scraper_schema:
         raise ValueError("scraper_schema is required and must be non-empty")
@@ -569,6 +654,15 @@ async def _scraper_run(
             path.unlink(missing_ok=True)
         except OSError as exc:
             log.warning("Could not remove local scrape file %s: %s", path, exc)
+
+    # Classify per-request errors into a failure verdict. Reached only after the
+    # DB is integrity-checked and archived above, so a failed run's database is
+    # always preserved (S3 or local archive) before the flow is marked Failed.
+    failure = _classify_run_failure(summary)
+    if failure is not None:
+        name, message = failure
+        log.error("Run failed [%s]: %s", name, message)
+        return Failed(message=f"{message} DB archived at {archive_uri}.", name=name)
 
     return archive_uri
 

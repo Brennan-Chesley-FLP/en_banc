@@ -6,7 +6,7 @@ tags = ["en-banc", "scraper", "http", "court:ky", "court:kyctapp"]
 [[schedules]]
 # Once a week; adjust day/time/timezone as needed.
 rrule = "FREQ=WEEKLY;BYDAY=TU;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
-timezone = "UTC"
+timezone = "America/New_York"
 active = true
 
 [parameters]
