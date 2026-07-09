@@ -2,7 +2,6 @@
 description = "pa_ujs_portal — weekly last-7-days maintenance"
 work_pool_name = "scraper-pool"
 work_queue_name = "pa_ujs_portal"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:pa", "court:pacommwct", "court:pasuperct"]
 
 [[schedules]]

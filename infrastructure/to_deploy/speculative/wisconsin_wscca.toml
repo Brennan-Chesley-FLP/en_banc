@@ -6,8 +6,6 @@
 # left as TODO placeholders (min = 1) per the contract fallback.
 description = "wisconsin_wscca — speculative maintenance (advancing cursors)"
 work_pool_name = "browser-pool"
-work_queue_name = "wisconsin_wscca"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:wis", "court:wisctapp"]
 
 [[schedules]]

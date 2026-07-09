@@ -1,8 +1,6 @@
 # missouri_case_net: weekly last-7-days maintenance (dockets_by_filing_date).
 description = "missouri_case_net — weekly last-7-days maintenance"
 work_pool_name = "browser-pool"
-work_queue_name = "missouri_case_net"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:mo", "court:moctapped", "court:moctappsd", "court:moctappwd"]
 
 [[schedules]]

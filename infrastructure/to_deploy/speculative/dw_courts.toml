@@ -6,8 +6,6 @@
 # value in the source and are left as TODO placeholders (min = 1).
 description = "dw_courts — speculative maintenance (advancing cursors)"
 work_pool_name = "browser-pool"
-work_queue_name = "dw_courts"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:wash", "court:washctappdiv1", "court:washctappdiv2", "court:washctappdiv3"]
 
 [[schedules]]

@@ -1,8 +1,6 @@
 # dc_court_of_appeals: weekly last-7-days maintenance (dockets_by_filing_date).
 description = "dc_court_of_appeals — weekly last-8-days maintenance"
 work_pool_name = "scraper-pool"
-work_queue_name = "dc_court_of_appeals"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:dc"]
 
 [[schedules]]

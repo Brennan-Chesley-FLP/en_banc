@@ -11,8 +11,6 @@
 # should confirm exact current highs before enabling.
 description = "new_mexico_case_lookup — speculative maintenance (advancing cursors)"
 work_pool_name = "scraper-pool"
-work_queue_name = "new_mexico_case_lookup"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:nm", "court:nmctapp"]
 
 [[schedules]]

@@ -16,8 +16,6 @@
 # these ceilings aren't skipped.
 description = "georgia_court_of_appeals — speculative maintenance (advancing cursors)"
 work_pool_name = "scraper-pool"
-work_queue_name = "georgia_court_of_appeals"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:gactapp"]
 
 [[schedules]]

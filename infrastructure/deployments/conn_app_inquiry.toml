@@ -4,8 +4,6 @@
 # `{"internal_id": {"min": 1, "soft_max": 105336, "gap": 500}}`).
 description = "conn_app_inquiry — speculative maintenance (advancing cursors)"
 work_pool_name = "scraper-pool"
-work_queue_name = "conn_app_inquiry"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:conn", "court:connappct", "court:connsuperct"]
 
 [[schedules]]

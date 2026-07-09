@@ -4,8 +4,6 @@
 # designed by hand. Available entries: docket_by_number, dockets_by_bulk.
 description = "ny_court_pass — special ongoing config needed"
 work_pool_name = "browser-pool"
-work_queue_name = "ny_court_pass"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:ny"]
 
 [[schedules]]

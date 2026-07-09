@@ -3,8 +3,6 @@
 # CC_NOTES.md — "Sequences in the wild run 1 -> ~5000"; recommended seed gap=50).
 description = "tennessee_public_case_history — speculative maintenance (advancing cursors)"
 work_pool_name = "scraper-pool"
-work_queue_name = "tennessee_public_case_history"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:tenn", "court:tenncrimapp", "court:tennctapp"]
 
 [[schedules]]

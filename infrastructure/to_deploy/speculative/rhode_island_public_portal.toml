@@ -4,8 +4,6 @@
 # and could not be reached during recon, so no highest-observed value exists).
 description = "rhode_island_public_portal — speculative maintenance (advancing cursors)"
 work_pool_name = "browser-pool"
-work_queue_name = "rhode_island_public_portal"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:ri"]
 
 [[schedules]]

@@ -1,8 +1,6 @@
 # texas_tames: weekly last-7-days maintenance (dockets_by_filing_date).
 description = "texas_tames — weekly last-7-days maintenance"
 work_pool_name = "scraper-pool"
-work_queue_name = "texas_tames"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:tex", "court:texapp", "court:texcrimapp"]
 
 [[schedules]]

@@ -239,10 +239,10 @@ async def run_scraper_task(
 ) -> Path | None:
     """Run a JKent scraper, streaming file downloads to the files bucket.
 
-    Per-scraper concurrency is enforced at the scheduling layer: each scraper
-    has its own work queue with a concurrency limit, so the server never
-    dispatches more than that many runs of a given scraper to a worker. By the
-    time this task runs the slot is already held, so it just does the scrape.
+    Per-scraper concurrency is enforced at the scheduling layer: each
+    deployment carries its own concurrency limit, so the server never dispatches
+    more than that many runs of a given scraper to a worker. By the time this
+    task runs the slot is already held, so it just does the scrape.
 
     Honors cooperative shutdown: if the process-local shutdown event fires
     mid-scrape (the worker entrypoint broadcast SIGUSR1 on container stop),

@@ -1,8 +1,6 @@
 # minnesota: weekly last-7-days maintenance (dockets_by_filing_date).
 description = "minnesota — weekly last-7-days maintenance"
 work_pool_name = "browser-pool"
-work_queue_name = "minnesota"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:minn", "court:minnctapp"]
 
 [[schedules]]

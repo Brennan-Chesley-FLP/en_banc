@@ -7,8 +7,6 @@
 # and the module docstring stating a single shared csIID sequence).
 description = "nevada — speculative maintenance (advancing cursors)"
 work_pool_name = "scraper-pool"
-work_queue_name = "nevada"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:nev", "court:nevapp"]
 
 [[schedules]]

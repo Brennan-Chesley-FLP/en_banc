@@ -5,8 +5,6 @@
 # was 100 for every court, 2026-04-03).
 description = "ca_app — speculative maintenance (advancing cursors)"
 work_pool_name = "browser-pool"
-work_queue_name = "ca_app"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:cal", "court:calctapp_1st", "court:calctapp_2nd", "court:calctapp_3rd", "court:calctapp_4th_div1", "court:calctapp_4th_div2", "court:calctapp_4th_div3", "court:calctapp_5th", "court:calctapp_6th"]
 
 [[schedules]]
@@ -34,61 +32,61 @@ seed_params = [
 court_id = "cal"
 min = 295928
 soft_max = 295928
-gap = 100
+gap = 10
 should_advance = true
 
 [variables.ca_app_scraper__calctapp_1st]
 court_id = "calctapp_1st"
 min = 175975
 soft_max = 175975
-gap = 100
+gap = 10
 should_advance = true
 
 [variables.ca_app_scraper__calctapp_2nd]
 court_id = "calctapp_2nd"
 min = 343601
 soft_max = 343601
-gap = 100
+gap = 10
 should_advance = true
 
 [variables.ca_app_scraper__calctapp_3rd]
 court_id = "calctapp_3rd"
-min = 102353
-soft_max = 102353
-gap = 100
+min = 106695
+soft_max = 106696
+gap = 10
 should_advance = true
 
 [variables.ca_app_scraper__calctapp_4th_div1]
 court_id = "calctapp_4th_div1"
 min = 87818
-soft_max = 87818
-gap = 100
+soft_max = 87819
+gap = 10
 should_advance = true
 
 [variables.ca_app_scraper__calctapp_4th_div2]
 court_id = "calctapp_4th_div2"
 min = 88098
 soft_max = 88098
-gap = 100
+gap = 10
 should_advance = true
 
 [variables.ca_app_scraper__calctapp_4th_div3]
 court_id = "calctapp_4th_div3"
 min = 66312
 soft_max = 66312
-gap = 100
+gap = 10
 should_advance = true
 
 [variables.ca_app_scraper__calctapp_5th]
 court_id = "calctapp_5th"
 min = 91244
 soft_max = 91244
-gap = 100
+gap = 10
 should_advance = true
 
 [variables.ca_app_scraper__calctapp_6th]
 court_id = "calctapp_6th"
 min = 53901
 soft_max = 53901
-gap = 100
+gap = 10
 should_advance = true

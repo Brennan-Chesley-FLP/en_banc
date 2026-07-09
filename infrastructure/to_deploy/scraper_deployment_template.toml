@@ -1,6 +1,6 @@
 # Template for a new scraper deployment. Copy it, name the copy after the
-# scraper's schema slug (e.g. ca_app.toml — the slug names the deployment, the
-# work queue, and the S3 prefix), and fill in every <angle-bracket> value.
+# scraper's schema slug (e.g. ca_app.toml — the slug names the deployment and
+# the S3 prefix), and fill in every <angle-bracket> value.
 # Draft under infrastructure/to_deploy/<category>/; move the file into
 # infrastructure/deployments/ to deploy it (each file there becomes one Prefect
 # deployment on the next `pulumi up`).
@@ -12,13 +12,19 @@ description = "<schema> — <what this deployment does>"
 # class), else "scraper-pool". Must be one of those two.
 work_pool_name = "scraper-pool"
 
-# The scraper's work queue under that pool; by convention the schema slug.
-work_queue_name = "<schema>"
+# --- lane + concurrency (both optional) ---------------------------------------
+# work_queue_name: which shared priority lane this deployment lands on. Defaults
+# to "ongoing" (weekly maintenance). Other lanes: "high-priority", "backfill",
+# and — scraper-pool only — the dedicated "pa_ujs_portal" /
+# "south_carolina_appellate". Pulumi rejects a lane the pool doesn't serve.
+# Leave it unset for a normal maintenance scrape.
+# work_queue_name = "ongoing"
 
-# Per-scraper scheduling-layer concurrency. Keep at 1 if the deployment
-# advances speculative cursors — the finalize step has no monotonic cross-run
-# guard and relies on runs being serialized.
-concurrency_limit = 1
+# concurrency_limit: per-deployment scheduling-layer concurrency. Defaults to 1,
+# which serializes this scraper's runs (excess runs enqueue and wait). Keep it 1
+# if the deployment advances speculative cursors — the finalize step has no
+# monotonic cross-run guard and relies on runs being serialized.
+# concurrency_limit = 1
 
 # By convention: "en-banc", "scraper", the transport ("http" or "browser",
 # matching work_pool_name), and one "court:<id>" per CourtListener court the

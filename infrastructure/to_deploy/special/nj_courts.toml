@@ -4,8 +4,6 @@
 # designed by hand. Available entries: dockets_by_argument_date, dockets_by_bulk, dockets_by_posted_date.
 description = "nj_courts — special ongoing config needed"
 work_pool_name = "scraper-pool"
-work_queue_name = "nj_courts"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:nj", "court:njsuperctappdiv"]
 
 [parameters]

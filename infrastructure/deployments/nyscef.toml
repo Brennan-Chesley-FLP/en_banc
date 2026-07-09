@@ -1,8 +1,6 @@
 # nyscef: weekly last-7-days maintenance (dockets_by_filing_date).
 description = "nyscef — weekly last-7-days maintenance"
 work_pool_name = "browser-pool"
-work_queue_name = "nyscef"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:nyappd1", "court:nyappd2", "court:nyappd3", "court:nyappd4", "court:nysctcl"]
 
 [[schedules]]

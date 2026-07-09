@@ -4,8 +4,6 @@
 # no highest-observed table). gap = 5 per that same source example.
 description = "washington_acdoc_portal — speculative maintenance (advancing cursors)"
 work_pool_name = "scraper-pool"
-work_queue_name = "washington_acdoc_portal"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:wash", "court:washctapp"]
 
 [[schedules]]

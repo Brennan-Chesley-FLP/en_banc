@@ -4,8 +4,6 @@
 # designed by hand. Available entries: briefs_by_hearing_date.
 description = "washington_briefs — special ongoing config needed"
 work_pool_name = "scraper-pool"
-work_queue_name = "washington_briefs"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:wash", "court:washctappdiv1", "court:washctappdiv2", "court:washctappdiv3"]
 
 [parameters]

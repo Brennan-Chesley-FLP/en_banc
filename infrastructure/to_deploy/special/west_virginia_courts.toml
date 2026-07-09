@@ -4,8 +4,6 @@
 # designed by hand. Available entries: docket_by_number, dockets_by_argument_date.
 description = "west_virginia_courts — special ongoing config needed"
 work_pool_name = "scraper-pool"
-work_queue_name = "west_virginia_courts"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:wva", "court:wvactapp"]
 
 [parameters]

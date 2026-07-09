@@ -29,11 +29,43 @@ services:
       postgres:
         condition: service_healthy
 
-  # HTTP scraper worker: serves the lean `scraper-pool` (no browser engine)
-  # with Prefect's stock process worker — one subprocess per flow run. The
-  # host checkouts of the app + jkent + juriscraper are mounted over the paths
-  # their editable installs point at, so code changes apply on the next flow
-  # run without a rebuild (deps changes still need `mise run build-worker`).
+
+  # Tailscale sidecar: owns a network namespace that the scraper and browser
+  # workers join (network_mode: service:ts-sidecar), so ALL of their egress
+  # leaves through the selected Tailscale exit node. Only these workers route
+  # this way — postgres/prefect-server are untouched.
+  #
+  # Kernel networking (TUN) is required: userspace mode only exposes a SOCKS5
+  # proxy, not transparent default-route egress for the shared netns. Hence
+  # NET_ADMIN + /dev/net/tun + TS_USERSPACE=false. --exit-node-allow-lan-access
+  # keeps the local docker network (RFC1918) directly reachable so the workers
+  # can still talk to prefect-server; without it that traffic would be forced
+  # through the exit node too and break.
+  #
+  # Switch exit nodes by changing TS_EXIT_NODE and recreating just this service:
+  #   TS_EXIT_NODE=egress.tailXXXX.ts.net docker compose up -d ts-sidecar
+  ts-sidecar:
+    image: tailscale/tailscale:latest
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    environment:
+      TS_AUTHKEY: ${TS_AUTHKEY:?set TS_AUTHKEY to a Tailscale auth key for the sidecar}
+      TS_HOSTNAME: en-banc-egress
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_USERSPACE: "false"
+      TS_EXTRA_ARGS: --exit-node=${TS_EXIT_NODE:?set TS_EXIT_NODE, e.g. egress.tailXXXX.ts.net} --exit-node-allow-lan-access
+    volumes:
+      - tailscale_state:/var/lib/tailscale
+    healthcheck:
+      test: ["CMD", "tailscale", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+
+  # HTTP scraper worker: serves the lean `scraper-pool` (no browser engine).
   # Built out-of-band — this image needs juriscraper/jkent as additional
   # build contexts, which compose builders (esp. podman -> classic
   # docker-compose) don't reliably support. Build it first with
@@ -45,6 +77,8 @@ services:
     # (the entrypoint SIGUSR1s the flow-run subprocesses, which finish their
     # in-flight request and finalize their DBs for resume).
     stop_grace_period: 120s
+    # Share the Tailscale sidecar's netns: all egress exits via the exit node.
+    network_mode: "service:ts-sidecar"
     environment:
       PREFECT_API_URL: http://prefect-server:4200/api
       SCRAPER_RUNS_DIR: /app/runs
@@ -71,7 +105,10 @@ services:
       # Run DBs stay on a named volume (shadows /app/runs inside the bind).
       - worker_runs:/app/runs
     depends_on:
-      - prefect-server
+      prefect-server:
+        condition: service_started
+      ts-sidecar:
+        condition: service_healthy
 
   # Browser scraper worker: serves `browser-pool` and runs scrapers that need a
   # live browser (FF_ALIKE/CHROME_ALIKE/JS_EVAL/captcha handlers). Uses the
@@ -82,6 +119,8 @@ services:
     image: en-banc-worker-browser
     restart: unless-stopped
     stop_grace_period: 120s
+    # Share the Tailscale sidecar's netns: all egress exits via the exit node.
+    network_mode: "service:ts-sidecar"
     environment:
       PREFECT_API_URL: http://prefect-server:4200/api
       SCRAPER_RUNS_DIR: /app/runs
@@ -103,9 +142,13 @@ services:
       - ../../juriscraper:/src/juriscraper
       - browser_worker_runs:/app/runs
     depends_on:
-      - prefect-server
+      prefect-server:
+        condition: service_started
+      ts-sidecar:
+        condition: service_healthy
 
 volumes:
   postgres_data:
   worker_runs:
   browser_worker_runs:
+  tailscale_state:

@@ -1,14 +1,12 @@
 # nevada_acis: weekly last-7-days maintenance (dockets_by_filing_date).
 description = "nevada_acis — weekly last-7-days maintenance"
 work_pool_name = "scraper-pool"
-work_queue_name = "nevada_acis"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:nev", "court:nevapp"]
 
 [[schedules]]
 # Once a week; adjust day/time/timezone as needed.
 rrule = "FREQ=WEEKLY;BYDAY=WE;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
-timezone = "UTC"
+timezone = "America/Los_Angeles"
 active = true
 
 [parameters]

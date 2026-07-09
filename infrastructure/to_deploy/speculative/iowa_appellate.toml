@@ -4,8 +4,6 @@
 # seed gap=20).
 description = "iowa_appellate — speculative maintenance (advancing cursors)"
 work_pool_name = "browser-pool"
-work_queue_name = "iowa_appellate"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:iowa", "court:iowactapp"]
 
 [[schedules]]

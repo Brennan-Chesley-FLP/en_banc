@@ -4,8 +4,6 @@
 # dockets_by_number docstring seeds soft_max~=600, gap=25 for 2026).
 description = "ohio_supreme_court — speculative maintenance (advancing cursors)"
 work_pool_name = "scraper-pool"
-work_queue_name = "ohio_supreme_court"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:ohio"]
 
 [[schedules]]

@@ -4,8 +4,6 @@
 # designed by hand. Available entries: active_dockets_by_filing_date, archived_dockets_by_filing_date, closed_dockets_by_filing_date, docket_by_number.
 description = "montana_supreme_court — special ongoing config needed"
 work_pool_name = "scraper-pool"
-work_queue_name = "montana_supreme_court"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:mont"]
 
 [parameters]

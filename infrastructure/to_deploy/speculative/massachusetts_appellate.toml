@@ -18,8 +18,6 @@
 # should confirm exact current highs before enabling.
 description = "massachusetts_appellate — speculative maintenance (advancing cursors)"
 work_pool_name = "browser-pool"
-work_queue_name = "massachusetts_appellate"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:mass", "court:massappct"]
 
 [[schedules]]

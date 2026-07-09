@@ -18,8 +18,6 @@
 # actual highest observed 2026 sequence per prefix before deploy.
 description = "maryland_judiciary_case_search — speculative maintenance (advancing cursors)"
 work_pool_name = "browser-pool"
-work_queue_name = "maryland_judiciary_case_search"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "browser", "court:md", "court:mdctspecapp"]
 
 [[schedules]]

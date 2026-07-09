@@ -1,18 +1,12 @@
-# Special ongoing config needed.
-# No dockets_by_filing_date / dockets_by_updated_date and no speculative entry
-# was found for this scraper, so its ongoing-maintenance strategy needs to be
-# designed by hand. Available entries: get_dockets_by_date.
 description = "arkansas_appellate — special ongoing config needed"
 work_pool_name = "scraper-pool"
-work_queue_name = "arkansas_appellate"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:ark", "court:arkctapp"]
 
 
 [[schedules]]
 # Once a week; adjust day/time/timezone as needed.
 rrule = "FREQ=WEEKLY;BYDAY=TH;BYHOUR=10;BYMINUTE=0;BYSECOND=0"
-timezone = "UTC"
+timezone = "America/Chicago"
 active = true
 
 

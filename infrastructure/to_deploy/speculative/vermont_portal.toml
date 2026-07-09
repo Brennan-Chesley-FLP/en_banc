@@ -4,8 +4,6 @@
 # number documented). No source gap override, so the gap=10 default is used.
 description = "vermont_portal — speculative maintenance (advancing cursors)"
 work_pool_name = "scraper-pool"
-work_queue_name = "vermont_portal"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:vt"]
 
 [[schedules]]

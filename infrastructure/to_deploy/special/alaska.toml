@@ -6,8 +6,6 @@
 # seeds and MUST be verified — see the # TODO comments on each cursor.
 description = "alaska — speculative maintenance (advancing cursors)"
 work_pool_name = "scraper-pool"
-work_queue_name = "alaska"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:ak", "court:akctapp"]
 
 [[schedules]]

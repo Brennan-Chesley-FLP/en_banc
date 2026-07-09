@@ -1,8 +1,6 @@
 # alabama: weekly last-7-days maintenance (dockets_by_filing_date).
 description = "alabama — weekly last-8-days maintenance"
 work_pool_name = "scraper-pool"
-work_queue_name = "alabama"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:ala", "court:alacrimapp", "court:alactapp"]
 
 [[schedules]]

@@ -4,9 +4,14 @@ Each TOML in ``infrastructure/deployments/`` is the *complete* definition of one
 Prefect deployment — nothing is inferred from the scraper class. The Pulumi
 program (``infrastructure/__main__.py``) enumerates them with
 :func:`deployment_paths` and turns each into resources via
-:func:`load_deployment_spec`: one deployment, one concurrency-limited work
-queue, plus any ``[[schedules]]`` and speculative-cursor ``[variables.<key>]``
-the file declares. No file, no deployment.
+:func:`load_deployment_spec`: one deployment (with its own concurrency limit),
+plus any ``[[schedules]]`` and speculative-cursor ``[variables.<key>]`` the file
+declares. No file, no deployment.
+
+Work queues are no longer per-scraper: each pool has a fixed set of shared
+priority lanes (``POOL_QUEUES`` in the Pulumi program). A deployment picks a
+lane via ``work_queue_name`` (default :data:`DEFAULT_WORK_QUEUE`); concurrency
+is enforced on the deployment itself, not the lane.
 
 The TOML mirrors the subset of Prefect's deployment schema that the
 ``pulumi_prefect`` provider can set, plus two conveniences:
@@ -39,14 +44,25 @@ from typing import Any
 #: relative to the repo root (this module lives in ``flows/``).
 DEPLOYMENTS_DIR = Path(__file__).resolve().parent.parent / "infrastructure" / "deployments"
 
-#: Top-level keys every deployment TOML must set. Structural fields
+#: The work queue a deployment lands on when it doesn't name one — the shared
+#: maintenance lane. Must be a queue every pool defines (see ``POOL_QUEUES`` in
+#: the Pulumi program). Most deployments are recurring maintenance scrapes, so
+#: the common case sets neither ``work_queue_name`` nor ``concurrency_limit``.
+DEFAULT_WORK_QUEUE = "ongoing"
+
+#: Per-deployment concurrency when the TOML doesn't set one. A limit of 1
+#: serializes a scraper's runs, which the speculative-cursor finalize step
+#: relies on (no monotonic cross-run guard).
+DEFAULT_CONCURRENCY_LIMIT = 1
+
+#: Top-level keys every deployment TOML must set. Routing beyond the pool
+#: (``work_queue_name``) and ``concurrency_limit`` are optional now — they
+#: default to the shared ``ongoing`` lane and a limit of 1. Structural fields
 #: (``flow_id``, ``entrypoint``, ``path``) are always Pulumi-controlled and are
 #: intentionally absent — a TOML cannot repoint the deployment at different code.
 _REQUIRED_TOP_LEVEL = frozenset(
     {
         "work_pool_name",
-        "work_queue_name",
-        "concurrency_limit",
         "tags",
         "parameters",
     }
@@ -55,6 +71,8 @@ _REQUIRED_TOP_LEVEL = frozenset(
 #: Top-level keys a deployment TOML may set.
 _ALLOWED_TOP_LEVEL = _REQUIRED_TOP_LEVEL | frozenset(
     {
+        "work_queue_name",
+        "concurrency_limit",
         "description",
         "version",
         "job_variables",
@@ -64,16 +82,6 @@ _ALLOWED_TOP_LEVEL = _REQUIRED_TOP_LEVEL | frozenset(
         "variables",
     }
 )
-
-#: Keys every deployment TOML must set — routing, tags, and identity are all
-#: spelled out explicitly (nothing is inferred from the scraper class).
-_REQUIRED_TOP_LEVEL =set([
-    "work_pool_name",
-    "work_queue_name",
-    "concurrency_limit",
-    "tags",
-    "parameters",
-])
 
 #: Keys a single ``[[schedules]]`` entry may set — the subset of
 #: ``DeploymentSchedule`` inputs that make sense to declare statically.
@@ -115,10 +123,10 @@ class DeploymentSpec:
 
     name: str
     work_pool_name: str
-    work_queue_name: str
-    concurrency_limit: int
     tags: list[str]
     parameters: dict[str, Any]
+    work_queue_name: str = DEFAULT_WORK_QUEUE
+    concurrency_limit: int = DEFAULT_CONCURRENCY_LIMIT
     enforce_parameter_schema: bool = True
     paused: bool = False
     description: str | None = None
@@ -173,8 +181,8 @@ def load_deployment_spec(path: Path) -> DeploymentSpec:
     return DeploymentSpec(
         name=schema,
         work_pool_name=data["work_pool_name"],
-        work_queue_name=data["work_queue_name"],
-        concurrency_limit=int(data["concurrency_limit"]),
+        work_queue_name=data.get("work_queue_name", DEFAULT_WORK_QUEUE),
+        concurrency_limit=int(data.get("concurrency_limit", DEFAULT_CONCURRENCY_LIMIT)),
         tags=list(data["tags"]),
         parameters=parameters,
         enforce_parameter_schema=bool(data.get("enforce_parameter_schema", True)),

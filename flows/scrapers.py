@@ -22,9 +22,10 @@ def scraper_schema_name(scraper_path: str) -> str:
 
     Derived from the class name with any trailing ``Scraper`` removed and the
     remainder converted to ``snake_case`` (e.g. ``ArkansasAppellateScraper`` ->
-    ``arkansas_appellate``). Used as the S3 key prefix, the deployment name, and
-    the work-queue name, so all three always agree — a deployment TOML's
-    filename and ``scraper_schema`` parameter must both be this slug.
+    ``arkansas_appellate``). Used as the S3 key prefix and the deployment name,
+    so both always agree — a deployment TOML's filename and ``scraper_schema``
+    parameter must both be this slug. (Work queues are shared priority lanes, no
+    longer per-scraper.)
 
     Args:
         scraper_path: ``"module.path:ClassName"`` import path (the same value

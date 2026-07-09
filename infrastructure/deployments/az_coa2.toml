@@ -1,8 +1,6 @@
 # az_coa2: weekly last-7-days maintenance (dockets_by_filing_date).
 description = "az_coa2 — weekly last-7-days maintenance"
 work_pool_name = "scraper-pool"
-work_queue_name = "az_coa2"
-concurrency_limit = 1
 tags = ["en-banc", "scraper", "http", "court:arizctapp"]
 
 [[schedules]]
