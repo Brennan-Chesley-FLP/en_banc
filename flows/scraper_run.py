@@ -48,16 +48,25 @@ STATS_LOG_INTERVAL_SECONDS = 300
 DEFAULT_MAX_CONTINUATION_WORKERS = 10
 
 
-def resolve_max_continuation_workers() -> int:
-    """Return the per-run continuation-worker cap from ``MAX_CONTINUATION_WORKERS``.
+def resolve_max_continuation_workers(override: int | None = None) -> int:
+    """Return the per-run continuation-worker cap.
 
-    Defaults to :data:`DEFAULT_MAX_CONTINUATION_WORKERS`. Both the scraper worker
-    and the browser worker run this flow and read the same env var, so one
-    setting dials the pool for whichever worker runs the scrape.
+    Precedence: an explicit ``override`` (the flow's ``max_workers`` param, which
+    a deployment TOML can set) wins; otherwise the ``MAX_CONTINUATION_WORKERS``
+    env var; otherwise :data:`DEFAULT_MAX_CONTINUATION_WORKERS`. Both the scraper
+    worker and the browser worker run this flow and read the same env var, so one
+    setting dials the pool for whichever worker runs the scrape — while a single
+    deployment can still override it per-scraper via its ``max_workers`` param.
 
     Raises:
-        ValueError: If set to a non-integer or a value below 1.
+        ValueError: If the override is below 1, or the env var is set to a
+            non-integer or a value below 1.
     """
+    if override is not None:
+        if override < 1:
+            raise ValueError(f"max_workers must be >= 1, got {override}")
+        return override
+
     raw = os.environ.get(
         "MAX_CONTINUATION_WORKERS", str(DEFAULT_MAX_CONTINUATION_WORKERS)
     ).strip()
@@ -317,6 +326,7 @@ async def run_scraper_task(
     scraper_path: str,
     seed_params: list[dict[str, dict[str, Any]]] | None,
     scraper_schema: str,
+    max_workers: int | None = None,
 ) -> Path | None:
     """Run a JKent scraper, streaming file downloads to the files bucket.
 
@@ -335,6 +345,9 @@ async def run_scraper_task(
         seed_params: JKent ``seed_params`` (``[{entry: kwargs}]``); ``None``
             uses the scraper's default entry points.
         scraper_schema: Schema name, used for S3 key prefixes.
+        max_workers: Per-run continuation-worker cap. ``None`` falls back to the
+            ``MAX_CONTINUATION_WORKERS`` env var / default (see
+            :func:`resolve_max_continuation_workers`).
 
     Returns:
         Path to the resulting SQLite database, or ``None`` if the scrape was
@@ -370,10 +383,10 @@ async def run_scraper_task(
         prefix=f"{scraper_schema}/"
     )
 
-    max_workers = resolve_max_continuation_workers()
+    resolved_workers = resolve_max_continuation_workers(max_workers)
     log.info(
         "Commencing scrape: %s (max_continuation_workers=%d)",
-        scraper_path, max_workers,
+        scraper_path, resolved_workers,
     )
 
     # Resolve the seed's ``[key]`` speculative-cursor references against Prefect
@@ -395,7 +408,7 @@ async def run_scraper_task(
             seed_params=seed_params,
             archive_handler=archive_handler,
             resume=True,
-            max_workers=max_workers,
+            max_workers=resolved_workers,
             setup_signal_handlers=False,
         ) as run:
             # Bind the SQLAlchemy instrumentor to this run's per-run engine so its DB
@@ -547,8 +560,7 @@ async def advance_cursors_task(
     For each ``[key]`` reference the run's seed_params consumed, bump the backing
     Prefect Variable to the next start position so the next scheduled run resumes
     just past this run's highest successful ID (see
-    :func:`flows.speculative.advance_speculative_cursors`). Uses a fresh scraper
-    instance because the probe re-seed populates ``_speculation_templates``.
+    :func:`flows.speculative.advance_speculative_cursors`).
     Best-effort: failures are logged, never fatal to the run.
     """
     from flows.speculative import advance_speculative_cursors
@@ -563,6 +575,7 @@ async def scraper_run_flow(
     scraper_path: str,
     scraper_schema: str,
     seed_params: list[dict[str, dict[str, Any]]] | None = None,
+    max_workers: int | None = None,
 ) -> str | State:
     """Run a JKent scrape and archive its database.
 
@@ -571,6 +584,10 @@ async def scraper_run_flow(
         scraper_schema: Schema/source name used as the S3 key prefix and in
             artifacts (e.g. ``"ala_publicportal"``). Required and non-empty.
         seed_params: JKent ``seed_params``; ``None`` uses default entries.
+        max_workers: Override for the per-run continuation-worker cap. ``None``
+            falls back to the ``MAX_CONTINUATION_WORKERS`` env var / default.
+            Set it in a deployment's ``[parameters]`` to dial one scraper's
+            pool without touching the shared env var.
 
     Returns:
         S3 URI of the uploaded scrape database on a clean run; a ``Cancelled``
@@ -596,7 +613,7 @@ async def scraper_run_flow(
     install_shutdown_signal_handler()
     _silence_seaweedfs_header_warnings()
     try:
-        return await _scraper_run(scraper_path, scraper_schema, seed_params)
+        return await _scraper_run(scraper_path, scraper_schema, seed_params, max_workers)
     finally:
         await stop_loop_monitor(monitor)
         if flush is not None:
@@ -607,10 +624,13 @@ async def _scraper_run(
     scraper_path: str,
     scraper_schema: str,
     seed_params: list[dict[str, dict[str, Any]]] | None,
+    max_workers: int | None = None,
 ) -> str | State:
     """The flow body proper — see :func:`scraper_run_flow`."""
     log = get_run_logger()
-    db_path = await run_scraper_task(scraper_path, seed_params, scraper_schema)
+    db_path = await run_scraper_task(
+        scraper_path, seed_params, scraper_schema, max_workers
+    )
 
     # The scrape was drained mid-run for a graceful shutdown. Don't upload a
     # partial DB or clean it up — leave it for resume and end the run Cancelled.

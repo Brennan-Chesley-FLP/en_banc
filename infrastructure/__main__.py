@@ -193,6 +193,15 @@ scraper_run_parameter_schema = json.dumps(
                 "position": 2,
                 "title": "seed_params",
             },
+            "max_workers": {
+                "anyOf": [
+                    {"type": "integer", "minimum": 1},
+                    {"type": "null"},
+                ],
+                "default": None,
+                "position": 3,
+                "title": "max_workers",
+            },
         },
         "required": ["scraper_path", "scraper_schema"],
     }
