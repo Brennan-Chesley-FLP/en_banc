@@ -65,7 +65,7 @@ should_advance = true
 
 [variables.ca_app_scraper__calctapp_4th_div2]
 court_id = "calctapp_4th_div2"
-min = 881107
+min = 88107
 soft_max = 88107
 gap = 10
 should_advance = true
