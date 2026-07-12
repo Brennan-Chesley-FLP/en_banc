@@ -30,8 +30,8 @@ seed_params = [
 
 [variables.ca_app_scraper__cal]
 court_id = "cal"
-min = 295928
-soft_max = 295928
+min = 297487
+soft_max = 297487
 gap = 10
 should_advance = true
 
@@ -58,29 +58,29 @@ should_advance = true
 
 [variables.ca_app_scraper__calctapp_4th_div1]
 court_id = "calctapp_4th_div1"
-min = 87818
-soft_max = 87819
+min = 87827
+soft_max = 87827
 gap = 10
 should_advance = true
 
 [variables.ca_app_scraper__calctapp_4th_div2]
 court_id = "calctapp_4th_div2"
-min = 88098
-soft_max = 88098
+min = 881107
+soft_max = 88107
 gap = 10
 should_advance = true
 
 [variables.ca_app_scraper__calctapp_4th_div3]
 court_id = "calctapp_4th_div3"
-min = 66312
-soft_max = 66312
+min = 67191
+soft_max = 67191
 gap = 10
 should_advance = true
 
 [variables.ca_app_scraper__calctapp_5th]
 court_id = "calctapp_5th"
-min = 91244
-soft_max = 91244
+min = 91253
+soft_max = 91253
 gap = 10
 should_advance = true
 
