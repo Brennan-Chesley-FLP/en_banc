@@ -6,7 +6,7 @@ tags = ["en-banc", "scraper", "browser", "court:mo", "court:moctapped", "court:m
 [[schedules]]
 # Once a week; adjust day/time/timezone as needed.
 rrule = "FREQ=WEEKLY;BYDAY=MO;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
-timezone = "UTC"
+timezone = "America/Chicago"
 active = true
 
 [parameters]

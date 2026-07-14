@@ -27,9 +27,9 @@ seed_params = [
 
 # Shared cursor — covers miss + missctapp (one unified case_num space).
 [variables.mississippi_appellate_scraper]
-min = 100500      # documented leading edge as of Q2 2025 (CC_NOTES.md)
-soft_max = 100500 # min == soft_max advance-window cursor (frontier maintenance)
-gap = 20          # source seed example uses gap=20 (wider than the 10 default)
+min = 101240      # documented leading edge as of Q2 2025 (CC_NOTES.md)
+soft_max = 101241 # min == soft_max advance-window cursor (frontier maintenance)
+gap = 10          # source seed example uses gap=20 (wider than the 10 default)
 should_advance = true
 # NOTE: case_num grows ~10 000/year and CC_NOTES cites an observed range up to
 # ~110 000; the 100 500 leading edge is dated Q2 2025, so a human should bump
