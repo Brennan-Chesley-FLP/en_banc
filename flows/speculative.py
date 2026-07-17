@@ -18,12 +18,10 @@ the runtime half of that mechanism:
   the highest ID that succeeded, and writes it back to the Variable so the next
   scheduled run picks up where this one left off.
 
-The ``[key]`` -> ``{func}:{param_index}`` mapping isn't stored anywhere, so
-:func:`_map_state_keys_to_vars` re-derives it from ``seed_params`` + entry
-metadata, mirroring jkent's own index assignment (one speculation state per
-speculative-entry invocation, in seed order). This is purely structural — it
-never re-runs validation, so no range field constraint (e.g. ``min > 0``) can
-trip it.
+jkent persists each speculation-state row's raw seed value
+(``seed_value_json`` — for a persisted cursor, the ``"[key]"`` reference
+string itself), so :func:`_map_state_keys_to_vars` reads the mapping straight
+off the run's speculation state; nothing is re-derived or re-validated.
 
 All ``juriscraper`` / ``jkent`` imports are deferred into function bodies: the
 ``[key]`` params API ships in a juriscraper change that may land after this
@@ -94,39 +92,28 @@ def _match_key_ref(value: Any) -> str | None:
 
 
 def _map_state_keys_to_vars(
-    scraper: Any,
-    seed_params: list[dict[str, dict[str, Any]]],
+    states: dict[str, dict[str, Any]],
 ) -> dict[str, str]:
     """Map each speculation-state key ``{func}:{param_index}`` to its Variable.
 
-    Re-derives jkent's own index assignment instead of probing: ``initial_seed``
-    appends one template to ``_speculation_templates[func]`` per invocation of a
-    speculative entry, in ``seed_params`` order, and speculation state is keyed
-    ``f"{func}:{i}"`` by that position (see jkent's ``discover_speculate_
-    functions``). So we walk ``seed_params`` in order, keep a per-speculative-
-    func counter, and whenever an invocation's speculative param is a ``[key]``
-    reference, record ``{func}:{i} -> key``.
-
-    This deliberately avoids re-running validation (an earlier probe rewrote the
-    template ``min`` to trace it, which broke on ranges that constrain
-    ``min > 0``). The mapping is structural, so no range constraint applies.
+    jkent stores each state row's raw seed value as ``seed_value_json``; for a
+    persisted cursor that raw value is the ``"[key]"`` reference string itself,
+    so the mapping is read directly off the rows. States seeded with a literal
+    range (no ``[key]``) simply don't map — their cursors aren't ours to
+    advance.
     """
-    spec_params = {
-        e.func_name: e.speculative_param
-        for e in scraper.list_speculative_entries()
-        if e.speculative_param is not None
-    }
-    counters: dict[str, int] = {}
     mapping: dict[str, str] = {}
-    for invocation in seed_params:
-        for func, kwargs in invocation.items():
-            if func not in spec_params:
-                continue  # non-speculative entry -> no speculation-state row
-            index = counters.get(func, 0)
-            counters[func] = index + 1
-            key = _match_key_ref(kwargs.get(spec_params[func]))
-            if key is not None:
-                mapping[f"{func}:{index}"] = key
+    for state_key, state in states.items():
+        raw = state.get("seed_value_json")
+        if not raw:
+            continue
+        try:
+            seed_value = json.loads(raw)
+        except (ValueError, TypeError):
+            continue
+        key = _match_key_ref(seed_value)
+        if key is not None:
+            mapping[state_key] = key
     return mapping
 
 
@@ -209,38 +196,34 @@ def scheduled_anchor_date() -> date:
 
 
 async def advance_speculative_cursors(
-    scraper: Any,
     db_path: Path,
     log: Any,
 ) -> dict[str, dict[str, Any]]:
     """Advance each referenced Prefect Variable to the next run's start cursor.
 
-    Reads the run's stored ``seed_params`` and speculation state from
-    ``db_path``, maps each speculative template back to the Variable it was
-    seeded from, and for each writes back ``min = soft_max = max(seeded_min,
-    highest_successful_id + 1)`` (so a run that made no new hits holds its
-    cursor instead of resetting). All other template fields — ``court_id``,
-    ``year``, ``gap``, ``should_advance`` — are preserved.
+    Reads the run's speculation state from ``db_path``, maps each speculative
+    template back to the Variable it was seeded from (via the persisted
+    ``seed_value_json``), and for each writes back ``min = soft_max =
+    max(seeded_min, highest_successful_id + 1)`` (so a run that made no new
+    hits holds its cursor instead of resetting). All other template fields —
+    ``court_id``, ``year``, ``gap``, ``should_advance`` — are preserved.
 
     Best-effort: any failure is logged and swallowed so cursor bookkeeping never
     fails an otherwise-successful scrape. Returns the ``{key: written_value}``
     map (empty if nothing was advanced), primarily for logging/tests.
 
     Args:
-        scraper: A scraper instance, used only for ``list_speculative_entries``
-            metadata to re-derive the state-key -> Variable mapping.
         db_path: The finished run's SQLite database.
         log: A logger exposing ``.info`` / ``.warning``.
     """
     try:
-        return await _advance_speculative_cursors(scraper, db_path, log)
+        return await _advance_speculative_cursors(db_path, log)
     except Exception as exc:  # noqa: BLE001 - bookkeeping must never fail a run
         log.warning("Speculative cursor advancement failed (skipped): %s", exc)
         return {}
 
 
 async def _advance_speculative_cursors(
-    scraper: Any,
     db_path: Path,
     log: Any,
 ) -> dict[str, dict[str, Any]]:
@@ -249,13 +232,12 @@ async def _advance_speculative_cursors(
     from jkent.driver.database_engine.sql_manager import SQLManager
 
     async with SQLManager.open(db_path) as db:
-        seed_params = await db.get_seed_params()
         states = await db.load_all_speculation_states()
 
-    if not seed_params or not states:
+    if not states:
         return {}
 
-    state_key_to_var = _map_state_keys_to_vars(scraper, seed_params)
+    state_key_to_var = _map_state_keys_to_vars(states)
     next_by_var = _compute_next_cursors(states, state_key_to_var)
 
     for var_key, value in next_by_var.items():

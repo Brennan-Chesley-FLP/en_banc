@@ -12,7 +12,7 @@ active = true
 [parameters]
 scraper_path = "juriscraper.state.north_carolina.ncappellatecourts_org.scraper:NorthCarolinaAppellateScraper"
 scraper_schema = "north_carolina_appellate"
-max_workers = 2
+continuation_workers = 2
 seed_params = [
   { dockets_by_filing_date = { court_ids = ["nc", "ncctapp"], date_range = "-8d" } },
 ]

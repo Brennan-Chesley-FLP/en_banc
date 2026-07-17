@@ -178,18 +178,16 @@ def init_telemetry() -> Optional[Callable[[], None]]:
     HTTPXClientInstrumentor().instrument()
     BotocoreInstrumentor().instrument()
 
-    # jkent resolves its tracer/meter through ``@lru_cache``d accessors. If either
-    # was called before the providers above were installed (an import-time probe,
-    # an early request), the cache pins the no-op proxy for the process's life.
-    # Clear both so the first real resolution binds to the providers set here.
+    # jkent memoizes its tracer/instruments accessors. If either resolved
+    # before the providers above were installed (an import-time probe, an
+    # early request), the memo pins the no-op proxy for the process's life.
+    # jkent.observability.reset() is the supported seam to re-bind them.
     try:
-        from jkent.observability import metrics as _jkent_metrics
-        from jkent.observability import tracing as _jkent_tracing
+        from jkent import observability as _jkent_observability
 
-        _jkent_tracing.tracer.cache_clear()
-        _jkent_metrics.instruments.cache_clear()
+        _jkent_observability.reset()
     except Exception:  # noqa: BLE001 - telemetry must never break the scrape
-        logger.exception("Could not clear jkent observability caches; continuing.")
+        logger.exception("Could not reset jkent observability caches; continuing.")
 
     logger.info(
         "OpenTelemetry initialized: exporting to %s (service=%s pool=%s)",
@@ -272,12 +270,12 @@ def instrument_run_engine(run: Any) -> None:
     jkent's run DB is an *async* SQLAlchemy engine over aiosqlite; the instrumentor
     binds to the sync engine underneath. jkent creates the engine per run inside
     ``RunBootstrapper``, so this is called right after the run opens, using the
-    public ``SQLManager.engine`` property jkent exposes. No-op when telemetry is
-    disabled.
+    public ``ScrapeRun.sync_engine`` property jkent exposes. No-op when telemetry
+    is disabled.
 
     Args:
-        run: The opened jkent ``ScrapeRun`` (``run._db.engine.sync_engine`` is the
-            sync engine SQLAlchemy's instrumentor binds to).
+        run: The opened jkent ``ScrapeRun`` (``run.sync_engine`` is the sync
+            engine SQLAlchemy's instrumentor binds to).
     """
     if not telemetry_enabled():
         return
@@ -286,8 +284,7 @@ def instrument_run_engine(run: Any) -> None:
             SQLAlchemyInstrumentor,
         )
 
-        sync_engine = run._db.engine.sync_engine
-        SQLAlchemyInstrumentor().instrument(engine=sync_engine)
+        SQLAlchemyInstrumentor().instrument(engine=run.sync_engine)
     except Exception:  # noqa: BLE001 - telemetry must never break the scrape
         logger.exception("Could not instrument run DB engine; continuing.")
 

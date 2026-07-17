@@ -14,7 +14,10 @@ import logging
 import os
 import sqlite3
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from jkent.driver.database_engine.stats import RunSummary
 
 import prefect.runtime
 from prefect import flow, get_run_logger, task
@@ -39,24 +42,27 @@ SCRAPES_S3_BLOCK_NAME = "scrapes"
 # How often the background stats logger reports scrape progress to the run logs.
 STATS_LOG_INTERVAL_SECONDS = 300
 
-# Per-run continuation-worker pool cap (jkent's RunBootstrapper ``max_workers``).
-# This is the number of concurrent continuation workers a *single* run may ramp
-# up to — distinct from WORKER_CONCURRENCY, which is how many runs a worker
-# executes at once. Dial MAX_CONTINUATION_WORKERS to test whether more workers
-# inside one run improves throughput (EN_BANC_OTEL.md §5). jkent caps this to 1
-# for STRICTLY_SERIAL scrapers regardless, so raising it is safe.
+# Per-run continuation-worker pool size (jkent's RunBootstrapper
+# ``num_workers``). The pool is pinned: jkent spawns exactly this many workers
+# up front and never re-grows the pool — distinct from WORKER_CONCURRENCY,
+# which is how many runs a worker executes at once. Dial
+# MAX_CONTINUATION_WORKERS to test whether more workers inside one run
+# improves throughput (EN_BANC_OTEL.md §5). jkent caps this to 1 for
+# STRICTLY_SERIAL scrapers regardless, so raising it is safe.
 DEFAULT_MAX_CONTINUATION_WORKERS = 10
 
 
 def resolve_max_continuation_workers(override: int | None = None) -> int:
-    """Return the per-run continuation-worker cap.
+    """Return the per-run continuation-worker pool size (pinned by jkent).
 
-    Precedence: an explicit ``override`` (the flow's ``max_workers`` param, which
+    Precedence: an explicit ``override`` (the flow's ``continuation_workers`` param, which
     a deployment TOML can set) wins; otherwise the ``MAX_CONTINUATION_WORKERS``
     env var; otherwise :data:`DEFAULT_MAX_CONTINUATION_WORKERS`. Both the scraper
     worker and the browser worker run this flow and read the same env var, so one
     setting dials the pool for whichever worker runs the scrape — while a single
-    deployment can still override it per-scraper via its ``max_workers`` param.
+    deployment can still override it per-scraper via its ``continuation_workers`` param.
+    (The ``MAX_CONTINUATION_WORKERS`` env var keeps its historical name; jkent
+    now pins the pool at this size rather than treating it as a ramp-up cap.)
 
     Raises:
         ValueError: If the override is below 1, or the env var is set to a
@@ -64,7 +70,7 @@ def resolve_max_continuation_workers(override: int | None = None) -> int:
     """
     if override is not None:
         if override < 1:
-            raise ValueError(f"max_workers must be >= 1, got {override}")
+            raise ValueError(f"continuation_workers must be >= 1, got {override}")
         return override
 
     raw = os.environ.get(
@@ -88,26 +94,23 @@ async def _log_stats_periodically(
 ) -> None:
     """Log a scrape progress snapshot every ``interval_seconds`` until cancelled.
 
-    Taps JKent's :func:`get_stats` against the live run database so a long scrape
-    reports progress to the flow logs instead of going silent. The queries are
+    Taps JKent's :meth:`ScrapeRun.stats` so a long scrape reports progress to
+    the flow logs instead of going silent. The queries are
     read-only (SQLite WAL lets them run alongside the scrape's writers), and the
     coroutine runs as a background task that the caller cancels once the scrape
     finishes or drains. Stats failures are logged and swallowed — surfacing
     progress must never disturb the scrape itself.
 
     Args:
-        run: The opened :class:`ScrapeRun`; its ``_db._session_factory`` is the
-            same session factory JKent's own stats queries use.
+        run: The opened :class:`ScrapeRun`.
         log: The Prefect run logger.
         interval_seconds: Delay between snapshots (also the delay before the
             first one, so a just-started run isn't reported as all-zeros).
     """
-    from jkent.driver.database_engine.stats import get_stats
-
     while True:
         await asyncio.sleep(interval_seconds)
         try:
-            stats = await get_stats(run._db._session_factory)
+            stats = await run.stats()
         except Exception as exc:  # noqa: BLE001 - stats must never break the scrape
             log.warning("Could not gather scrape stats: %s", exc)
             continue
@@ -160,114 +163,6 @@ def _import_scraper(scraper_path: str) -> type:
     return getattr(module, class_name)
 
 
-def _table_exists(conn: sqlite3.Connection, name: str) -> bool:
-    """Return whether a table exists in the connected database."""
-    return (
-        conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name=?", (name,)
-        ).fetchone()
-        is not None
-    )
-
-
-def _read_run_summary(db_path: Path) -> dict[str, Any]:
-    """Read aggregate run statistics from a scrape's SQLite database.
-
-    JKent records per-request failures (HTTP 500s, structural/validation
-    assumption failures, etc.) as ``errors`` rows rather than raising — so a
-    run can "complete" while still having failed work. Alongside the errors,
-    this aggregates the request queue and the harvested results so the summary
-    artifact can show what the run actually did.
-
-    Returns a dict with:
-        ``requests_by_status``: ``[(continuation, status, count), ...]``
-        ``errors_by_continuation``: ``[(continuation, error_type, count), ...]``
-        ``results_by_type``: ``[(result_type, valid, invalid), ...]``
-        ``total``: total error count (for log broadcasting)
-        ``by_type``: ``{error_type: count}`` (for log broadcasting)
-        ``rows``: first 50 error detail rows (for log broadcasting / detail table)
-        ``requests_total``: total request count (failure classification)
-        ``errored_requests``: distinct requests with >=1 error (failure classification)
-        ``archive_error_total``: error rows on archive requests (failure classification)
-    Missing tables yield empty aggregates rather than raising.
-    """
-    conn = sqlite3.connect(str(db_path))
-    try:
-        requests_by_status: list[tuple] = []
-        if _table_exists(conn, "requests"):
-            requests_by_status = conn.execute(
-                "SELECT continuation, status, COUNT(*) "
-                "FROM requests GROUP BY continuation, status "
-                "ORDER BY continuation, status"
-            ).fetchall()
-
-        results_by_type: list[tuple] = []
-        if _table_exists(conn, "results"):
-            results_by_type = conn.execute(
-                "SELECT result_type, "
-                "SUM(is_valid), SUM(CASE WHEN is_valid THEN 0 ELSE 1 END) "
-                "FROM results GROUP BY result_type ORDER BY result_type"
-            ).fetchall()
-
-        total = 0
-        by_type: dict[str, int] = {}
-        rows: list[tuple] = []
-        errors_by_continuation: list[tuple] = []
-        if _table_exists(conn, "errors"):
-            total = conn.execute("SELECT COUNT(*) FROM errors").fetchone()[0]
-            by_type = dict(
-                conn.execute(
-                    "SELECT error_type, COUNT(*) FROM errors GROUP BY error_type"
-                ).fetchall()
-            )
-            rows = conn.execute(
-                "SELECT error_type, error_class, message, request_url "
-                "FROM errors ORDER BY id LIMIT 50"
-            ).fetchall()
-            # continuation lives on the request, not the error, so join through.
-            errors_by_continuation = conn.execute(
-                "SELECT r.continuation, e.error_type, COUNT(*) "
-                "FROM errors e LEFT JOIN requests r ON e.request_id = r.id "
-                "GROUP BY r.continuation, e.error_type "
-                "ORDER BY r.continuation, e.error_type"
-            ).fetchall()
-
-        # Failure-classification inputs (see _classify_run_failure): how many
-        # requests the run held, how many distinct requests recorded an error,
-        # and how many error rows land on archive (file-download) requests.
-        # ``request_type == 'archive'`` is how the queue stores a
-        # Request(archive=True); all other types are ordinary page requests.
-        requests_total = 0
-        errored_requests = 0
-        archive_error_total = 0
-        if _table_exists(conn, "requests") and _table_exists(conn, "errors"):
-            requests_total = conn.execute(
-                "SELECT COUNT(*) FROM requests"
-            ).fetchone()[0]
-            errored_requests = conn.execute(
-                "SELECT COUNT(DISTINCT request_id) FROM errors "
-                "WHERE request_id IS NOT NULL"
-            ).fetchone()[0]
-            archive_error_total = conn.execute(
-                "SELECT COUNT(*) FROM errors e "
-                "JOIN requests r ON e.request_id = r.id "
-                "WHERE r.request_type = 'archive'"
-            ).fetchone()[0]
-    finally:
-        conn.close()
-    return {
-        "requests_by_status": requests_by_status,
-        "errors_by_continuation": errors_by_continuation,
-        "results_by_type": results_by_type,
-        "total": total,
-        "by_type": by_type,
-        "rows": rows,
-        "requests_total": requests_total,
-        "errored_requests": errored_requests,
-        "archive_error_total": archive_error_total,
-    }
-
-
 # Prefect state names for the three run-failure classifications. Each is its own
 # named FAILED state so the failure modes are distinguishable at a glance in the
 # Prefect UI and to any automation keying on the state name.
@@ -276,7 +171,7 @@ FAILURE_PARTIAL_ERRORS = "PartialErrors"
 FAILURE_ARCHIVE_ERRORS = "ArchiveErrors"
 
 
-def _classify_run_failure(summary: dict[str, Any]) -> tuple[str, str] | None:
+def _classify_run_failure(summary: RunSummary) -> tuple[str, str] | None:
     """Classify a completed run's per-request errors into a failure mode.
 
     JKent completes a run even when individual requests fail (errors are
@@ -291,13 +186,13 @@ def _classify_run_failure(summary: dict[str, Any]) -> tuple[str, str] | None:
     - :data:`FAILURE_ALL_ERRORS`: every request in the run recorded an error.
     - :data:`FAILURE_PARTIAL_ERRORS`: some (but not all) requests recorded errors.
     """
-    total_errors = summary["total"]
+    total_errors = summary.errors_total
     if not total_errors:
         return None
 
-    requests_total = summary["requests_total"]
-    errored_requests = summary["errored_requests"]
-    archive_error_total = summary["archive_error_total"]
+    requests_total = summary.requests_total
+    errored_requests = summary.errored_requests
+    archive_error_total = summary.archive_error_total
 
     # Archive-only first: if no error escapes an archive request, the scrape
     # proper succeeded and only downloads failed — the narrowest, least severe
@@ -326,7 +221,9 @@ async def run_scraper_task(
     scraper_path: str,
     seed_params: list[dict[str, dict[str, Any]]] | None,
     scraper_schema: str,
-    max_workers: int | None = None,
+    continuation_workers: int | None = None,
+    circuit_breaker: dict[str, Any] | None = None,
+    max_persistent_errors: int | None = None,
 ) -> Path | None:
     """Run a JKent scraper, streaming file downloads to the files bucket.
 
@@ -345,9 +242,17 @@ async def run_scraper_task(
         seed_params: JKent ``seed_params`` (``[{entry: kwargs}]``); ``None``
             uses the scraper's default entry points.
         scraper_schema: Schema name, used for S3 key prefixes.
-        max_workers: Per-run continuation-worker cap. ``None`` falls back to the
-            ``MAX_CONTINUATION_WORKERS`` env var / default (see
-            :func:`resolve_max_continuation_workers`).
+        continuation_workers: Per-run continuation-worker pool size (pinned). ``None``
+            falls back to the ``MAX_CONTINUATION_WORKERS`` env var / default
+            (see :func:`resolve_max_continuation_workers`).
+        circuit_breaker: Optional ``{failure_threshold, recovery_timeout}`` for
+            jkent's run-scoped circuit breaker (built into a
+            ``CircuitBreakerPolicy``). Either key may be omitted to keep jkent's
+            default (3 consecutive pool-wide transient failures / 300s cool-off).
+            ``None`` uses the default policy entirely.
+        max_persistent_errors: Stop the run gracefully once this many
+            never-retried (persistent) failures have been stored. ``None`` =
+            unlimited (jkent's default).
 
     Returns:
         Path to the resulting SQLite database, or ``None`` if the scrape was
@@ -358,7 +263,7 @@ async def run_scraper_task(
     from juriscraper.state.common.params import anchor_date, spec_kv_store
 
     from flows.speculative import load_seed_store, scheduled_anchor_date
-    from jkent.driver.unified_driver import RunBootstrapper
+    from jkent.driver.unified_driver import CircuitBreakerPolicy, RunBootstrapper
 
     log = get_run_logger()
     run_name = prefect.runtime.flow_run.name or "unnamed"
@@ -383,10 +288,17 @@ async def run_scraper_task(
         prefix=f"{scraper_schema}/"
     )
 
-    resolved_workers = resolve_max_continuation_workers(max_workers)
+    resolved_workers = resolve_max_continuation_workers(continuation_workers)
+    # Build the breaker policy only when the deployment tunes it; an empty/None
+    # value leaves jkent on its default policy. Unknown keys raise here (and are
+    # already rejected by the deployment's parameter schema) — fail fast.
+    cb_policy = (
+        CircuitBreakerPolicy(**circuit_breaker) if circuit_breaker else None
+    )
     log.info(
-        "Commencing scrape: %s (max_continuation_workers=%d)",
-        scraper_path, resolved_workers,
+        "Commencing scrape: %s (continuation_workers=%d, "
+        "circuit_breaker=%s, max_persistent_errors=%s)",
+        scraper_path, resolved_workers, cb_policy, max_persistent_errors,
     )
 
     # Resolve the seed's ``[key]`` speculative-cursor references against Prefect
@@ -408,7 +320,9 @@ async def run_scraper_task(
             seed_params=seed_params,
             archive_handler=archive_handler,
             resume=True,
-            max_workers=resolved_workers,
+            num_workers=resolved_workers,
+            circuit_breaker_policy=cb_policy,
+            max_persistent_errors=max_persistent_errors,
             setup_signal_handlers=False,
         ) as run:
             # Bind the SQLAlchemy instrumentor to this run's per-run engine so its DB
@@ -552,7 +466,6 @@ async def integrity_check_and_archive(
 
 @task(log_prints=True, task_run_name="advance-speculative-cursors")
 async def advance_cursors_task(
-    scraper_path: str,
     db_path: Path,
 ) -> dict[str, dict[str, Any]]:
     """Advance persisted speculative cursors after a clean scrape.
@@ -566,8 +479,7 @@ async def advance_cursors_task(
     from flows.speculative import advance_speculative_cursors
 
     log = get_run_logger()
-    scraper = _import_scraper(scraper_path)()
-    return await advance_speculative_cursors(scraper, db_path, log)
+    return await advance_speculative_cursors(db_path, log)
 
 
 @flow(name="scraper-run", log_prints=True)
@@ -575,7 +487,9 @@ async def scraper_run_flow(
     scraper_path: str,
     scraper_schema: str,
     seed_params: list[dict[str, dict[str, Any]]] | None = None,
-    max_workers: int | None = None,
+    continuation_workers: int | None = None,
+    circuit_breaker: dict[str, Any] | None = None,
+    max_persistent_errors: int | None = None,
 ) -> str | State:
     """Run a JKent scrape and archive its database.
 
@@ -584,10 +498,16 @@ async def scraper_run_flow(
         scraper_schema: Schema/source name used as the S3 key prefix and in
             artifacts (e.g. ``"ala_publicportal"``). Required and non-empty.
         seed_params: JKent ``seed_params``; ``None`` uses default entries.
-        max_workers: Override for the per-run continuation-worker cap. ``None``
-            falls back to the ``MAX_CONTINUATION_WORKERS`` env var / default.
-            Set it in a deployment's ``[parameters]`` to dial one scraper's
-            pool without touching the shared env var.
+        continuation_workers: Override for the per-run continuation-worker pool size
+            (pinned by jkent). ``None`` falls back to the
+            ``MAX_CONTINUATION_WORKERS`` env var / default. Set it in a
+            deployment's ``[parameters]`` to dial one scraper's pool without
+            touching the shared env var.
+        circuit_breaker: Optional ``{failure_threshold, recovery_timeout}``
+            tuning jkent's run-scoped circuit breaker; ``None`` uses jkent's
+            default policy. Set it in a deployment's ``[parameters.circuit_breaker]``.
+        max_persistent_errors: Graceful-stop budget for never-retried errors;
+            ``None`` = unlimited. Set it in a deployment's ``[parameters]``.
 
     Returns:
         S3 URI of the uploaded scrape database on a clean run; a ``Cancelled``
@@ -613,7 +533,14 @@ async def scraper_run_flow(
     install_shutdown_signal_handler()
     _silence_seaweedfs_header_warnings()
     try:
-        return await _scraper_run(scraper_path, scraper_schema, seed_params, max_workers)
+        return await _scraper_run(
+            scraper_path,
+            scraper_schema,
+            seed_params,
+            continuation_workers,
+            circuit_breaker,
+            max_persistent_errors,
+        )
     finally:
         await stop_loop_monitor(monitor)
         if flush is not None:
@@ -624,12 +551,19 @@ async def _scraper_run(
     scraper_path: str,
     scraper_schema: str,
     seed_params: list[dict[str, dict[str, Any]]] | None,
-    max_workers: int | None = None,
+    continuation_workers: int | None = None,
+    circuit_breaker: dict[str, Any] | None = None,
+    max_persistent_errors: int | None = None,
 ) -> str | State:
     """The flow body proper — see :func:`scraper_run_flow`."""
     log = get_run_logger()
     db_path = await run_scraper_task(
-        scraper_path, seed_params, scraper_schema, max_workers
+        scraper_path,
+        seed_params,
+        scraper_schema,
+        continuation_workers,
+        circuit_breaker,
+        max_persistent_errors,
     )
 
     # The scrape was drained mid-run for a graceful shutdown. Don't upload a
@@ -640,13 +574,17 @@ async def _scraper_run(
 
     # Surface per-request errors recorded during the scrape. These don't fail
     # the run on their own, so broadcast them explicitly to the run logs.
-    summary = await asyncio.to_thread(_read_run_summary, db_path)
-    if summary["total"]:
-        by_type = ", ".join(f"{t}={n}" for t, n in sorted(summary["by_type"].items()))
-        log.warning(
-            "Scrape recorded %d error(s) [%s]", summary["total"], by_type
+    from jkent.driver.database_engine.stats import read_run_summary
+
+    summary = await read_run_summary(db_path)
+    if summary.errors_total:
+        by_type = ", ".join(
+            f"{t}={n}" for t, n in sorted(summary.errors_by_type.items())
         )
-        for error_type, error_class, message, request_url in summary["rows"]:
+        log.warning(
+            "Scrape recorded %d error(s) [%s]", summary.errors_total, by_type
+        )
+        for error_type, error_class, message, request_url in summary.error_rows:
             log.warning("  [%s] %s: %s (%s)", error_type, error_class, message, request_url)
     else:
         log.info("Scrape recorded no errors")
@@ -654,7 +592,7 @@ async def _scraper_run(
     # Before archiving, advance any speculative cursors this run consumed so the
     # next scheduled run starts past this one's highest successful ID. Only
     # reached on clean completion — drained/interrupted runs returned above.
-    await advance_cursors_task(scraper_path, db_path)
+    await advance_cursors_task(db_path)
 
     archive_uri = await integrity_check_and_archive(db_path, scraper_schema)
 
@@ -734,13 +672,13 @@ def _build_summary_markdown(
     scraper_path: str,
     scraper_schema: str,
     s3_uri: str,
-    summary: dict[str, Any],
+    summary: RunSummary,
 ) -> str:
     """Render the scrape-summary markdown artifact from aggregate stats."""
-    requests_by_status = summary["requests_by_status"]
-    errors_by_continuation = summary["errors_by_continuation"]
-    results_by_type = summary["results_by_type"]
-    total_errors = summary["total"]
+    requests_by_status = summary.requests_by_status
+    errors_by_continuation = summary.errors_by_continuation
+    results_by_type = summary.results_by_type
+    total_errors = summary.errors_total
 
     total_requests = sum(n for _, _, n in requests_by_status)
     total_results = sum(valid + invalid for _, valid, invalid in results_by_type)
@@ -778,12 +716,13 @@ def _build_summary_markdown(
         lines += _pivot_table(errors_by_continuation, "Continuation", "Error type")
 
         lines += ["", "## Error detail", "", "| Type | Class | Message | URL |", "| --- | --- | --- | --- |"]
-        for error_type, error_class, message, request_url in summary["rows"]:
+        for error_type, error_class, message, request_url in summary.error_rows:
             # Escape pipes so the markdown table doesn't break on error text.
             msg = (message or "").replace("|", "\\|").replace("\n", " ")
             lines.append(f"| {error_type} | {error_class} | {msg} | {request_url} |")
-        if total_errors > len(summary["rows"]):
-            lines += ["", f"_…and {total_errors - len(summary['rows'])} more (showing first {len(summary['rows'])})._"]
+        if total_errors > len(summary.error_rows):
+            shown = len(summary.error_rows)
+            lines += ["", f"_…and {total_errors - shown} more (showing first {shown})._"]
     else:
         lines.append("_No errors recorded._")
 

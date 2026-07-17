@@ -193,14 +193,49 @@ scraper_run_parameter_schema = json.dumps(
                 "position": 2,
                 "title": "seed_params",
             },
-            "max_workers": {
+            "continuation_workers": {
                 "anyOf": [
                     {"type": "integer", "minimum": 1},
                     {"type": "null"},
                 ],
                 "default": None,
                 "position": 3,
-                "title": "max_workers",
+                "title": "continuation_workers",
+            },
+            # jkent's run-scoped CircuitBreakerPolicy. Both knobs are optional;
+            # an omitted knob keeps jkent's default (threshold 3 / 300s). The
+            # flow builds CircuitBreakerPolicy(**circuit_breaker) — additional
+            # keys are rejected so a typo fails the run instead of being ignored.
+            "circuit_breaker": {
+                "anyOf": [
+                    {
+                        "type": "object",
+                        "properties": {
+                            "failure_threshold": {
+                                "type": "integer",
+                                "minimum": 1,
+                            },
+                            "recovery_timeout": {
+                                "type": "number",
+                                "exclusiveMinimum": 0,
+                            },
+                        },
+                        "additionalProperties": False,
+                    },
+                    {"type": "null"},
+                ],
+                "default": None,
+                "position": 4,
+                "title": "circuit_breaker",
+            },
+            "max_persistent_errors": {
+                "anyOf": [
+                    {"type": "integer", "minimum": 1},
+                    {"type": "null"},
+                ],
+                "default": None,
+                "position": 5,
+                "title": "max_persistent_errors",
             },
         },
         "required": ["scraper_path", "scraper_schema"],

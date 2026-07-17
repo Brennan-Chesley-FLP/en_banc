@@ -49,6 +49,27 @@ scraper_schema = "<schema>"
 #   { dockets_by_number = { docket_number = "[<schema>_scraper__<court_id>]" } },
 # ]
 
+# --- optional run-tuning knobs (all default to jkent's own defaults) ----------
+# continuation_workers: per-run continuation-worker pool size. jkent pins the
+# pool at this size for the whole run (it is NOT a ramp-up cap). Omit to use the
+# worker's MAX_CONTINUATION_WORKERS env var / default (10). jkent forces 1 for
+# STRICTLY_SERIAL scrapers regardless.
+# continuation_workers = 2
+
+# max_persistent_errors: graceful-stop budget. jkent halts the run cleanly
+# (DB finalized, resumable) once this many never-retried "persistent" failures
+# have been stored. Omit for unlimited (jkent's default).
+# max_persistent_errors = 50
+
+# [parameters.circuit_breaker]: jkent's run-scoped circuit breaker over
+# *transient* failures — one breaker shared by the whole worker pool, so the
+# count is a run-global "the server is in distress" signal. When it trips, the
+# pool pauses (requests aren't failed) until a probe succeeds. Either knob may
+# be omitted to keep jkent's default. Omit the whole table for the default policy.
+# [parameters.circuit_breaker]
+# failure_threshold = 3       # consecutive pool-wide transient failures that trip it
+# recovery_timeout = 300.0    # seconds paused before admitting one probe
+
 # Each [[schedules]] becomes one DeploymentSchedule. Set exactly one of
 # cron / interval (seconds) / rrule; other allowed keys: timezone, active,
 # slug, anchor_date, day_or, catchup, max_active_runs, max_scheduled_runs,
