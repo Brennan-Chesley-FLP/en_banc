@@ -6,6 +6,7 @@
 description = "mississippi_appellate — speculative maintenance (advancing cursors)"
 work_pool_name = "scraper-pool"
 tags = ["en-banc", "scraper", "http", "court:miss", "court:missctapp"]
+continuation_workers = 2
 
 [[schedules]]
 # Once a week; adjust as needed.
