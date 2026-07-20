@@ -27,6 +27,7 @@ seed_params = [
   { dockets_by_number = { docket_number = "[ca_app_scraper__calctapp_5th]" } },
   { dockets_by_number = { docket_number = "[ca_app_scraper__calctapp_6th]" } },
 ]
+continuation_workers = 2
 
 [variables.ca_app_scraper__cal]
 court_id = "cal"

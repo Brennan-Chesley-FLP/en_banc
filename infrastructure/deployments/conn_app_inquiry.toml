@@ -25,6 +25,7 @@ scraper_schema = "conn_app_inquiry"
 seed_params = [
   { dockets_by_internal_id = { internal_id = "[conn_app_inquiry_scraper]" } },
 ]
+continuation_workers = 2
 
 # Shared cursor — covers conn + connappct (one CRN space; connsuperct reached via
 # trial-court links off civil cases).

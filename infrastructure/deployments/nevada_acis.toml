@@ -15,3 +15,4 @@ scraper_schema = "nevada_acis"
 seed_params = [
   { dockets_by_filing_date = { court_ids = ["nev", "nevapp"], date_range = "-8d" } },
 ]
+continuation_workers = 2

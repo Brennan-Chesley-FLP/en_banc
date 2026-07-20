@@ -16,3 +16,4 @@ scraper_schema = "arkansas_appellate"
 seed_params = [
   { dockets_by_filing_date = { court_ids = ["ark","arkctapp"], date_range = "-8d" } },
 ]
+continuation_workers = 2

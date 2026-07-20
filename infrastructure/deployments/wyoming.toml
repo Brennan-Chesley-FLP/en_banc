@@ -15,3 +15,4 @@ scraper_schema = "wyoming"
 seed_params = [
   { dockets_by_filing_date = { court_ids = ["wyo"], date_range = "-8d" } },
 ]
+continuation_workers = 2

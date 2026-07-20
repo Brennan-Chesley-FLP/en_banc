@@ -15,3 +15,4 @@ scraper_schema = "arizona_appellate"
 seed_params = [
   { dockets_by_updated_date = { court_ids = ["ariz", "arizctapp"], date_range = "-8d" } },
 ]
+continuation_workers = 2

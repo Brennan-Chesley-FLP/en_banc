@@ -15,3 +15,4 @@ scraper_schema = "kentucky_appellate"
 seed_params = [
   { dockets_by_filing_date = { court_ids = ["ky", "kyctapp"], date_range = "-8d" } },
 ]
+continuation_workers = 2

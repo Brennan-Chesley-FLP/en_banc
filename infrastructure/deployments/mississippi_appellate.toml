@@ -6,7 +6,6 @@
 description = "mississippi_appellate — speculative maintenance (advancing cursors)"
 work_pool_name = "scraper-pool"
 tags = ["en-banc", "scraper", "http", "court:miss", "court:missctapp"]
-continuation_workers = 2
 
 [[schedules]]
 # Once a week; adjust as needed.
@@ -17,6 +16,7 @@ active = true
 [parameters]
 scraper_path = "juriscraper.state.mississippi.courts_ms_gov.scraper:MississippiAppellateScraper"
 scraper_schema = "mississippi_appellate"
+continuation_workers = 2
 # SHARED cursor: build_docket.php is keyed by an internal sequential `case_num`
 # that is a SINGLE space shared across both courts (miss + missctapp) and all
 # case types; the court is derived from the docket-number suffix (-SCT -> miss /

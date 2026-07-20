@@ -15,3 +15,4 @@ scraper_schema = "north_dakota"
 seed_params = [
   { dockets_by_filing_date = { court_ids = ["nd"], date_range = "-8d" } },
 ]
+continuation_workers = 2
