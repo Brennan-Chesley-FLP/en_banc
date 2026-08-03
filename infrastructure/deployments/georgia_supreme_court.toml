@@ -9,4 +9,4 @@ tags = ["en-banc", "scraper", "http", "court:ga"]
 [parameters]
 scraper_path = "juriscraper.state.georgia.pubdoc_gasupreme_us.scraper:GeorgiaSupremeCourtScraper"
 scraper_schema = "georgia_supreme_court"
-# seed_params = [ ]  # TODO: define the ongoing-maintenance seed.
+seed_params = [{"dockets_by_year" = {"court_ids" = ["ga"], "year" = 26}}]
