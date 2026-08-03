@@ -6,6 +6,12 @@ description = "georgia_supreme_court — special ongoing config needed"
 work_pool_name = "scraper-pool"
 tags = ["en-banc", "scraper", "http", "court:ga"]
 
+[[schedules]]
+# Once a week; adjust as needed.
+rrule = "FREQ=WEEKLY;BYDAY=TU;BYHOUR=6;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
 [parameters]
 scraper_path = "juriscraper.state.georgia.pubdoc_gasupreme_us.scraper:GeorgiaSupremeCourtScraper"
 scraper_schema = "georgia_supreme_court"
