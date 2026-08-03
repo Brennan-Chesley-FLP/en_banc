@@ -38,7 +38,7 @@ seed_params = [
 # gap = 15 follows the scraper docstring's seed example (dense annual sequences).
 
 # A = Direct appeal (~2,200/yr)
-[variables.georgia_court_of_appeals_scraper__gactapp__A]
+[variables.georgia_court_of_appeals_scraper__gactapp__a]
 min = 2200
 soft_max = 2200
 gap = 15
@@ -47,7 +47,7 @@ year = 2026
 letter = "A"
 
 # D = Discretionary application (~600/yr)
-[variables.georgia_court_of_appeals_scraper__gactapp__D]
+[variables.georgia_court_of_appeals_scraper__gactapp__d]
 min = 600
 soft_max = 600
 gap = 15
@@ -56,7 +56,7 @@ year = 2026
 letter = "D"
 
 # E = Emergency motion (~250/yr)
-[variables.georgia_court_of_appeals_scraper__gactapp__E]
+[variables.georgia_court_of_appeals_scraper__gactapp__e]
 min = 250
 soft_max = 250
 gap = 15
@@ -65,7 +65,7 @@ year = 2026
 letter = "E"
 
 # I = Interlocutory application (~300/yr)
-[variables.georgia_court_of_appeals_scraper__gactapp__I]
+[variables.georgia_court_of_appeals_scraper__gactapp__i]
 min = 300
 soft_max = 300
 gap = 15
@@ -74,7 +74,7 @@ year = 2026
 letter = "I"
 
 # O = Original proceeding, rare (~30/yr)
-[variables.georgia_court_of_appeals_scraper__gactapp__O]
+[variables.georgia_court_of_appeals_scraper__gactapp__o]
 min = 30
 soft_max = 30
 gap = 15
