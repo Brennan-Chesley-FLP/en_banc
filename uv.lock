@@ -1195,9 +1195,9 @@ operational = [
     { name = "camoufox", extra = ["geoip"] },
     { name = "h11" },
     { name = "httpx", extra = ["brotli", "http2", "socks"] },
+    { name = "opentelemetry-api" },
     { name = "playwright" },
     { name = "sqlalchemy", extra = ["asyncio"] },
-    { name = "sqlmodel" },
     { name = "zstandard" },
 ]
 
@@ -1210,11 +1210,11 @@ requires-dist = [
     { name = "h11", marker = "extra == 'operational'", specifier = "==0.16.0" },
     { name = "httpx", extras = ["socks", "http2", "brotli"], marker = "extra == 'operational'", specifier = ">=0.28.1" },
     { name = "lxml", specifier = ">=5.2" },
+    { name = "opentelemetry-api", marker = "extra == 'operational'", specifier = ">=1.43.0" },
     { name = "playwright", marker = "extra == 'operational'", specifier = ">=1.57.0" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "pyrate-limiter", specifier = ">=3.9.0" },
     { name = "sqlalchemy", extras = ["asyncio"], marker = "extra == 'operational'", specifier = ">=2.0" },
-    { name = "sqlmodel", marker = "extra == 'operational'", specifier = ">=0.0.32" },
     { name = "typing-extensions", specifier = ">=4.15.0" },
     { name = "zstandard", marker = "extra == 'operational'", specifier = ">=0.25.0" },
 ]
@@ -1295,7 +1295,7 @@ wheels = [
 
 [[package]]
 name = "juriscraper"
-version = "3.0.31"
+version = "3.0.40"
 source = { editable = "../juriscraper" }
 dependencies = [
     { name = "certifi" },
@@ -3137,20 +3137,6 @@ wheels = [
 [package.optional-dependencies]
 asyncio = [
     { name = "greenlet" },
-]
-
-[[package]]
-name = "sqlmodel"
-version = "0.0.38"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pydantic" },
-    { name = "sqlalchemy" },
-    { name = "typing-extensions" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/64/0d/26ec1329960ea9430131fe63f63a95ea4cb8971d49c891ff7e1f3255421c/sqlmodel-0.0.38.tar.gz", hash = "sha256:d583ec237b14103809f74e8630032bc40ab68cd6b754a610f0813c56911a547b", size = 86710 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/72/c7/10c60af0607ab6fa136264f7f39d205932218516226d38585324ffda705d/sqlmodel-0.0.38-py3-none-any.whl", hash = "sha256:84e3fa990a77395461ded72a6c73173438ce8449d5c1c4d97fbff1b1df692649", size = 27294 },
 ]
 
 [[package]]

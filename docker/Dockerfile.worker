@@ -23,15 +23,27 @@
 # A rebuild is still required when *dependencies* change (a pyproject gains or
 # bumps a package) or to refresh the browser engine — mounts carry code only.
 #
-# Browser support (camoufox/Firefox, for FF_ALIKE scrapers) is off by default
-# to keep the image lean. Opt in with --build-arg INSTALL_BROWSERS=1:
+# Browser support is off by default to keep the image lean. Opt in with
+# --build-arg INSTALL_BROWSERS=1 and tag the result en-banc-worker-browser (the
+# image docker-compose.yml's browser-worker runs):
 #
-#   mise run build-worker -- --build-arg INSTALL_BROWSERS=1
+#   podman build \
+#       --build-context juriscraper=../juriscraper \
+#       --build-context jkent=../jkent \
+#       --build-arg INSTALL_BROWSERS=1 \
+#       -f docker/Dockerfile.worker -t en-banc-worker-browser .
+#
+# That adds camoufox/Firefox plus the X substrate jkent's CloudflareHandler
+# needs to clear Turnstile interstitials: Xvfb (a real display to map a headed
+# browser window into) and xdotool (genuine XTEST pointer events — the only
+# input Turnstile accepts). It mirrors the system layer of jkent's own
+# docker/Dockerfile (the jkent-cf image) minus that image's uv-managed Python,
+# which exists to dodge bookworm's SQLite 3.40; this trixie base ships 3.50.
 
 FROM prefecthq/prefect:3-python3.13
 
-# 0 = plain-HTTP scrapers only (lean); 1 = also install the Firefox-alike
-# browser engine for FF_ALIKE scrapers (heavy: pulls a full browser).
+# 0 = plain-HTTP scrapers only (lean); 1 = also install the browser engine and
+# the Xvfb/xdotool display stack (heavy: pulls a full browser).
 ARG INSTALL_BROWSERS=0
 
 # curl: the entrypoint polls the Prefect server health endpoint.
@@ -42,8 +54,16 @@ RUN apt-get update \
 
 # Sibling source trees at the exact paths the compose mounts shadow. jkent goes
 # first so juriscraper's unconstrained `jkent` dependency resolves to it.
-COPY --from=jkent . /src/jkent
-COPY --from=juriscraper . /src/juriscraper
+#
+# Both are copied selectively — just what an editable install needs (the
+# pyproject, the files its metadata names, and the package). Never the whole
+# checkout: jkent's own docker/compose.yaml keeps run databases under
+# jkent/docker/runs, which can run to 100+ GB and would fill the builder's disk,
+# and a juriscraper checkout carries runs/, .tox and .venv the image never uses.
+COPY --from=jkent pyproject.toml README.md /src/jkent/
+COPY --from=jkent jkent /src/jkent/jkent
+COPY --from=juriscraper pyproject.toml README.rst LICENSE /src/juriscraper/
+COPY --from=juriscraper juriscraper /src/juriscraper/juriscraper
 
 # jkent[operational] (DB engine + HTTP/browser transports) and juriscraper,
 # both editable so site-packages points at /src — where the compose mounts put
@@ -67,10 +87,26 @@ RUN pip install --no-cache-dir uv \
     opentelemetry-instrumentation-botocore \
     opentelemetry-instrumentation-asyncio
 
-# Browser engine for Firefox-alike (FF_ALIKE) scrapers. Skipped unless
-# INSTALL_BROWSERS=1 — it's a heavy layer (full browser download).
+# Browser engine + display stack. Skipped unless INSTALL_BROWSERS=1 — it's a
+# heavy layer (full browser download).
+#   * xvfb xauth xdotool: the display and the input injector. x11-utils brings
+#     xdpyinfo, which both the entrypoint and jkent's per-browser displays
+#     (jkent/driver/xvfb.py) use to probe for readiness.
+#   * libgl1-mesa-dri & co: software GL. Without it the WebGL fingerprint
+#     degrades to a detectable state.
+#   * fonts-liberation/fontconfig: an unremarkable font set.
+#   * playwright install-deps firefox: Firefox's runtime libs under this
+#     distro's package names (trixie's t64 renames, not jkent-cf's bookworm
+#     list).
 RUN if [ "$INSTALL_BROWSERS" = "1" ]; then \
-        playwright install-deps firefox && python -m camoufox fetch; \
+        apt-get update \
+        && apt-get install -y --no-install-recommends \
+            xvfb xauth xdotool x11-utils \
+            libgl1 libegl1 libglx-mesa0 libgl1-mesa-dri libgbm1 \
+            fonts-liberation fontconfig \
+        && playwright install-deps firefox \
+        && apt-get clean && rm -rf /var/lib/apt/lists/* \
+        && python -m camoufox fetch; \
     else \
         echo "Skipping browser install (INSTALL_BROWSERS=$INSTALL_BROWSERS)"; \
     fi

@@ -1,0 +1,33 @@
+# cal_supreme_briefs: weekly briefs-by-argument-session maintenance
+# (briefs_by_argument_date).
+#
+# The court posts a session's briefs the day it sets the calendar (roughly a
+# month before argument; the index already listed September 2026 sessions on
+# 2026-09-10) and keeps appending filings until argument. So the window looks
+# forward as well as back: sessions from a week ago through two months out.
+# A session therefore stays in the window for several weekly runs, which is
+# the point — each pass re-reads its page and picks up briefs appended since.
+# PDFs already archived are skipped by their dedup key
+# (<docket_number>-<filename>), so a repeat pass re-fetches only the index and
+# the session pages.
+#
+# court_ids filters output only (the index isn't per-court). calctapp_3rd
+# covers the three Third District cases on the 2010-09-07 session page; it
+# never matches in a rolling window but costs nothing to keep.
+description = "cal_supreme_briefs — weekly briefs for recent and upcoming argument sessions"
+work_pool_name = "scraper-pool"
+tags = ["en-banc", "scraper", "http", "court:cal", "court:calctapp_3rd"]
+
+[[schedules]]
+# Once a week; adjust as needed.
+rrule = "FREQ=WEEKLY;BYDAY=TH;BYHOUR=20;BYMINUTE=0;BYSECOND=0"
+timezone = "America/Los_Angeles"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.california.supreme_courts_ca_gov.scraper:CalSupremeBriefsScraper"
+scraper_schema = "cal_supreme_briefs"
+seed_params = [
+  { briefs_by_argument_date = { court_ids = ["cal", "calctapp_3rd"], date_range = "-1w,+2m" } },
+]
+continuation_workers = 2

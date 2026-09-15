@@ -4,6 +4,34 @@ set -e
 RUNS_DIR="${SCRAPER_RUNS_DIR:-/app/runs}"
 mkdir -p "$RUNS_DIR"
 
+# Browser image only (INSTALL_BROWSERS=1 installs Xvfb): bring up the shared X
+# display. jkent's camoufox engine gives each headed browser its own private
+# Xvfb (:101 and up), so this one is the fallback — CloudflareHandler's
+# OS-level click aims at $DISPLAY when a browser has no private display, and a
+# headed Playwright browser needs one just to launch.
+if command -v Xvfb >/dev/null 2>&1; then
+    DISPLAY="${DISPLAY:-:99}"
+    GEOMETRY="${SCREEN_GEOMETRY:-1920x1080x24}"
+    export DISPLAY
+    # No X server can be running yet this early in a start, so any lock is
+    # stale — left by a crash before a `restart`, which keeps the container's
+    # /tmp. Xvfb refuses a locked display number.
+    rm -f /tmp/.X*-lock /tmp/.X11-unix/X*
+    echo "Starting Xvfb on $DISPLAY ($GEOMETRY)"
+    Xvfb "$DISPLAY" -screen 0 "$GEOMETRY" -nolisten tcp >/tmp/xvfb.log 2>&1 &
+    tries=0
+    until xdpyinfo >/dev/null 2>&1; do
+        tries=$((tries + 1))
+        if [ "$tries" -ge 40 ]; then
+            echo "ERROR: Xvfb never came up on $DISPLAY:" >&2
+            tail -20 /tmp/xvfb.log >&2 || true
+            exit 1
+        fi
+        sleep 0.25
+    done
+    echo "X display $DISPLAY ready (xdotool: $(command -v xdotool || echo MISSING))"
+fi
+
 # Wait for the Prefect server to be reachable.
 echo "Waiting for Prefect server at $PREFECT_API_URL ..."
 until curl -sf "$PREFECT_API_URL/health" > /dev/null 2>&1; do

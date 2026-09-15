@@ -223,8 +223,9 @@ Each branch is answered by one signal, so a dashboard of the above resolves
 - **Low lag, low lock wait, high `rate_limiter.gate.wait`** → rate-limit-bound.
   More workers/processes are pointless; you're at the courtesy ceiling.
 - **All of the above low, throughput still capped** → genuinely I/O-bound →
-  raise `MAX_CONTINUATION_WORKERS` (the per-run continuation-worker cap, wired
-  into `RunBootstrapper.max_workers`; default 10) and/or `WORKER_CONCURRENCY`.
+  raise `MAX_CONTINUATION_WORKERS` (the per-run continuation-worker pool size,
+  wired into `RunBootstrapper.num_workers`; default 10) and/or
+  `WORKER_CONCURRENCY`.
   Cheapest win, stays in one loop. Metrics carry the setting as the
   `worker.max_continuation_workers` resource attribute, so group by it to see
   whether dialing it up actually moved throughput/lag.
@@ -241,10 +242,11 @@ Keep telemetry disable-able without code changes. Suggested:
 
 Tuning (not telemetry, but read on the same worker):
 
-- `MAX_CONTINUATION_WORKERS` (default 10) — per-run continuation-worker cap,
-  wired into `RunBootstrapper.max_workers`. Both the scraper and browser workers
-  read it. Distinct from `WORKER_CONCURRENCY` (how many *runs* a worker executes
-  at once). jkent caps it to 1 for `STRICTLY_SERIAL` scrapers regardless.
+- `MAX_CONTINUATION_WORKERS` (default 10) — per-run continuation-worker pool
+  size (pinned; jkent spawns exactly this many and never re-grows), wired into
+  `RunBootstrapper.num_workers`. Both the scraper and browser workers read it.
+  Distinct from `WORKER_CONCURRENCY` (how many *runs* a worker executes at
+  once). jkent caps it to 1 for `STRICTLY_SERIAL` scrapers regardless.
 
 jkent honors an additional `JKENT_OTEL_LOOP_MONITOR` (default on) that *permits*
 the event-loop-lag sampling task — set it to `0` to hard-disable that ~200 ms

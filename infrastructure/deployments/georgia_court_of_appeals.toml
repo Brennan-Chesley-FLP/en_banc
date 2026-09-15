@@ -28,11 +28,11 @@ active = true
 scraper_path = "juriscraper.state.georgia.gaappeals_gov.scraper:GeorgiaCourtOfAppealsScraper"
 scraper_schema = "georgia_court_of_appeals"
 seed_params = [
-  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__A]" } },
-  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__D]" } },
-  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__E]" } },
-  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__I]" } },
-  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__O]" } },
+  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__a]" } },
+  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__d]" } },
+  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__e]" } },
+  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__i]" } },
+  { dockets_by_number = { docket_number = "[georgia_court_of_appeals_scraper__gactapp__o]" } },
 ]
 
 # gap = 15 follows the scraper docstring's seed example (dense annual sequences).

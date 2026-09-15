@@ -87,6 +87,27 @@ def resolve_max_continuation_workers(override: int | None = None) -> int:
     return value
 
 
+def resolve_headless() -> bool:
+    """Whether browser scrapers run headless, from the ``BROWSER_HEADLESS`` env var.
+
+    Unset means headless — jkent's own default, right for local runs and for
+    any host without a display. The browser worker sets ``BROWSER_HEADLESS=0``:
+    jkent's CloudflareHandler clears Turnstile interstitials with an OS-level
+    (xdotool) click, which needs a headed window mapped onto the worker's Xvfb
+    display; a headless browser cannot clear one at all. Plain-HTTP scrapers
+    never launch a browser, so they ignore it.
+
+    Raises:
+        ValueError: If the env var is set to something other than a boolean.
+    """
+    raw = os.environ.get("BROWSER_HEADLESS", "1").strip().lower()
+    if raw in ("1", "true", "yes", "on"):
+        return True
+    if raw in ("0", "false", "no", "off"):
+        return False
+    raise ValueError(f"BROWSER_HEADLESS must be a boolean (1/0), got {raw!r}")
+
+
 async def _log_stats_periodically(
     run: Any,
     log: Any,
@@ -295,10 +316,12 @@ async def run_scraper_task(
     cb_policy = (
         CircuitBreakerPolicy(**circuit_breaker) if circuit_breaker else None
     )
+    headless = resolve_headless()
     log.info(
         "Commencing scrape: %s (continuation_workers=%d, "
-        "circuit_breaker=%s, max_persistent_errors=%s)",
+        "circuit_breaker=%s, max_persistent_errors=%s, headless=%s)",
         scraper_path, resolved_workers, cb_policy, max_persistent_errors,
+        headless,
     )
 
     # Resolve the seed's ``[key]`` speculative-cursor references against Prefect
@@ -321,6 +344,7 @@ async def run_scraper_task(
             archive_handler=archive_handler,
             resume=True,
             num_workers=resolved_workers,
+            headless=headless,
             circuit_breaker_policy=cb_policy,
             max_persistent_errors=max_persistent_errors,
             setup_signal_handlers=False,
