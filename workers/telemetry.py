@@ -169,9 +169,22 @@ def init_telemetry() -> Optional[Callable[[], None]]:
     )
     logger.info("Tracer provider in effect: %r", trace.get_tracer_provider())
 
+    # Pin the metric exporter to the *base* OTLP endpoint instead of letting it
+    # resolve from the environment. Every exporter reads the signal-specific
+    # OTEL_EXPORTER_OTLP_METRICS_ENDPOINT ahead of the base var, and we set that
+    # one to the collector's OTLP/**HTTP** port (:4318) for Prefect's benefit:
+    # its per-flow-run resource metrics (prefect/_internal/metrics.py RunMetrics)
+    # hardcode the proto.http exporter and would otherwise POST HTTP/1.1 at the
+    # gRPC port. Left unpinned, this gRPC exporter would follow it to :4318,
+    # where gRPC doesn't answer.
+    otlp_endpoint = os.environ["OTEL_EXPORTER_OTLP_ENDPOINT"].strip()
     mp = MeterProvider(
         resource=resource,
-        metric_readers=[PeriodicExportingMetricReader(OTLPMetricExporter())],
+        metric_readers=[
+            PeriodicExportingMetricReader(
+                OTLPMetricExporter(endpoint=otlp_endpoint)
+            )
+        ],
     )
     metrics.set_meter_provider(mp)
 

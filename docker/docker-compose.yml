@@ -86,12 +86,42 @@ services:
       # Max flow runs this worker executes at once (one subprocess per run).
       # Override on the host: WORKER_CONCURRENCY=8 docker compose up
       WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-4}
+      # Put docker/debug on the import path so every flow-run subprocess picks
+      # up its sitecustomize.py at interpreter startup. That module instruments
+      # Prefect's concurrency-lease renewal thread — the thing that, when it
+      # runs late, lets the 300s lease expire, frees the slot to another run,
+      # and gets this one killed with "Concurrency lease renewal failed - slots
+      # are no longer reserved". It records time-since-last-*successful* renewal,
+      # per-attempt HTTP latency, thread-scheduling drift and cgroup PSI stalls
+      # to /app/runs/_debug/lease.log, and mirrors the bad ones to the flow run
+      # logger so they land in Postgres and outlive the container's log buffer.
+      # Without this the failure is invisible: the retry warnings go to the
+      # console-only `prefect.concurrency` logger. Disable with
+      # EN_BANC_LEASE_DEBUG=0 rather than by unsetting this.
+      PYTHONPATH: /app/docker/debug
+      # Renew the lease more often than Prefect's default, trading API calls for
+      # slack. Prefect renews at _RENEWAL_FRACTION=0.75 of the 300s TTL — every
+      # 225s, leaving a single 75s margin, so *one* late wakeup loses the lease
+      # and kills a scrape hours in. 0.25 renews every 75s: three chances inside
+      # each lease window. Read by docker/debug/sitecustomize.py, not Prefect.
+      EN_BANC_LEASE_RENEWAL_FRACTION: ${EN_BANC_LEASE_RENEWAL_FRACTION:-0.25}
       # OpenTelemetry: off by default (jkent's spans/metrics stay no-ops). Enable
       # by pointing at an OTLP collector and clearing the disable flag, e.g.
       # OTEL_SDK_DISABLED=false OTEL_EXPORTER_OTLP_ENDPOINT=http://otel:4317
       OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-true}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
       OTEL_EXPORTER_OTLP_INSECURE: ${OTEL_EXPORTER_OTLP_INSECURE:-true}
+      # Metrics get their own endpoint because two exporters with different
+      # protocols are in play. workers/telemetry.py speaks OTLP/gRPC to the base
+      # endpoint above (:4317), but Prefect's per-flow-run resource metrics
+      # (prefect/_internal/metrics.py RunMetrics — process CPU/memory, exported
+      # every 10s) hardcode the OTLP/*HTTP* exporter and derive their URL as
+      # OTEL_EXPORTER_OTLP_ENDPOINT + "/v1/metrics". Pointed at the gRPC port
+      # that fails on every export, spamming BadStatusLine retries in every flow
+      # run. Send them to the collector's OTLP/HTTP port (:4318) instead — full
+      # URL, used verbatim. telemetry.py pins its own gRPC metric exporter to the
+      # base endpoint so this signal-specific override doesn't drag it along.
+      OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: ${OTEL_EXPORTER_OTLP_METRICS_ENDPOINT:-}
       JKENT_OTEL_LOOP_MONITOR: ${JKENT_OTEL_LOOP_MONITOR:-1}
       JKENT_OTEL_SAMPLE_RATIO: ${JKENT_OTEL_SAMPLE_RATIO:-1}
       JKENT_OTEL_CONSOLE: ${JKENT_OTEL_CONSOLE:-1}
@@ -143,9 +173,17 @@ services:
       DISPLAY: ":99"
       SCREEN_GEOMETRY: 1920x1080x24
       # Telemetry, same knobs as the HTTP worker.
+      # Lease-renewal instrumentation + faster renewal, same as the HTTP worker
+      # (see the comments there). ny_court_pass has already been killed by an
+      # expired lease, so this pool needs it too.
+      PYTHONPATH: /app/docker/debug
+      EN_BANC_LEASE_RENEWAL_FRACTION: ${EN_BANC_LEASE_RENEWAL_FRACTION:-0.25}
+      # Telemetry, same knobs as the HTTP worker (including the separate
+      # OTLP/HTTP metrics endpoint for Prefect's RunMetrics — see above).
       OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-true}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
       OTEL_EXPORTER_OTLP_INSECURE: ${OTEL_EXPORTER_OTLP_INSECURE:-true}
+      OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: ${OTEL_EXPORTER_OTLP_METRICS_ENDPOINT:-}
       JKENT_OTEL_LOOP_MONITOR: ${JKENT_OTEL_LOOP_MONITOR:-1}
       JKENT_OTEL_SAMPLE_RATIO: ${JKENT_OTEL_SAMPLE_RATIO:-1}
       JKENT_OTEL_CONSOLE: ${JKENT_OTEL_CONSOLE:-1}
