@@ -1,36 +1,38 @@
-# pa_courts_api: speculative dockets_by_number probing over the PACMS JSON API
-# (services.pacourts.us). Complements pa_ujs_portal: structured case data
-# here, PDFs there — both should run.
+# pa_courts_api: weekly last-7-days maintenance (dockets_by_filing_date).
+# Structured case data from the PACMS JSON API (services.pacourts.us).
+# Complements pa_ujs_portal: structured case data here, PDFs there — both
+# should run.
 #
-# Docket numbers are "<seq> <TYPE> <year>", with <seq> restarting at 1 each
-# year within each of the 17 type prefixes (DOCKET_TYPES in models.py), so
-# there is ONE cursor per (docket_type, year) — 17 cursors, all year = 2026.
-# PaDocketRange carries court_id + docket_type + year; the year does NOT roll
-# over, so 2027 cursors must be added (and 2026's retired) at the new year.
+# CROSS-DOMAIN: this entry point is not purely a services.pacourts.us scrape.
+# The JSON API refuses to search on a date range alone, so dockets_by_filing_date
+# runs the *sibling portal's* filing-date search on ujsportal.pacourts.us as a
+# docket-number oracle, then fetches each case in full from the API. One portal
+# search per court enumerates a window exactly, where the old speculative walk
+# only estimated it. See the scraper's CC_NOTES.md → "Cross-domain docket
+# discovery".
 #
-# Cursor seeds: the highest 2026 sequence seen in the scraper's test fixtures
-# (search_supreme_smith.json / search_unfiltered_smith.json, 150-row "Smith"
-# name searches captured 2026-09-08). Those are sparse samples, so each seed is
-# a LOWER bound on the real frontier: the first run walks forward from it to
-# the true high (nothing above is skipped), and cases below it are backfill,
-# not maintenance. Prefixes with no 2026 number in the fixtures start at 1.
+# This replaces the previous speculative dockets_by_number sweep (17 advancing
+# (docket_type, year) cursors). That walk could never distinguish "this sequence
+# number doesn't exist" from "the numbers stop here", cost one request per
+# candidate against an API that permits ~1 req/10 s, and — worst — read a
+# throttled 429 as a miss, silently truncating ranges. The portal search has
+# none of those failure modes. It remains available as a fallback and an
+# independent cross-check; re-seeding it means restoring the [variables.*]
+# cursor tables from this file's git history.
 #
-# gap = 25 per CC_NOTES.md: sequences are sparse (~1/3-1/2 resolve) with
-# interior runs of 5+ misses, so a tight gap ends the walk early.
-#
-# RATE LIMIT: the API 429s hard and the block is IP-wide and outlasts an hour
-# (scraper rate_limits = 1 req / 10 s, a guess, not a measurement). A throttled
-# walk reads 429s as misses and ends ranges early. CC_NOTES.md says to prove a
-# single (type, year) range walks cleanly before running a broad sweep like
-# this one, so this deployment ships PAUSED. Unpause after that check.
-description = "pa_courts_api — speculative maintenance (advancing cursors)"
+# RATE LIMIT: the API 429s hard and the block is IP-wide, outlasting an hour in
+# recon (scraper rate_limits = 1 req / 10 s, a guess, not a measurement). Unlike
+# the speculative walk, a throttled run here is *slow, not incomplete*: 429 is
+# TRANSIENT, so requests retry rather than being read as missing data. The
+# ceiling is run-global rather than per-host, so the portal searches and the
+# case fetches compete for the same budget.
+description = "pa_courts_api — weekly last-7-days maintenance"
 work_pool_name = "scraper-pool"
 tags = ["en-banc", "scraper", "http", "court:pa", "court:pacommwct", "court:pasuperct"]
-paused = true
 
 [[schedules]]
-# Once a week; adjust as needed. Offset from pa_ujs_portal (WE) so the two
-# AOPC scrapers don't run the same day.
+# Once a week, offset from pa_ujs_portal (WE) so the two AOPC scrapers don't run
+# the same day — now doubly relevant, since this one also hits the portal host.
 rrule = "FREQ=WEEKLY;BYDAY=SA;BYHOUR=20;BYMINUTE=0;BYSECOND=0"
 timezone = "America/New_York"
 active = true
@@ -39,209 +41,15 @@ active = true
 scraper_path = "juriscraper.state.pennsylvania.service_pacourts_us.scraper:PaCourtsApiScraper"
 scraper_schema = "pa_courts_api"
 seed_params = [
-  # Supreme Court of Pennsylvania
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pa__map]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pa__eap]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pa__wap]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pa__mal]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pa__eal]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pa__wal]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pa__mm]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pa__em]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pa__wm]" } },
-  # Superior Court of Pennsylvania
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pasuperct__eda]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pasuperct__mda]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pasuperct__wda]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pasuperct__edm]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pasuperct__mdm]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pasuperct__wdm]" } },
-  # Commonwealth Court of Pennsylvania
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pacommwct__cd]" } },
-  { dockets_by_number = { docket_number = "[pa_courts_api_scraper__pacommwct__md]" } },
+  { dockets_by_filing_date = { court_ids = ["pa", "pacommwct", "pasuperct"], date_range = "-8d" } },
 ]
-# At 1 request / 10 s, extra workers only queue on the rate limiter.
+# At 1 request / 10 s (run-global), extra workers only queue on the rate limiter.
 continuation_workers = 1
 
-# Pause the pool on a streak of transient failures (429s) instead of letting
-# retries keep hitting a blocked IP. The penalty outlasted an hour in recon, so
-# probe every 15 min rather than jkent's default 5.
+# Pause the pool on a streak of transient failures instead of letting retries
+# keep hitting a blocked IP — 429s from the API, and the portal's intermittent
+# 400s, both land here. The penalty outlasted an hour in recon, so probe every
+# 15 min rather than jkent's default 5.
 [parameters.circuit_breaker]
 failure_threshold = 3
 recovery_timeout = 900.0
-
-# --- Supreme Court of Pennsylvania ---------------------------------------------
-
-# MAP = Middle District appeal (no 2026 number in fixtures)
-[variables.pa_courts_api_scraper__pa__map]
-court_id = "pa"
-docket_type = "MAP"
-year = 2026
-min = 1
-soft_max = 1
-gap = 25
-should_advance = true
-
-# EAP = Eastern District appeal (fixture high: 31 EAP 2026)
-[variables.pa_courts_api_scraper__pa__eap]
-court_id = "pa"
-docket_type = "EAP"
-year = 2026
-min = 31
-soft_max = 31
-gap = 25
-should_advance = true
-
-# WAP = Western District appeal (no 2026 number in fixtures)
-[variables.pa_courts_api_scraper__pa__wap]
-court_id = "pa"
-docket_type = "WAP"
-year = 2026
-min = 1
-soft_max = 1
-gap = 25
-should_advance = true
-
-# MAL = Middle District allocatur (fixture high: 496 MAL 2026)
-[variables.pa_courts_api_scraper__pa__mal]
-court_id = "pa"
-docket_type = "MAL"
-year = 2026
-min = 496
-soft_max = 496
-gap = 25
-should_advance = true
-
-# EAL = Eastern District allocatur (fixture high: 187 EAL 2026)
-[variables.pa_courts_api_scraper__pa__eal]
-court_id = "pa"
-docket_type = "EAL"
-year = 2026
-min = 187
-soft_max = 187
-gap = 25
-should_advance = true
-
-# WAL = Western District allocatur (fixture high: 219 WAL 2026)
-[variables.pa_courts_api_scraper__pa__wal]
-court_id = "pa"
-docket_type = "WAL"
-year = 2026
-min = 219
-soft_max = 219
-gap = 25
-should_advance = true
-
-# MM = Middle District miscellaneous (fixture high: 133 MM 2026)
-[variables.pa_courts_api_scraper__pa__mm]
-court_id = "pa"
-docket_type = "MM"
-year = 2026
-min = 133
-soft_max = 133
-gap = 25
-should_advance = true
-
-# EM = Eastern District miscellaneous (fixture high: 5 EM 2026)
-[variables.pa_courts_api_scraper__pa__em]
-court_id = "pa"
-docket_type = "EM"
-year = 2026
-min = 5
-soft_max = 5
-gap = 25
-should_advance = true
-
-# WM = Western District miscellaneous (fixture high: 44 WM 2026)
-[variables.pa_courts_api_scraper__pa__wm]
-court_id = "pa"
-docket_type = "WM"
-year = 2026
-min = 44
-soft_max = 44
-gap = 25
-should_advance = true
-
-# --- Superior Court of Pennsylvania --------------------------------------------
-
-# EDA = Eastern District appeal (fixture high: 2149 EDA 2026)
-[variables.pa_courts_api_scraper__pasuperct__eda]
-court_id = "pasuperct"
-docket_type = "EDA"
-year = 2026
-min = 2149
-soft_max = 2149
-gap = 25
-should_advance = true
-
-# MDA = Middle District appeal (fixture high: 1333 MDA 2026)
-[variables.pa_courts_api_scraper__pasuperct__mda]
-court_id = "pasuperct"
-docket_type = "MDA"
-year = 2026
-min = 1333
-soft_max = 1333
-gap = 25
-should_advance = true
-
-# WDA = Western District appeal (fixture high: 1141 WDA 2026)
-[variables.pa_courts_api_scraper__pasuperct__wda]
-court_id = "pasuperct"
-docket_type = "WDA"
-year = 2026
-min = 1141
-soft_max = 1141
-gap = 25
-should_advance = true
-
-# EDM = Eastern District miscellaneous (no 2026 number in fixtures)
-[variables.pa_courts_api_scraper__pasuperct__edm]
-court_id = "pasuperct"
-docket_type = "EDM"
-year = 2026
-min = 1
-soft_max = 1
-gap = 25
-should_advance = true
-
-# MDM = Middle District miscellaneous (no 2026 number in fixtures)
-[variables.pa_courts_api_scraper__pasuperct__mdm]
-court_id = "pasuperct"
-docket_type = "MDM"
-year = 2026
-min = 1
-soft_max = 1
-gap = 25
-should_advance = true
-
-# WDM = Western District miscellaneous (no 2026 number in fixtures)
-[variables.pa_courts_api_scraper__pasuperct__wdm]
-court_id = "pasuperct"
-docket_type = "WDM"
-year = 2026
-min = 1
-soft_max = 1
-gap = 25
-should_advance = true
-
-# --- Commonwealth Court of Pennsylvania ----------------------------------------
-
-# CD = Commonwealth appellate (fixture high: 1125 CD 2026)
-[variables.pa_courts_api_scraper__pacommwct__cd]
-court_id = "pacommwct"
-docket_type = "CD"
-year = 2026
-min = 1125
-soft_max = 1125
-gap = 25
-should_advance = true
-
-# MD = Commonwealth original jurisdiction (no 2026 number in fixtures)
-[variables.pa_courts_api_scraper__pacommwct__md]
-court_id = "pacommwct"
-docket_type = "MD"
-year = 2026
-min = 1
-soft_max = 1
-gap = 25
-should_advance = true
