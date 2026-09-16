@@ -1,0 +1,524 @@
+# delaware_courtconnect: weekly speculative maintenance over Delaware
+# CourtConnect (courtconnect.courts.delaware.gov), the state's Avenu/Contexte
+# portal. One docket-report endpoint fronts every Delaware trial court, and the
+# court a case belongs to is encoded in the shape of its case id.
+#
+# NO DATE-BASED ENTRY EXISTS. Per CC_NOTES.md, no endpoint takes a filing-date
+# window as its primary key, and the portal's two name-based searches index
+# neither Chancery nor any appellate case type (a party search for SMITH with
+# case_type=2A returns "No records found"). Speculative enumeration is not a
+# preference here — it is the only access path in.
+#
+# SCOPE: the two spaces CC_NOTES calls complete, for the current year only:
+#   * chancery        {YYYY}-{NNNN}, year-partitioned         ->  1 cursor
+#   * superior_appeal {County}{YY}A-{MM}-{NNN}                -> 36 cursors
+#     (Superior Court sitting as Delaware's intermediate appellate court;
+#      partitioned by county N/K/S AND month, hence 3 x 12 per year)
+# Superior's `A` docket needs no scope test — the A type letter *is* the
+# appellate docket. Chancery's test only drops the few Justice of the Peace
+# cases sharing the low end of the pre-2017 integers.
+#
+# SEEDING DEVIATES FROM THE min == soft_max ADVANCE-WINDOW CONVENTION, on
+# purpose. That convention is for frontier maintenance under a punishing rate
+# limit (cf. pa_courts_api). CourtConnect has no bot protection of any kind and
+# the scraper's 2 req/s is self-imposed politeness, not a measured ceiling — so
+# these seed min = 1 and let the FIRST run sweep 2026 whole (~1,845 probe
+# ceiling, roughly 15 minutes at 2 req/s). The cursor then advances to the
+# frontier and every later run is cheap. Seeding at the frontier instead would
+# have left all of 2026 below the seed as backfill nobody collects.
+# Values are the scraper's own: SEED_HINTS[2026]=1100 for Chancery, and
+# SPACE_GAPS / _DEFAULT_SOFT_MAX for the per-space gap and ceiling. Generated
+# via seed_templates() and validated through DeCaseRange, because a template
+# missing a partition component does not fail loudly — it just misses, and a
+# run of misses reads as a legitimately empty partition.
+#
+# THE YEAR DOES NOT ROLL OVER. These are 2026 cursors; 2027 cursors must be
+# added (and 2026's retired) at the new year, same as pa_courts_api.
+#
+# NOT COVERED, deliberately (one file = one deployment, and scraper_schema must
+# equal the filename stem, so a second TOML for the same scraper is not
+# possible — backfill these with a one-off manual run instead):
+#   * chancery_legacy           flat integers to 13013, 2007-2016, ~10k records
+#   * superior_appeal_archival  S-prefixed, 1991-2008, ~2k records
+#   * common_pleas              ~85% of the total request budget for ~25% of the
+#                               records, all of them JP appeals heard by a court
+#                               CourtListener types as `trial`; ~40h at 2 req/s
+#   * common_pleas_legacy       NOT production-ready per CC_NOTES: the suffix
+#                               vocabulary is unestablished, and appeals are too
+#                               sparse for a gap-based walk to find its own end
+#
+# A case dropped by the scope filter is NOT a speculation miss — the step emits
+# nothing but the probe still counts as a hit, so the walk keeps going.
+description = "delaware_courtconnect — weekly speculative maintenance (advancing cursors)"
+work_pool_name = "scraper-pool"
+tags = ["en-banc", "scraper", "http", "court:delch", "court:delsuperct"]
+
+[[schedules]]
+# Once a week. TU 22:00 UTC is uncontended across the other deployments.
+rrule = "FREQ=WEEKLY;BYDAY=TU;BYHOUR=22;BYMINUTE=0;BYSECOND=0"
+timezone = "UTC"
+active = true
+
+[parameters]
+scraper_path = "juriscraper.state.delaware.courtconnect_courts_delaware_gov.scraper:DeCourtConnectScraper"
+scraper_schema = "delaware_courtconnect"
+seed_params = [
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__chancery_2026]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_01]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_02]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_03]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_04]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_05]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_06]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_07]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_08]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_09]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_10]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_11]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_N_12]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_01]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_02]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_03]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_04]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_05]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_06]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_07]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_08]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_09]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_10]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_11]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_K_12]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_01]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_02]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_03]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_04]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_05]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_06]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_07]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_08]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_09]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_10]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_11]" } },
+  { dockets_by_number = { docket_number = "[delaware_courtconnect_scraper__superior_S_12]" } },
+]
+# The 2 req/s ceiling is run-global, so workers past a couple only queue on the
+# rate limiter. No circuit_breaker table: CC_NOTES records no throttling or
+# blocking across ~250 probes at ~3/s, so the default policy is right.
+continuation_workers = 2
+
+# --- Court of Chancery (delch) -------------------------------------------------
+# Wanted in full. Near-contiguous: one hole in a contiguous 60-wide scan, so
+# gap = 25 is generous headroom for the year's sparse tail.
+
+[variables.delaware_courtconnect_scraper__chancery_2026]
+space = "chancery"
+court_id = "delch"
+year = 2026
+min = 1
+soft_max = 1100
+gap = 25
+should_advance = true
+
+# --- Superior Court sitting appellate (delsuperct) -----------------------------
+# 3 counties (N New Castle, K Kent, S Sussex) x 12 months. Each county-month
+# holds only a handful of appeals and never skipped a number, so gap = 5 is
+# enough — a larger one would spend most of the probe budget on empty months.
+
+# New Castle County (N)
+[variables.delaware_courtconnect_scraper__superior_N_01]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 1
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_N_02]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 2
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_N_03]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 3
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_N_04]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 4
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_N_05]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 5
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_N_06]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 6
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_N_07]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 7
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_N_08]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 8
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_N_09]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 9
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_N_10]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 10
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_N_11]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 11
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_N_12]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "N"
+month = 12
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+# Kent County (K)
+[variables.delaware_courtconnect_scraper__superior_K_01]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 1
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_K_02]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 2
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_K_03]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 3
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_K_04]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 4
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_K_05]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 5
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_K_06]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 6
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_K_07]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 7
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_K_08]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 8
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_K_09]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 9
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_K_10]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 10
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_K_11]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 11
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_K_12]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "K"
+month = 12
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+# Sussex County (S)
+[variables.delaware_courtconnect_scraper__superior_S_01]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 1
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_S_02]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 2
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_S_03]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 3
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_S_04]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 4
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_S_05]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 5
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_S_06]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 6
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_S_07]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 7
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_S_08]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 8
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_S_09]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 9
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_S_10]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 10
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_S_11]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 11
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
+
+[variables.delaware_courtconnect_scraper__superior_S_12]
+space = "superior_appeal"
+court_id = "delsuperct"
+year = 2026
+county = "S"
+month = 12
+min = 1
+soft_max = 15
+gap = 5
+should_advance = true
