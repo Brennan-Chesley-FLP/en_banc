@@ -202,10 +202,11 @@ scraper_run_parameter_schema = json.dumps(
                 "position": 3,
                 "title": "continuation_workers",
             },
-            # jkent's run-scoped CircuitBreakerPolicy. Both knobs are optional;
-            # an omitted knob keeps jkent's default (threshold 3 / 300s). The
-            # flow builds CircuitBreakerPolicy(**circuit_breaker) — additional
-            # keys are rejected so a typo fails the run instead of being ignored.
+            # jkent's run-scoped CircuitBreakerPolicy. Every knob is optional;
+            # an omitted knob keeps jkent's default (threshold 8, 30s base
+            # cool-down escalating x2 up to 300s). The flow builds
+            # CircuitBreakerPolicy(**circuit_breaker) — additional keys are
+            # rejected so a typo fails the run instead of being ignored.
             "circuit_breaker": {
                 "anyOf": [
                     {
@@ -216,6 +217,17 @@ scraper_run_parameter_schema = json.dumps(
                                 "minimum": 1,
                             },
                             "recovery_timeout": {
+                                "type": "number",
+                                "exclusiveMinimum": 0,
+                            },
+                            # Multiplier applied to the cool-down on each
+                            # failed probe; 1.0 disables escalation.
+                            "recovery_backoff": {
+                                "type": "number",
+                                "minimum": 1,
+                            },
+                            # Ceiling on the escalated cool-down.
+                            "max_recovery_timeout": {
                                 "type": "number",
                                 "exclusiveMinimum": 0,
                             },
@@ -236,6 +248,36 @@ scraper_run_parameter_schema = json.dumps(
                 "default": None,
                 "position": 5,
                 "title": "max_persistent_errors",
+            },
+            # Seconds between worker spawns at startup. Shapes arrival, not
+            # capacity: the pool still reaches continuation_workers, it just
+            # doesn't open that many browser pages on the first tick. 0 spawns
+            # the whole pool at once. Keep in step with the flow's
+            # DEFAULT_WORKER_RAMP_INTERVAL.
+            "worker_ramp_interval": {
+                "type": "number",
+                "minimum": 0,
+                "default": 30.0,
+                "position": 6,
+                "title": "worker_ramp_interval",
+            },
+            # Honor the scraper's declared rate_limits. Off is for replay and
+            # other no-network runs; a live scrape wants this on.
+            "rate_limited": {
+                "type": "boolean",
+                "default": True,
+                "position": 7,
+                "title": "rate_limited",
+            },
+            # Make the run's *default* rate-limit lane adaptive: it opens at
+            # the scraper's declared rate_limits and slows on server pushback.
+            # The scraper's other lanes are unaffected; jkent ignores this
+            # when rate_limited is off.
+            "adaptive_rate_limit": {
+                "type": "boolean",
+                "default": True,
+                "position": 8,
+                "title": "adaptive_rate_limit",
             },
         },
         "required": ["scraper_path", "scraper_schema"],

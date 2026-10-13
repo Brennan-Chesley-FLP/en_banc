@@ -51,6 +51,13 @@ STATS_LOG_INTERVAL_SECONDS = 300
 # STRICTLY_SERIAL scrapers regardless, so raising it is safe.
 DEFAULT_MAX_CONTINUATION_WORKERS = 10
 
+# Seconds between worker spawns at startup (jkent's RunConfig
+# ``worker_ramp_interval``). Shapes arrival, not capacity: the pool still ends
+# up at ``continuation_workers``, it just gets there one worker at a time
+# instead of opening N browser pages on the first tick. 0 spawns the whole pool
+# at once.
+DEFAULT_WORKER_RAMP_INTERVAL = 30.0
+
 
 def resolve_max_continuation_workers(override: int | None = None) -> int:
     """Return the per-run continuation-worker pool size (pinned by jkent).
@@ -245,6 +252,9 @@ async def run_scraper_task(
     continuation_workers: int | None = None,
     circuit_breaker: dict[str, Any] | None = None,
     max_persistent_errors: int | None = None,
+    worker_ramp_interval: float = DEFAULT_WORKER_RAMP_INTERVAL,
+    rate_limited: bool = True,
+    adaptive_rate_limit: bool = True,
 ) -> Path | None:
     """Run a JKent scraper, streaming file downloads to the files bucket.
 
@@ -266,14 +276,24 @@ async def run_scraper_task(
         continuation_workers: Per-run continuation-worker pool size (pinned). ``None``
             falls back to the ``MAX_CONTINUATION_WORKERS`` env var / default
             (see :func:`resolve_max_continuation_workers`).
-        circuit_breaker: Optional ``{failure_threshold, recovery_timeout}`` for
-            jkent's run-scoped circuit breaker (built into a
-            ``CircuitBreakerPolicy``). Either key may be omitted to keep jkent's
-            default (3 consecutive pool-wide transient failures / 300s cool-off).
-            ``None`` uses the default policy entirely.
+        circuit_breaker: Optional ``{failure_threshold, recovery_timeout,
+            recovery_backoff, max_recovery_timeout}`` for jkent's run-scoped
+            circuit breaker (built into a ``CircuitBreakerPolicy``). Any key may
+            be omitted to keep jkent's default (8 consecutive pool-wide transient
+            failures; 30s cool-off escalating x2 up to 300s). ``None`` uses the
+            default policy entirely.
         max_persistent_errors: Stop the run gracefully once this many
             never-retried (persistent) failures have been stored. ``None`` =
             unlimited (jkent's default).
+        worker_ramp_interval: Seconds between worker spawns at startup (see
+            :data:`DEFAULT_WORKER_RAMP_INTERVAL`). 0 spawns the whole pool at
+            once; the final pool size is unchanged either way.
+        rate_limited: Honor the scraper's declared ``rate_limits``. Leave on;
+            turning it off removes the scraper's own pacing.
+        adaptive_rate_limit: Make the run's *default* rate-limit lane adaptive
+            — it opens at the scraper's declared ``rate_limits`` and slows on
+            server pushback. The scraper's other lanes are unaffected, and
+            jkent ignores this when ``rate_limited`` is off.
 
     Returns:
         Path to the resulting SQLite database, or ``None`` if the scrape was
@@ -284,7 +304,11 @@ async def run_scraper_task(
     from juriscraper.state.common.params import anchor_date, spec_kv_store
 
     from flows.speculative import load_seed_store, scheduled_anchor_date
-    from jkent.driver.unified_driver import CircuitBreakerPolicy, RunBootstrapper
+    from jkent.driver.unified_driver import (
+        CircuitBreakerPolicy,
+        RunBootstrapper,
+        RunConfig,
+    )
 
     log = get_run_logger()
     run_name = prefect.runtime.flow_run.name or "unnamed"
@@ -299,8 +323,9 @@ async def run_scraper_task(
     # The DB is named after the (unique) flow run, so an existing file means a
     # prior attempt of *this same* run already seeded and partly executed it —
     # e.g. retrying a cancelled or crashed run. Re-seeding an existing run is
-    # rejected by the bootstrapper, so drop seed_params and let resume=True
-    # pick up where it left off; same run name implies the same seed.
+    # rejected by the bootstrapper, so drop seed_params and let jkent pick up
+    # where it left off (reopening a run DB always resumes); same run name
+    # implies the same seed.
     if seed_params is not None and db_path.exists():
         log.info("Resuming existing run DB %s; ignoring seed_params", db_path)
         seed_params = None
@@ -318,10 +343,11 @@ async def run_scraper_task(
     )
     headless = resolve_headless()
     log.info(
-        "Commencing scrape: %s (continuation_workers=%d, "
-        "circuit_breaker=%s, max_persistent_errors=%s, headless=%s)",
-        scraper_path, resolved_workers, cb_policy, max_persistent_errors,
-        headless,
+        "Commencing scrape: %s (continuation_workers=%d, worker_ramp_interval=%s, "
+        "circuit_breaker=%s, max_persistent_errors=%s, rate_limited=%s, "
+        "adaptive_rate_limit=%s, headless=%s)",
+        scraper_path, resolved_workers, worker_ramp_interval, cb_policy,
+        max_persistent_errors, rate_limited, adaptive_rate_limit, headless,
     )
 
     # Resolve the seed's ``[key]`` speculative-cursor references against Prefect
@@ -339,14 +365,21 @@ async def run_scraper_task(
     with anchor_date(scheduled_anchor_date()), spec_ctx:
         async with RunBootstrapper(
             scraper,
-            db_path=db_path,
-            seed_params=seed_params,
+            db_path,
+            config=RunConfig(
+                seed_params=seed_params,
+                num_workers=resolved_workers,
+                worker_ramp_interval=worker_ramp_interval,
+                max_persistent_errors=max_persistent_errors,
+                rate_limited=rate_limited,
+                adaptive_rate_limit=adaptive_rate_limit,
+                # RunConfig's breaker policy is non-optional (it defaults to
+                # jkent's own policy), so only pass ours when the deployment
+                # tuned it.
+                **({"circuit_breaker_policy": cb_policy} if cb_policy else {}),
+            ),
             archive_handler=archive_handler,
-            resume=True,
-            num_workers=resolved_workers,
             headless=headless,
-            circuit_breaker_policy=cb_policy,
-            max_persistent_errors=max_persistent_errors,
             setup_signal_handlers=False,
         ) as run:
             # Bind the SQLAlchemy instrumentor to this run's per-run engine so its DB
@@ -514,6 +547,9 @@ async def scraper_run_flow(
     continuation_workers: int | None = None,
     circuit_breaker: dict[str, Any] | None = None,
     max_persistent_errors: int | None = None,
+    worker_ramp_interval: float = DEFAULT_WORKER_RAMP_INTERVAL,
+    rate_limited: bool = True,
+    adaptive_rate_limit: bool = True,
 ) -> str | State:
     """Run a JKent scrape and archive its database.
 
@@ -527,11 +563,20 @@ async def scraper_run_flow(
             ``MAX_CONTINUATION_WORKERS`` env var / default. Set it in a
             deployment's ``[parameters]`` to dial one scraper's pool without
             touching the shared env var.
-        circuit_breaker: Optional ``{failure_threshold, recovery_timeout}``
-            tuning jkent's run-scoped circuit breaker; ``None`` uses jkent's
-            default policy. Set it in a deployment's ``[parameters.circuit_breaker]``.
+        circuit_breaker: Optional ``{failure_threshold, recovery_timeout,
+            recovery_backoff, max_recovery_timeout}`` tuning jkent's run-scoped
+            circuit breaker; ``None`` uses jkent's default policy. Set it in
+            a deployment's ``[parameters.circuit_breaker]``.
         max_persistent_errors: Graceful-stop budget for never-retried errors;
             ``None`` = unlimited. Set it in a deployment's ``[parameters]``.
+        worker_ramp_interval: Seconds between worker spawns at startup
+            (default :data:`DEFAULT_WORKER_RAMP_INTERVAL`); 0 spawns the pool
+            at once. Set it in a deployment's ``[parameters]``.
+        rate_limited: Honor the scraper's declared ``rate_limits``. On by
+            default; a deployment can set it ``false`` in ``[parameters]``.
+        adaptive_rate_limit: Let the run's default rate-limit lane slow itself
+            on server pushback. On by default; ignored when ``rate_limited``
+            is off. Set it in a deployment's ``[parameters]``.
 
     Returns:
         S3 URI of the uploaded scrape database on a clean run; a ``Cancelled``
@@ -564,6 +609,9 @@ async def scraper_run_flow(
             continuation_workers,
             circuit_breaker,
             max_persistent_errors,
+            worker_ramp_interval=worker_ramp_interval,
+            rate_limited=rate_limited,
+            adaptive_rate_limit=adaptive_rate_limit,
         )
     finally:
         await stop_loop_monitor(monitor)
@@ -578,6 +626,10 @@ async def _scraper_run(
     continuation_workers: int | None = None,
     circuit_breaker: dict[str, Any] | None = None,
     max_persistent_errors: int | None = None,
+    *,
+    worker_ramp_interval: float = DEFAULT_WORKER_RAMP_INTERVAL,
+    rate_limited: bool = True,
+    adaptive_rate_limit: bool = True,
 ) -> str | State:
     """The flow body proper — see :func:`scraper_run_flow`."""
     log = get_run_logger()
@@ -588,6 +640,9 @@ async def _scraper_run(
         continuation_workers,
         circuit_breaker,
         max_persistent_errors,
+        worker_ramp_interval=worker_ramp_interval,
+        rate_limited=rate_limited,
+        adaptive_rate_limit=adaptive_rate_limit,
     )
 
     # The scrape was drained mid-run for a graceful shutdown. Don't upload a

@@ -49,12 +49,30 @@ scraper_schema = "<schema>"
 #   { dockets_by_number = { docket_number = "[<schema>_scraper__<court_id>]" } },
 # ]
 
-# --- optional run-tuning knobs (all default to jkent's own defaults) ----------
+# --- optional run-tuning knobs -----------------------------------------------
+# Omitting one takes en_banc's default, noted per knob. Most match jkent's own
+# default; worker_ramp_interval and adaptive_rate_limit deliberately do not.
 # continuation_workers: per-run continuation-worker pool size. jkent pins the
 # pool at this size for the whole run (it is NOT a ramp-up cap). Omit to use the
 # worker's MAX_CONTINUATION_WORKERS env var / default (10). jkent forces 1 for
 # STRICTLY_SERIAL scrapers regardless.
 # continuation_workers = 2
+
+# worker_ramp_interval: seconds between worker spawns at startup. Shapes
+# arrival, not capacity — the pool still reaches continuation_workers, it just
+# doesn't open that many browser pages on the first tick. Default 30.0 (jkent's
+# own default is 0.0 = all at once); set 0 to opt back into that.
+# worker_ramp_interval = 0
+
+# rate_limited: honor the scraper's declared rate_limits. Default true; false
+# is for replay and other no-network runs, not for going faster.
+# rate_limited = false
+
+# adaptive_rate_limit: make the run's *default* rate-limit lane adaptive — it
+# opens at the scraper's declared rate_limits and slows on server pushback. The
+# scraper's other lanes are unaffected, and it's ignored when rate_limited is
+# false. Default true (jkent's own default is false).
+# adaptive_rate_limit = false
 
 # max_persistent_errors: graceful-stop budget. jkent halts the run cleanly
 # (DB finalized, resumable) once this many never-retried "persistent" failures
@@ -64,11 +82,16 @@ scraper_schema = "<schema>"
 # [parameters.circuit_breaker]: jkent's run-scoped circuit breaker over
 # *transient* failures — one breaker shared by the whole worker pool, so the
 # count is a run-global "the server is in distress" signal. When it trips, the
-# pool pauses (requests aren't failed) until a probe succeeds. Either knob may
-# be omitted to keep jkent's default. Omit the whole table for the default policy.
+# pool pauses (requests aren't failed) until a probe succeeds. Any knob may
+# be omitted to keep jkent's default. Omit the whole table for the default policy
+# (threshold 8, 30s base cool-down escalating x2 up to 300s). Size the threshold
+# against the pool: it must exceed continuation_workers by enough that one bad
+# moment across every worker at once doesn't read as a downed server.
 # [parameters.circuit_breaker]
-# failure_threshold = 3       # consecutive pool-wide transient failures that trip it
-# recovery_timeout = 300.0    # seconds paused before admitting one probe
+# failure_threshold = 8        # consecutive pool-wide transient failures that trip it
+# recovery_timeout = 30.0      # seconds paused before admitting one probe
+# recovery_backoff = 2.0       # cool-down multiplier per failed probe (1.0 = fixed window)
+# max_recovery_timeout = 300.0 # ceiling on the escalated cool-down
 
 # Each [[schedules]] becomes one DeploymentSchedule. Set exactly one of
 # cron / interval (seconds) / rrule; other allowed keys: timezone, active,
