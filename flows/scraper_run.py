@@ -755,7 +755,7 @@ def _build_summary_markdown(
 ) -> str:
     """Render the scrape-summary markdown artifact from aggregate stats."""
     requests_by_status = summary.requests_by_status
-    errors_by_continuation = summary.errors_by_continuation
+    errors_by_step = summary.errors_by_step
     results_by_type = summary.results_by_type
     total_errors = summary.errors_total
 
@@ -774,9 +774,9 @@ def _build_summary_markdown(
         f"- **Errors**: {total_errors}",
     ]
 
-    lines += ["", "## Requests by status and continuation", ""]
+    lines += ["", "## Requests by status and step", ""]
     if requests_by_status:
-        lines += _pivot_table(requests_by_status, "Continuation", "Status")
+        lines += _pivot_table(requests_by_status, "Step", "Status")
     else:
         lines.append("_No requests recorded._")
 
@@ -790,9 +790,9 @@ def _build_summary_markdown(
     else:
         lines.append("_No results recorded._")
 
-    lines += ["", "## Errors by continuation and type", ""]
-    if errors_by_continuation:
-        lines += _pivot_table(errors_by_continuation, "Continuation", "Error type")
+    lines += ["", "## Errors by step and type", ""]
+    if errors_by_step:
+        lines += _pivot_table(errors_by_step, "Step", "Error type")
 
         lines += ["", "## Error detail", "", "| Type | Class | Message | URL |", "| --- | --- | --- | --- |"]
         for error_type, error_class, message, request_url in summary.error_rows:
